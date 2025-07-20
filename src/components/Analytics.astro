@@ -5,6 +5,7 @@ const shouldRender = import.meta.env.PROD && !!cloudflareToken;
 ---
 {shouldRender && (
   <script 
+    is:inline
     defer 
     src="https://static.cloudflareinsights.com/beacon.min.js" 
     data-cf-beacon={`{"token": "${cloudflareToken}"}`}

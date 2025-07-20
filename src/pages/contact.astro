@@ -1,5 +1,4 @@
 ---
-// src/pages/contact.astro
 import Layout from '../layouts/Layout.astro';
 import FadeIn from '../components/FadeIn.astro';
 
@@ -51,7 +50,7 @@ const formspreeFormId = import.meta.env.PUBLIC_FORMSPREE_ID;
   </FadeIn>
 </Layout>
 
-<script define:vars={{ formspreeFormId }}>
+<script is:inline define:vars={{ formspreeFormId }}>
   const form = document.getElementById('contact-form');
   const successMessage = document.getElementById('success-message');
   const errorMessage = document.getElementById('error-message');
