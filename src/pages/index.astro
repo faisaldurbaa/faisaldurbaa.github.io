@@ -1,16 +1,15 @@
 ---
+// src/pages/index.astro
+import Layout from '../layouts/Layout.astro';
 
+const seo = {
+  title: "Home",
+  description: "Welcome to the professional portfolio of Joe Snow. Discover projects, writings, and more."
+};
 ---
-
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<Layout seo={seo}>
+  <div class="container mx-auto p-4">
+    <h1 class="text-4xl font-bold">Homepage Content Goes Here</h1>
+    <p class="mt-4">This page is now using our main layout.</p>
+  </div>
+</Layout>
