@@ -26,8 +26,14 @@ jobs:
           cache: "pnpm"
       - name: Install dependencies
         run: pnpm install
+      - name: Install Sharp
+        run: pnpm install sharp
       - name: Build
         run: pnpm run build
+        env:
+          PUBLIC_FORMSPREE_ID: ${{ secrets.PUBLIC_FORMSPREE_ID }}
+          PUBLIC_CLOUDFLARE_TOKEN: ${{ secrets.PUBLIC_CLOUDFLARE_TOKEN }}
+          ASTRO_TELEMETRY_DISABLED: 1
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
