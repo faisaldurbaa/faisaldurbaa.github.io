@@ -1,7 +1,12 @@
 ---
+// src/components/Analytics.astro
 const cloudflareToken = import.meta.env.PUBLIC_CLOUDFLARE_TOKEN;
 
-const shouldRender = import.meta.env.PROD && !!cloudflareToken;
+// Add a console log that will only appear during the build process in GitHub Actions
+console.log(`[BUILD] Cloudflare Token found: ${!!cloudflareToken}`);
+
+// Only render if we are in production AND the token exists.
+const shouldRender = import.meta.env.PROD && cloudflareToken;
 ---
 {shouldRender && (
   <script 
