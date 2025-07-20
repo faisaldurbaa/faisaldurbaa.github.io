@@ -1,6 +1,7 @@
 ---
-// src/pages/index.astro
+
 import Layout from '../layouts/Layout.astro';
+import FadeIn from '../components/FadeIn.astro';
 
 const seo = {
   title: "Home",
@@ -8,8 +9,10 @@ const seo = {
 };
 ---
 <Layout seo={seo}>
-  <div class="container mx-auto p-4">
-    <h1 class="text-4xl font-bold">Homepage Content Goes Here</h1>
-    <p class="mt-4">This page is now using our main layout.</p>
-  </div>
+  <FadeIn>
+    <div class="container mx-auto p-4">
+      <h1 class="text-4xl font-bold">Homepage Content Goes Here</h1>
+      <p class="mt-4">This page is now using our main layout.</p>
+    </div>
+  </FadeIn>
 </Layout>

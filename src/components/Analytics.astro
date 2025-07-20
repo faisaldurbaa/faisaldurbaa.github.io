@@ -1,5 +1,12 @@
 ---
-// src/components/Analytics.astro
-// This component will conditionally render the analytics script
-// based on user's cookie consent. Logic will be added in Module 3.
+const cloudflareToken = import.meta.env.PUBLIC_CLOUDFLARE_TOKEN;
+
+const shouldRender = import.meta.env.PROD && !!cloudflareToken;
 ---
+{shouldRender && (
+  <script 
+    defer 
+    src="https://static.cloudflareinsights.com/beacon.min.js" 
+    data-cf-beacon={`{"token": "${cloudflareToken}"}`}
+  ></script>
+)}
