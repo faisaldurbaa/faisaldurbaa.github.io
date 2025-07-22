@@ -1,4 +1,5 @@
 ---
+// src/components/Accordion.astro
 import { marked } from 'marked';
 
 export interface Props {
@@ -23,13 +24,25 @@ const htmlContent = marked.parse(content);
 
 <script is:inline>
   document.querySelectorAll('.accordion-details').forEach((details) => {
+    const summary = details.querySelector('summary');
     const contentWrapper = details.querySelector('.content-wrapper');
-    
+
+    summary.addEventListener('click', (event) => {
+      if (details.open) {
+        event.preventDefault();
+        
+        contentWrapper.style.maxHeight = '0px';
+        
+        setTimeout(() => {
+          details.open = false;
+        }, 500);
+      } else {
+      }
+    });
+
     details.addEventListener('toggle', () => {
       if (details.open) {
         contentWrapper.style.maxHeight = `${contentWrapper.scrollHeight}px`;
-      } else {
-        contentWrapper.style.maxHeight = '0px';
       }
     });
   });

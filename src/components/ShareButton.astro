@@ -1,40 +1,43 @@
 ---
+// src/components/ShareButton.astro
 import { Icon } from "astro-icon/components";
+
 export interface Props {
   title: string;
 }
-const { title } = Astro.props;
 ---
-<button id="share-button" class="inline-flex items-center gap-2 text-gray-600 hover:text-accent transition-colors" title="Share this post">
-  <Icon name="mdi:share-variant" class="w-5 h-5" />
-  <span>Share</span>
-</button>
-
-<script define:vars={{ title }}>
-  const shareButton = document.getElementById('share-button');
+<div class="relative">
+  <button id="share-button" class="inline-flex items-center gap-2 text-gray-600 hover:text-accent transition-colors" title="Copy link to clipboard">
+    <Icon name="mdi:link-variant" class="w-5 h-5" />
+    <span>Copy Link</span>
+  </button>
   
-  shareButton.addEventListener('click', async () => {
-    const shareData = {
-      title: title,
-      text: `Check out this article: ${title}`,
-      url: window.location.href,
-    };
+  <div id="toast-notification" class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-max bg-gray-800 text-white text-sm font-semibold py-1 px-3 rounded-md opacity-0 transition-opacity duration-300 pointer-events-none">
+    URL copied to clipboard!
+  </div>
+</div>
 
-    if (navigator.share && navigator.canShare(shareData)) {
-      try {
-        await navigator.share(shareData);
-      } catch (err) {
-      }
-    } else {
+<script>
+  const shareButton = document.getElementById('share-button');
+  const toast = document.getElementById('toast-notification');
+
+  if (shareButton && toast) {
+    shareButton.addEventListener('click', async () => {
       try {
         await navigator.clipboard.writeText(window.location.href);
-        shareButton.querySelector('span').textContent = 'Link Copied!';
+        
+        // Show the toast
+        toast.classList.remove('opacity-0');
+        
+        // Hide the toast after 2 seconds
         setTimeout(() => {
-          shareButton.querySelector('span').textContent = 'Share';
+          toast.classList.add('opacity-0');
         }, 2000);
+
       } catch (err) {
+        console.error('Failed to copy: ', err);
         alert('Failed to copy link.');
       }
-    }
-  });
+    });
+  }
 </script>

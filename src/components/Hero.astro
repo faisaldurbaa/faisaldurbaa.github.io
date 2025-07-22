@@ -1,0 +1,17 @@
+---
+import { Image } from 'astro:assets';
+import profilePic from '../assets/profile.jpg';
+---
+<section class="text-center py-20">
+  <Image 
+    src={profilePic}
+    alt="A photo of Joe Snow"
+    width={300}
+    height={300}
+    class="w-72 h-72 rounded-full border-4 border-white shadow-lg mx-auto mb-6"
+  />
+  <h1 class="text-5xl font-bold">Joe Snow</h1>
+  <p class="text-xl text-gray-600 mt-4 max-w-2xl mx-auto">
+    A passionate developer building efficient and user-friendly web applications.
+  </p>
+</section>

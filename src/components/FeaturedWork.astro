@@ -1,0 +1,46 @@
+---
+import { getCollection } from 'astro:content';
+import Card from './Card.astro';
+
+// Fetch all content
+const blog = await getCollection('blog');
+const projects = await getCollection('projects');
+const courses = await getCollection('courses', ({ id }) => id.endsWith('index.mdx') || id.endsWith('index.md'));
+
+// Combine and filter for featured items
+const allContent = [...blog, ...projects, ...courses];
+const featuredContent = allContent
+  .filter(item => item.data.featured)
+  .sort((a, b) => {
+  const dateA = a.data.publishDate ? new Date(a.data.publishDate) : new Date('1970-01-01');
+  const dateB = b.data.publishDate ? new Date(b.data.publishDate) : new Date('1970-01-01');
+  return dateB.valueOf() - dateA.valueOf();
+})
+  .slice(0, 6); // Get a maximum of 6 items
+---
+<section class="bg-white/50 py-20 px-4">
+  <div class="container mx-auto">
+    <h2 class="text-3xl font-bold text-center mb-12">Featured Work</h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      {featuredContent.map(item => {
+        const collection = item.collection;
+        let href = '';
+        if (collection === 'blog') href = `/blog/${item.slug}/`;
+        if (collection === 'projects') href = `/projects/${item.slug}/`;
+        if (collection === 'courses') href = `/courses/${item.slug.replace('/index', '')}/`;
+        
+        return (
+          <Card
+            title={item.data.title}
+            description={item.data.description}
+            href={href}
+            tags={item.data.tags ?? []}
+            type={collection as any}
+            publishDate={item.data.publishDate}
+            heroImage={item.data.heroImage}
+          />
+        )
+      })}
+    </div>
+  </div>
+</section>
