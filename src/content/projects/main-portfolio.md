@@ -5,6 +5,7 @@ publishDate: 2024-07-21
 tags: ["Astro", "TypeScript", "Tailwind"]
 featured: true
 repoUrl: "https://github.com/myagnetgit/myagnetgit.github.io"
+heroImage: "/images/placeholder.jpg"
 ---
 ### Phase 1: Planning & Scaffolding
 We defined the project requirements and set up the initial Astro project.

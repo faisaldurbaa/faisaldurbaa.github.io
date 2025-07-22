@@ -33,6 +33,7 @@ jobs:
         env:
           PUBLIC_FORMSPREE_ID: ${{ secrets.PUBLIC_FORMSPREE_ID }}
           PUBLIC_CLOUDFLARE_TOKEN: ${{ secrets.PUBLIC_CLOUDFLARE_TOKEN }}
+          PUBLIC_RECAPTCHA_SITE_KEY: ${{ secrets.PUBLIC_RECAPTCHA_SITE_KEY }}
           ASTRO_TELEMETRY_DISABLED: 1
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
