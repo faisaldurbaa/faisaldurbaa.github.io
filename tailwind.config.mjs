@@ -6,7 +6,7 @@ export default {
   theme: {
     extend: {
       colors: {
-        'accent': '#134b70',
+        'accent': 'rgb(30 41 59)',
       },
       fontFamily: {
         sans: ['Inter', 'sans-serif'],
