@@ -1,3 +1,4 @@
+# .github/workflows/deploy.yml
 name: Deploy to GitHub Pages
 
 on:
@@ -17,28 +18,46 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+      
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
+      
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: "20"
           cache: "pnpm"
+      
       - name: Install dependencies
         run: pnpm install
+      
       - name: Install Sharp
-        run: pnpm install sharp
+        run: pnpm install sharp --ignore-scripts
+
+      - name: Run Linter
+        run: pnpm lint
+
+      - name: Run Security Audit
+        run: pnpm audit --prod --audit-level=high
+
       - name: Build
         run: pnpm run build
         env:
+          PUBLIC_RECAPTCHA_SITE_KEY: ${{ secrets.PUBLIC_RECAPTCHA_SITE_KEY }}
           PUBLIC_FORMSPREE_ID: ${{ secrets.PUBLIC_FORMSPREE_ID }}
           PUBLIC_CLOUDFLARE_TOKEN: ${{ secrets.PUBLIC_CLOUDFLARE_TOKEN }}
-          PUBLIC_RECAPTCHA_SITE_KEY: ${{ secrets.PUBLIC_RECAPTCHA_SITE_KEY }}
           ASTRO_TELEMETRY_DISABLED: 1
-      - name: Upload artifact
+      
+      - name: Upload artifact for deployment
         uses: actions/upload-pages-artifact@v3
         with:
           path: ./dist
+
+      - name: Run Lighthouse CI
+        uses: treosh/lighthouse-ci-action@v11
+        with:
+          uploadArtifacts: true
+          assert: '{"preset": "lighthouse:recommended", "assertions": {"categories:performance": ["error", {"minScore": 0.75}], "categories:accessibility": ["error", {"minScore": 0.75}], "categories:best-practices": ["error", {"minScore": 0.75}], "categories:seo": ["error", {"minScore": 0.75}]}}'
 
   deploy:
     needs: build
