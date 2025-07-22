@@ -2,37 +2,45 @@
 export interface Props {
   title: string;
   description: string;
-  image?: string;
+  image?: string | null | undefined;
   noindex?: boolean;
 }
 
 const {
   title,
   description,
-  image = '/placeholder-social.jpg',
+  image: heroImage,
   noindex = false,
 } = Astro.props;
+
+const defaultImage = '/placeholder-social.jpg'; 
+const imageSrc = (heroImage && typeof heroImage === 'string') ? heroImage : defaultImage;
+const finalImageUrl = new URL(imageSrc, Astro.site);
 
 const siteName = "Joe Snow's Portfolio";
 const fullTitle = `${title} | ${siteName}`;
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 ---
 
+<!-- Primary Meta Tags -->
 <title>{fullTitle}</title>
 <meta name="title" content={fullTitle} />
 <meta name="description" content={description} />
 
+<!-- Open Graph / Facebook -->
 <meta property="og:type" content="website" />
 <meta property="og:url" content={canonicalURL} />
 <meta property="og:title" content={fullTitle} />
 <meta property="og:description" content={description} />
-<meta property="og:image" content={new URL(image, Astro.site)} />
+<meta property="og:image" content={finalImageUrl} />
 
+<!-- Twitter -->
 <meta property="twitter:card" content="summary_large_image" />
 <meta property="twitter:url" content={canonicalURL} />
 <meta property="twitter:title" content={fullTitle} />
 <meta property="twitter:description" content={description} />
-<meta property="twitter:image" content={new URL(image, Astro.site)} />
+<meta property="twitter:image" content={finalImageUrl} />
 
+<!-- General -->
 <link rel="canonical" href={canonicalURL} />
 <meta name="robots" content={noindex ? "noindex, nofollow" : "index, follow"} />

@@ -15,7 +15,7 @@ const allContent = [
     type: 'blog' as const,
     title: entry.data.title,
     description: entry.data.description,
-    href: `/blog/${entry.id.replace(/\.mdx?$/, '')}/`,
+    href: `/blog/${entry.slug}/`,
     tags: entry.data.tags,
     publishDate: entry.data.publishDate,
     heroImage: entry.data.heroImage,
@@ -24,7 +24,7 @@ const allContent = [
     type: 'project' as const,
     title: entry.data.title,
     description: entry.data.description,
-    href: `/projects/${entry.id.replace(/\.mdx?$/, '')}/`,
+    href: `/projects/${entry.slug}/`,
     tags: entry.data.tags,
     publishDate: entry.data.publishDate,
     heroImage: entry.data.heroImage,
@@ -33,7 +33,7 @@ const allContent = [
     type: 'course' as const,
     title: entry.data.title,
     description: entry.data.description,
-    href: `/courses/${entry.id.split('/')[0]}/`,
+    href: `/courses/${entry.slug.replace(/\/index$/, '')}/`,
     tags: entry.data.tags || [],
     publishDate: entry.data.publishDate,
     heroImage: entry.data.heroImage,
@@ -75,11 +75,11 @@ const seo = {
       
       <div id="portfolio-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 items-stretch">
         {sortedContent.map(item => (
-          <div class="portfolio-item h-full" data-type={item.type} data-title={item.title.toLowerCase()}>
-            <Card 
-              title={item.title}
-              description={item.description}
-              href={item.href}
+            <div class="portfolio-item h-full" data-type={item.type} data-title={item.title.toLowerCase()}>
+              <Card
+                title={item.title}
+                description={item.description}
+                href={item.href}
               tags={item.tags ?? []}
               type={item.type}
               publishDate={item.publishDate} 

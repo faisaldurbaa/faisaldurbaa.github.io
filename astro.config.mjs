@@ -10,6 +10,6 @@ export default defineConfig({
     mdx(), 
     tailwind(), 
     sitemap(),
-    icon() 
+    icon(),
   ],
 });

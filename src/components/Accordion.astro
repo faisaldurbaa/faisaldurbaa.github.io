@@ -1,0 +1,36 @@
+---
+import { marked } from 'marked';
+
+export interface Props {
+  summary: string;
+  content: string;
+}
+const { summary, content } = Astro.props;
+const htmlContent = marked.parse(content);
+---
+<details class="accordion-details group border-b border-gray-200 py-4 last:border-b-0">
+  <summary class="flex justify-between items-center cursor-pointer list-none">
+    <h3 class="text-lg font-semibold text-gray-800">{summary}</h3>
+    <span class="transition-transform duration-300 group-open:rotate-180">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5"><path d="m6 9 6 6 6-6"/></svg>
+    </span>
+  </summary>
+  
+  <div class="content-wrapper overflow-hidden transition-all duration-500 ease-in-out" style="max-height: 0;">
+    <div class="prose max-w-none pt-4 text-gray-600" set:html={htmlContent} />
+  </div>
+</details>
+
+<script is:inline>
+  document.querySelectorAll('.accordion-details').forEach((details) => {
+    const contentWrapper = details.querySelector('.content-wrapper');
+    
+    details.addEventListener('toggle', () => {
+      if (details.open) {
+        contentWrapper.style.maxHeight = `${contentWrapper.scrollHeight}px`;
+      } else {
+        contentWrapper.style.maxHeight = '0px';
+      }
+    });
+  });
+</script>

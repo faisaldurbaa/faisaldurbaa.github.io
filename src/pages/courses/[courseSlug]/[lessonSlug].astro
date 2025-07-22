@@ -1,0 +1,26 @@
+---
+import { getCollection, type CollectionEntry } from 'astro:content';
+import ArticleLayout from '../../../layouts/ArticleLayout.astro';
+
+export async function getStaticPaths() {
+  const lessonEntries = (await getCollection('courses')).filter(entry => 
+    !(entry.id.endsWith('index.mdx') || entry.id.endsWith('index.md'))
+  );
+
+  return lessonEntries.flatMap(entry => {
+    if (entry.slug && entry.slug.includes('/')) {
+      const [courseSlug, lessonSlug] = entry.slug.split('/');
+      return [{ params: { courseSlug, lessonSlug }, props: { entry } }];
+    }
+    return []; 
+  });
+}
+
+const { entry } = Astro.props as { entry: CollectionEntry<'courses'> };
+const courseSlug = entry.slug.split('/')[0];
+---
+<ArticleLayout 
+  entry={entry}
+  backLink={`/courses/${courseSlug}/`}
+  backText="Back to Course"
+/>

@@ -19,6 +19,8 @@ const projects = defineCollection({
   schema: contentBaseSchema.extend({
     repoUrl: z.string().url().optional(),
     liveUrl: z.string().url().optional(),
+    intro: z.string().optional(),
+    datasetUrl: z.string().url().optional(),
   }),
 });
 
@@ -26,6 +28,7 @@ const courses = defineCollection({
   type: 'content',
   schema: contentBaseSchema.extend({
     lessonNumber: z.number().optional(),
+    intro: z.string().optional(),
   }),
 });
 
