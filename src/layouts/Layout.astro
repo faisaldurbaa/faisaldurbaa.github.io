@@ -21,6 +21,7 @@ const { seo } = Astro.props;
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
   <Seo {...seo} />
   <Analytics />
+  <script is:inline src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body class="bg-gradient-to-br from-[#eaf2f7] via-[#f5f8fa] to-[#eaf2f7] text-gray-900 font-sans flex flex-col min-h-screen">
   <Header />

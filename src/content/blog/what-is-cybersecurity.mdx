@@ -1,0 +1,86 @@
+---
+title: "What is Cybersecurity?"
+description: "An overview of the importance of cybersecurity, its economic impact, and the growing demand for professionals in the field."
+publishDate: 2025-07-22
+tags: ["Cybersecurity", "Data", "Technology", "Career"]
+heroImage: "/images/placeholder.jpg"
+---
+import DataChart from '/src/components/DataChart.astro';
+
+Cybersecurity is the act of defending digital devices, systems and structures against cyber malicious attacks that aim to gain unauthorized access to the protected digital assets or to damage the digital assets.
+
+### What is so special about Cybersecurity?
+
+In the middle and new ages, the most important assets were precious elements such as gold, silver, diamonds etc. As the time passed and the modern-day technology was introduced by the development of internet and modern computer systems, information replaced the precious elements and became the most important asset. The reason behind this is very clear: there is information that can cause devastating effects on today’s social and economic structure, gaining the people who have this information immense power and control over the world. And the scale of this important asset is reducible even to your personal information that is compromised, or sold, almost every day by the organizations that collect it. Therefore, the protection of information on an organizational and personal scale is a key action which places cybersecurity jobs in **a crucial and high demand position** for today’s and tomorrow’s world.
+
+### Economic Effects & Importance of Cybersecurity:
+
+In 2023 the average total cost of a data breach globally was 4.45 million USD. And as data’s importance increases the costs will be changing accordingly in the future just like they did in the past years.
+
+<DataChart
+  client:visible
+  id="cost-of-breach-chart"
+  type="line"
+  title="Total Cost of a Data Breach (USD Millions)"
+  data={{
+    labels: ['2017', '2018', '2019', '2020', '2021', '2022', '2023'],
+    datasets: [{
+      label: 'Cost',
+      data: [3.62, 3.86, 3.92, 3.86, 4.24, 4.35, 4.45],
+      borderColor: 'rgb(30 41 59)',
+      backgroundColor: 'rgba(30 41 59, 0.5)',
+      fill: false,
+      tension: 0.4,
+    }]
+  }}
+/>
+
+The percentage of personal identifiable information (PII) has been rising at tremendous rates each year. Which poses a huge danger for personalized services and authentication through personal information.
+
+<DataChart
+  client:visible
+  id="data-compromised-chart"
+  type="bar"
+  title="Type of Data Compromised (%)"
+  data={{
+    labels: ['Customer PII', 'Employee PII', 'Intellectual Property', 'Anonymized Customer Data', 'Other Corporate Data'],
+    datasets: [
+      {
+        label: '2023',
+        data: [52, 40, 34, 33, 21],
+        backgroundColor: 'rgba(30, 41, 59, 0.8)',
+      },
+      {
+        label: '2022',
+        data: [47, 34, 31, 26, 15],
+        backgroundColor: 'rgba(51, 65, 85, 0.7)',
+      },
+      {
+        label: '2021',
+        data: [44, 26, 27, 28, 12],
+        backgroundColor: 'rgba(100, 116, 139, 0.6)',
+      }
+    ]
+  }}
+/>
+
+A survey of 500 CEOs found that 18% identified cybersecurity risk as the greatest threat to their organization's growth in 2024, underscoring its critical importance. Reflecting this concern, Gartner estimates that 40% of company boards will have a cybersecurity committee by 2025. Cybercrime is expected to cost a staggering **10.5 trillion USD annually by 2025**, highlighting the urgent need for robust cybersecurity measures.
+
+### What is the scale of the personnel gap in the sector?
+
+- According to IBM Cost of a Data Breach 2023 Report, only one third of data breaches in organizations are discovered by their own security teams or tools. 
+- Notably, the healthcare industry, which experiences the costliest data breaches, has seen a 53% increase in the average cost since 2020.
+- 51% of the organizations are planning to invest in areas such as employee training, threat detection, planning and testing to develop their cybersecurity protection.
+- According to ISC2 the cybersecurity workforce gap has reached **4 million professionals needed** to safeguard digital assets. The sector also faces challenges with insufficient employee skills, economic uncertainty in security investments, insufficient tools to fight or prevent data breaches and more.
+
+### Ending:
+
+Consequently, the cybersecurity industry plays a key role in the global economy and businesses. This role becomes increasingly emphasized as the seriousness of cybercrime rises. Additionally, the demand for cybersecurity professionals is growing rapidly each year. With dedication to acquiring the necessary skills and experience, anyone can become a professional in this wide-ranging industry.
+
+### Bibliography:
+
+- [What is Cybersecurity? | IBM](https://www.ibm.com/topics/cybersecurity)
+- [KPMG 2021 CEO Outlook - KPMG Global](https://kpmg.com/xx/en/home/insights/2021/08/kpmg-2021-ceo-outlook.html)
+- [Cybercrime threatens business growth. Take these steps to mitigate your risk | ZDNET](https://www.zdnet.com/article/cybercrime-can-be-the-biggest-threat-to-business-growth/)
+- [ISC2 Publishes 2023 Workforce Study](https://www.isc2.org/Insights/2023/10/ISC2-Reveals-Workforce-Growth-But-Record-Breaking-Gap-4-Million-Cybersecurity-Professionals)
+- [IBM Cost of a Data Breach 2023](https://www.ibm.com/reports/data-breach)
