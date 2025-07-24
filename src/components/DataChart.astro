@@ -1,0 +1,108 @@
+---
+// src/components/DataChart.astro
+import type { ChartData } from 'chart.js';
+
+export interface Props {
+  type: 'line' | 'bar';
+  data: ChartData;
+  title: string;
+  id: string;
+}
+
+const { type, data, title, id } = Astro.props;
+---
+<div class="w-full bg-white/50 border border-gray-200/50 rounded-lg shadow-sm p-4 my-8">
+  <h3 class="text-lg md:text-xl font-semibold mb-4 text-gray-800 text-center">{title}</h3>
+  <div class="relative h-72 md:h-96">
+    <canvas id={id}></canvas>
+  </div>
+</div>
+
+<script define:vars={{ type, data, id }}>
+  // This script assumes Chart.js has been loaded globally.
+  if (typeof window !== 'undefined') {
+    const initChart = () => {
+      const canvas = document.getElementById(id);
+      if (!canvas || !window.Chart) return;
+
+      // Check if a chart already exists and destroy it to prevent errors on hot-reload
+      const existingChart = window.Chart.getChart(canvas);
+      if (existingChart) {
+        existingChart.destroy();
+      }
+
+      const options = {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: {
+          mode: 'index',
+          intersect: false,
+        },
+        plugins: {
+          legend: {
+            display: type === 'bar',
+            position: 'top',
+            labels: { font: { family: 'Inter, sans-serif' }, color: '#1f2937' },
+          },
+          tooltip: {
+            backgroundColor: '#ffffff',
+            titleColor: '#1f2937',
+            bodyColor: '#4b5563',
+            borderColor: '#e5e7eb',
+            borderWidth: 1,
+            padding: 10,
+            cornerRadius: 8,
+            displayColors: true,
+          },
+        },
+        scales: {
+          x: {
+            grid: { display: false },
+            ticks: {
+              font: { family: 'Inter, sans-serif', size: 10 },
+              color: '#4b5563',
+              maxRotation: 45,
+              minRotation: 45,
+            },
+          },
+          y: {
+            grid: { color: '#e5e7eb', borderDash: [5, 5] },
+            ticks: {
+              font: { family: 'Inter, sans-serif', size: 10 },
+              color: '#4b5563',
+              callback: function(value) {
+                if (type === 'line') return `$${value}M`;
+                if (type === 'bar') return `${value}%`;
+                return value;
+              }
+            },
+          },
+        },
+        animation: { duration: 1000, easing: 'easeInOutCubic' },
+      };
+
+      new window.Chart(canvas, {
+        type: type,
+        data: data,
+        options: options,
+      });
+    };
+
+    const observer = new IntersectionObserver((entries, observer) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          // A small delay to ensure the global Chart.js script has had time to execute
+          setTimeout(() => {
+            initChart();
+            observer.unobserve(entry.target);
+          }, 100);
+        }
+      });
+    }, { threshold: 0.1 });
+
+    const chartContainer = document.getElementById(id);
+    if (chartContainer) {
+      observer.observe(chartContainer);
+    }
+  }
+</script>
