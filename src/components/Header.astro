@@ -67,33 +67,42 @@ const currentPath = Astro.url.pathname;
 </header>
 
 <script>
-  const mobileMenuButton = document.getElementById('mobile-menu-button');
-  const mobileMenu = document.getElementById('mobile-menu');
-  const hamburgerIcon = document.getElementById('hamburger-icon');
-  const closeIcon = document.getElementById('close-icon');
+  if (typeof window !== 'undefined') {
+    const mobileMenuButton = document.getElementById('mobile-menu-button');
+    const mobileMenu = document.getElementById('mobile-menu');
+    const hamburgerIcon = document.getElementById('hamburger-icon');
+    const closeIcon = document.getElementById('close-icon');
 
-  function toggleMenu() {
-    const isExpanded = mobileMenuButton.getAttribute('aria-expanded') === 'true';
-    mobileMenuButton.setAttribute('aria-expanded', !isExpanded);
-    mobileMenu.classList.toggle('hidden');
-    hamburgerIcon.classList.toggle('hidden');
-    closeIcon.classList.toggle('hidden');
+    function toggleMenu() {
+      if (!mobileMenuButton || !mobileMenu || !hamburgerIcon || !closeIcon) return;
+      const isExpanded = mobileMenuButton.getAttribute('aria-expanded') === 'true';
+      mobileMenuButton.setAttribute('aria-expanded', (!isExpanded).toString());
+      mobileMenu.classList.toggle('hidden');
+      hamburgerIcon.classList.toggle('hidden');
+      closeIcon.classList.toggle('hidden');
+    }
+
+    if (mobileMenuButton) {
+      mobileMenuButton.addEventListener('click', toggleMenu);
+    }
+
+    // Close menu when a link is clicked
+    if (mobileMenu) {
+      mobileMenu.addEventListener('click', (e) => {
+        const target = e.target as HTMLElement | null;
+        if (target && target.tagName === 'A') {
+          toggleMenu();
+        }
+      });
+    }
+
+    // Close menu on view change (Astro islands navigation)
+    document.addEventListener('astro:after-swap', () => {
+      if (!mobileMenuButton) return;
+      const isExpanded = mobileMenuButton.getAttribute('aria-expanded') === 'true';
+      if (isExpanded) {
+        toggleMenu();
+      }
+    });
   }
-
-  mobileMenuButton.addEventListener('click', toggleMenu);
-
-  // Close menu when a link is clicked
-  mobileMenu.addEventListener('click', (e) => {
-    if (e.target.tagName === 'A') {
-      toggleMenu();
-    }
-  });
-
-  // Close menu on view change
-  document.addEventListener('astro:after-swap', () => {
-    const isExpanded = mobileMenuButton.getAttribute('aria-expanded') === 'true';
-    if (isExpanded) {
-      toggleMenu();
-    }
-  });
 </script>
