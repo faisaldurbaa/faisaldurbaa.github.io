@@ -1,0 +1,290 @@
+---
+// src/components/interactive/CubanPlaybook.astro
+import ShareButton from '../ShareButton.astro';
+---
+<div class="px-4 sm:px-6 lg:px-8">
+    <style>
+        .card-flip {
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+        }
+        .card-flip.is-flipped {
+            transform: rotateY(180deg);
+        }
+        .card-front, .card-back {
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+        }
+        .card-back {
+            transform: rotateY(180deg);
+        }
+        .section-fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+        .section-fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+
+    <section class="mb-24 section-fade-in">
+        <div class="bg-white p-6 sm:p-8 border border-gray-200 rounded-lg shadow-sm">
+            <div class="flex justify-between items-center mb-4">
+                <p class="text-accent font-semibold">
+                    <a href="/portfolio" class="inline-flex items-center gap-2 hover:underline">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+                        Back to Portfolio
+                    </a>
+                </p>
+                <ShareButton title="The Mark Cuban Playbook: An Interactive Guide" />
+            </div>
+            <div class="text-center">
+                <h1 class="text-4xl md:text-6xl font-extrabold tracking-tight text-slate-900">
+                    The Mark Cuban Playbook
+                </h1>
+                <hr class="border-t border-gray-200 my-4 max-w-sm mx-auto" />
+                <p class="mt-4 max-w-2xl mx-auto text-lg text-slate-600">
+                    An interactive distillation of Mark Cuban's core philosophies on business, technology, and success, designed for the next generation of builders and innovators. The playbook draws directly from Cuban's speech at 2025 Harvard Undergraduate Ventures-TECH Summer Program. Enjoy!
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <section id="principles" class="mb-24 section-fade-in">
+        <div class="text-center mb-12">
+            <h2 class="text-3xl font-bold tracking-tight text-slate-900">Core Principles</h2>
+            <p class="mt-2 max-w-2xl mx-auto text-md text-slate-500">
+               Cuban's foundational advice and unconventional strategies for winning in business and life. Click on any card to reveal the core lesson behind the principle.
+            </p>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div class="card-container h-64 perspective-1000">
+                <div class="card-flip relative w-full h-full cursor-pointer">
+                    <div class="card-front absolute w-full h-full bg-white shadow-lg rounded-lg p-6 flex flex-col justify-center items-center text-center">
+                        <div class="text-5xl mb-3">⚙️</div>
+                        <h3 class="text-xl font-bold">Follow Effort, Not Passion</h3>
+                        <p class="text-sm text-cyan-600 font-semibold mt-4">Click to learn why</p>
+                    </div>
+                    <div class="card-back absolute w-full h-full bg-cyan-700 text-white shadow-lg rounded-lg p-6 flex flex-col justify-center">
+                        <p class="text-md font-semibold">"Don't follow your passions, follow where you spend your time."</p>
+                        <p class="mt-2 text-sm opacity-90">Your time and effort are the truest indicators of your interests and where you're likely to excel. The skills you gain from that effort are what create real value.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-container h-64 perspective-1000">
+                <div class="card-flip relative w-full h-full cursor-pointer">
+                    <div class="card-front absolute w-full h-full bg-white shadow-lg rounded-lg p-6 flex flex-col justify-center items-center text-center">
+                        <div class="text-5xl mb-3">📈</div>
+                        <h3 class="text-xl font-bold">Retain Your Equity</h3>
+                         <p class="text-sm text-cyan-600 font-semibold mt-4">Click to learn why</p>
+                    </div>
+                    <div class="card-back absolute w-full h-full bg-cyan-700 text-white shadow-lg rounded-lg p-6 flex flex-col justify-center">
+                        <p class="text-md font-semibold">"When you raise money, it's not an accomplishment, it's an obligation."</p>
+                        <p class="mt-2 text-sm opacity-90">Bootstrapping keeps you in control. Taking VC money means you're working for your investors, not just for your vision.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card-container h-64 perspective-1000">
+                <div class="card-flip relative w-full h-full cursor-pointer">
+                    <div class="card-front absolute w-full h-full bg-white shadow-lg rounded-lg p-6 flex flex-col justify-center items-center text-center">
+                        <div class="text-5xl mb-3">⏳</div>
+                        <h3 class="text-xl font-bold">Own Your Time</h3>
+                         <p class="text-sm text-cyan-600 font-semibold mt-4">Click to learn why</p>
+                    </div>
+                    <div class="card-back absolute w-full h-full bg-cyan-700 text-white shadow-lg rounded-lg p-6 flex flex-col justify-center">
+                        <p class="text-md font-semibold">"Time's the most valuable asset you don't own."</p>
+                        <p class="mt-2 text-sm opacity-90">The ultimate goal of wealth isn't luxury, but freedom. The ability to control your own schedule and priorities is the greatest return on investment.</p>
+                    </div>
+                </div>
+            </div>
+            
+             <div class="card-container h-64 perspective-1000">
+                <div class="card-flip relative w-full h-full cursor-pointer">
+                    <div class="card-front absolute w-full h-full bg-white shadow-lg rounded-lg p-6 flex flex-col justify-center items-center text-center">
+                        <div class="text-5xl mb-3">🤝</div>
+                        <h3 class="text-xl font-bold">Empathy is a Tool</h3>
+                         <p class="text-sm text-cyan-600 font-semibold mt-4">Click to learn why</p>
+                    </div>
+                    <div class="card-back absolute w-full h-full bg-cyan-700 text-white shadow-lg rounded-lg p-6 flex flex-col justify-center">
+                        <p class="text-md font-semibold">"Reward empathy, reward compassion."</p>
+                        <p class="mt-2 text-sm opacity-90">He believes capitalism can be improved by incentivizing companies to share appreciable assets (like stock) with every employee, aligning success for everyone.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-container h-64 perspective-1000">
+                <div class="card-flip relative w-full h-full cursor-pointer">
+                    <div class="card-front absolute w-full h-full bg-white shadow-lg rounded-lg p-6 flex flex-col justify-center items-center text-center">
+                        <div class="text-5xl mb-3">🧠</div>
+                        <h3 class="text-xl font-bold">Learn How to Learn</h3>
+                         <p class="text-sm text-cyan-600 font-semibold mt-4">Click to learn why</p>
+                    </div>
+                    <div class="card-back absolute w-full h-full bg-cyan-700 text-white shadow-lg rounded-lg p-6 flex flex-col justify-center">
+                        <p class="text-md font-semibold">The skill of learning is as important to business as any other.</p>
+                        <p class="mt-2 text-sm opacity-90">College and real-world experience teach you how to acquire and process new information, which is a non-negotiable skill in a constantly changing world.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-container h-64 perspective-1000">
+                <div class="card-flip relative w-full h-full cursor-pointer">
+                    <div class="card-front absolute w-full h-full bg-white shadow-lg rounded-lg p-6 flex flex-col justify-center items-center text-center">
+                       <div class="text-5xl mb-3">📣</div>
+                        <h3 class="text-xl font-bold">Master the Art of Sales</h3>
+                         <p class="text-sm text-cyan-600 font-semibold mt-4">Click to learn why</p>
+                    </div>
+                    <div class="card-back absolute w-full h-full bg-cyan-700 text-white shadow-lg rounded-lg p-6 flex flex-col justify-center">
+                        <p class="text-md font-semibold">"If you don't love your product... you're not cut out for it."</p>
+                        <p class="mt-2 text-sm opacity-90">The best entrepreneurs have an infectious belief in their product. Selling isn't just a transaction; it's the transfer of that belief to a customer.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="future" class="mb-24 bg-white p-8 rounded-lg shadow-lg section-fade-in">
+         <div class="text-center mb-12">
+            <h2 class="text-3xl font-bold tracking-tight text-slate-900">Future Focus: The AI Playbook</h2>
+            <p class="mt-2 max-w-3xl mx-auto text-md text-slate-500">
+                Cuban believes the next wave of opportunity is clear. He outlines a direct path for young entrepreneurs to capitalize on AI and highlights the human skills that will become even more critical.
+            </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+            <div>
+                <h3 class="text-2xl font-bold mb-4">The AI Consultant Path</h3>
+                <p class="text-slate-600 mb-6">If he were starting today with minimal resources, this is the exact 4-step plan he would follow:</p>
+                <ol class="space-y-4">
+                    <li class="flex items-start">
+                        <div class="flex-shrink-0 h-10 w-10 rounded-full bg-cyan-600 text-white flex items-center justify-center font-bold text-lg">1</div>
+                        <div class="ml-4">
+                            <h4 class="text-lg font-semibold">Become an AI Expert</h4>
+                            <p class="text-slate-500">Immerse yourself in current AI models and tools. Understand their capabilities and limitations completely.</p>
+                        </div>
+                    </li>
+                     <li class="flex items-start">
+                        <div class="flex-shrink-0 h-10 w-10 rounded-full bg-cyan-600 text-white flex items-center justify-center font-bold text-lg">2</div>
+                        <div class="ml-4">
+                            <h4 class="text-lg font-semibold">Target SMBs</h4>
+                            <p class="text-slate-500">Find small and medium-sized businesses whose owners are too busy or intimidated to learn AI themselves.</p>
+                        </div>
+                    </li>
+                     <li class="flex items-start">
+                        <div class="flex-shrink-0 h-10 w-10 rounded-full bg-cyan-600 text-white flex items-center justify-center font-bold text-lg">3</div>
+                        <div class="ml-4">
+                            <h4 class="text-lg font-semibold">Offer Integration Services</h4>
+                            <p class="text-slate-500">Act as a consultant, showing them how to use AI for practical gains in operations, marketing, and efficiency.</p>
+                        </div>
+                    </li>
+                     <li class="flex items-start">
+                        <div class="flex-shrink-0 h-10 w-10 rounded-full bg-cyan-600 text-white flex items-center justify-center font-bold text-lg">4</div>
+                        <div class="ml-4">
+                            <h4 class="text-lg font-semibold">Structure Performance Deals</h4>
+                            <p class="text-slate-500">Instead of a flat fee, charge a percentage of the upside you create. Participate in the value you generate.</p>
+                        </div>
+                    </li>
+                </ol>
+            </div>
+            <div class="space-y-6">
+                <div>
+                    <h4 class="text-xl font-semibold">Prediction 1: The AI Divide</h4>
+                    <p class="text-slate-600 mt-1">"There's going to be two types of companies in this world. Those who are great at AI and everybody else." Proficiency in AI will be the ultimate competitive advantage.</p>
+                </div>
+                 <div>
+                    <h4 class="text-xl font-semibold">Prediction 2: The Human Differentiator</h4>
+                    <p class="text-slate-600 mt-1">"The more we depend on AI tools, the more valuable interpersonal skills become." As AI handles technical work, the ability to connect with people becomes a premium skill.</p>
+                </div>
+                 <div>
+                    <h4 class="text-xl font-semibold">Prediction 3: No Single AGI</h4>
+                    <p class="text-slate-600 mt-1">He is skeptical of a single "Artificial General Intelligence" emerging. Instead, he predicts "millions of models" will exist due to competition and proprietary data, creating a fragmented and specialized AI landscape.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="journey" class="mb-24 section-fade-in">
+         <div class="text-center mb-12">
+            <h2 class="text-3xl font-bold tracking-tight text-slate-900">Lessons from the Journey</h2>
+            <p class="mt-2 max-w-2xl mx-auto text-md text-slate-500">
+                Key moments from Cuban's past that shaped his worldview and offer powerful lessons on risk, innovation, and seizing opportunity.
+            </p>
+        </div>
+        <div class="space-y-8">
+            <div class="bg-white p-6 rounded-lg shadow-md flex items-start space-x-4">
+                <div class="flex-shrink-0 text-3xl">👨‍🎓</div>
+                <div>
+                    <h3 class="text-xl font-bold">The Audacity of a Freshman</h3>
+                    <p class="mt-1 text-slate-600">As a freshman, he enrolled in an MBA-level statistics class. Years later, a chance encounter with that same professor led to hiring the first-ever data analytics expert for the Dallas Mavericks.</p>
+                    <p class="mt-2 font-semibold text-cyan-700">Lesson: Don't be afraid to push your limits and challenge traditional paths. Your audacity can create unforeseen opportunities.</p>
+                </div>
+            </div>
+            <div class="bg-white p-6 rounded-lg shadow-md flex items-start space-x-4">
+                 <div class="flex-shrink-0 text-3xl">🤪</div>
+                <div>
+                    <h3 class="text-xl font-bold">The "Idiot" Idea (Broadcast.com)</h3>
+                    <p class="mt-1 text-slate-600">When starting his internet streaming company, people called him an "idiot" because radios and TVs already existed. He saw beyond the current state to what was possible.</p>
+                    <p class="mt-2 font-semibold text-cyan-700">Lesson: True innovation often seems foolish to those who can't see the future. Trust your conviction when you see a shift others miss.</p>
+                </div>
+            </div>
+            <div class="bg-white p-6 rounded-lg shadow-md flex items-start space-x-4">
+                 <div class="flex-shrink-0 text-3xl">✈️</div>
+                <div>
+                    <h3 class="text-xl font-bold">The Lifetime Pass</h3>
+                    <p class="mt-1 text-slate-600">In a celebratory, drunken moment after his first big sale, he bought a lifetime first-class pass on American Airlines. It was a splurge that symbolized his newfound freedom.</p>
+                    <p class="mt-2 font-semibold text-cyan-700">Lesson: Define what success means to you. For him, it wasn't just money, but the freedom to own his time and experiences.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="drive" class="mb-24 section-fade-in">
+        <div class="text-center mb-12">
+            <h2 class="text-3xl font-bold tracking-tight text-slate-900">The Drive to Win</h2>
+            <p class="mt-2 max-w-2xl mx-auto text-md text-slate-500">
+                What fuels his relentless pursuit of knowledge and achievement? It's a combination of three core traits that any entrepreneur can cultivate.
+            </p>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+            <div class="bg-white p-8 rounded-lg shadow-md">
+                <div class="text-4xl mb-4">🧐</div>
+                <h3 class="text-xl font-bold">Insatiable Curiosity</h3>
+                <p class="text-slate-600 mt-2">He actively consumes information, experiments with new tech, and treats learning not as a chore, but as a competitive advantage and a form of entertainment.</p>
+            </div>
+            <div class="bg-white p-8 rounded-lg shadow-md">
+                <div class="text-4xl mb-4">👻</div>
+                <h3 class="text-xl font-bold">Productive Imposter Syndrome</h3>
+                <p class="text-slate-600 mt-2">He openly admits to feeling like an imposter. This feeling isn't debilitating; it's a powerful motivator that prevents complacency and drives him to stay ahead of the curve.</p>
+            </div>
+             <div class="bg-white p-8 rounded-lg shadow-md">
+                <div class="text-4xl mb-4">💪</div>
+                <h3 class="text-xl font-bold">Effort as the Ultimate Edge</h3>
+                <p class="text-slate-600 mt-2">He fundamentally believes he can outwork anyone. His willingness to put in the effort to learn what others won't—like reading manuals or testing every AI model—is his greatest differentiator.</p>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        const cardFlips = document.querySelectorAll('.card-flip');
+        cardFlips.forEach(card => {
+            card.addEventListener('click', () => {
+                card.classList.toggle('is-flipped');
+            });
+        });
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, { threshold: 0.1 });
+        
+        document.querySelectorAll('.section-fade-in').forEach(section => {
+            observer.observe(section);
+        });
+    </script>
+</div>

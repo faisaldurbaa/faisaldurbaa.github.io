@@ -11,7 +11,9 @@ const contentBaseSchema = z.object({
 
 const blog = defineCollection({
   type: 'content',
-  schema: contentBaseSchema,
+  schema: contentBaseSchema.extend({
+    layout: z.string().optional(),
+  }),
 });
 
 const projects = defineCollection({
