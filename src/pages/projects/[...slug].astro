@@ -18,20 +18,18 @@ export async function getStaticPaths() {
 const { entry } = Astro.props;
 const { Content } = await entry.render();
 
-const sections = entry.body.split(/(?=###\s)/).filter(Boolean);
+const sections = entry.body.split(/(?=^##\s)/m).filter(Boolean);
 
 const accordionItems = sections.reduce((acc, section) => {
   const lines = section.trim().split('\n');
   const titleLine = lines[0];
 
-  if (titleLine) {
+  if (titleLine && titleLine.startsWith('## ')) {
+    const title = titleLine.replace(/^##\s/, '').trim();
     const contentLines = lines.slice(1);
-    const title = titleLine.replace(/###\s/, '').trim();
     const content = contentLines.join('\n').trim();
-    
     acc.push({ title, content });
   }
-  
   return acc;
 }, [] as { title: string; content: string }[]);
 ---

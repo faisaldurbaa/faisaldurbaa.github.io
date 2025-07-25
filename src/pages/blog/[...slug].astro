@@ -10,10 +10,17 @@ export async function getStaticPaths() {
   }));
 }
 
-const { entry } = Astro.props as { entry: CollectionEntry<'blog'> };
+interface Props {
+  entry: CollectionEntry<'blog'>;
+}
+
+const { entry } = Astro.props;
+const { Content } = await entry.render();
 ---
-<ArticleLayout 
-  entry={entry}
-  backLink="/portfolio/"
-  backText="Back to Portfolio"
-/>
+{
+  entry.data.layout ? (
+    <Content />
+  ) : (
+    <ArticleLayout entry={entry} backLink="/portfolio" backText="Back to Portfolio" />
+  )
+}

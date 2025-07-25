@@ -5,10 +5,17 @@ import Footer from '../components/Footer.astro';
 import Analytics from '../components/Analytics.astro';
 
 interface Props {
-  seo: SeoProps;
+  seo?: SeoProps;
+  frontmatter?: any;
 }
 
-const { seo } = Astro.props;
+const { seo: seoProp, frontmatter } = Astro.props;
+
+const seo = seoProp || {
+  title: frontmatter?.title,
+  description: frontmatter?.description,
+  image: frontmatter?.heroImage,
+};
 ---
 <!doctype html>
 <html lang="en">

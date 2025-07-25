@@ -1,12 +1,14 @@
 ---
 title: "The History of the Internet"
-description: "From ARPANET to Web 3.0, a journey through the key developments that shaped the modern internet."
-publishDate: 2025-07-22
+description: "The Internet's Evolution: From ARPANET to Web 3.0."
+publishDate: 2024-03-15
 tags: ["Internet", "History", "Technology", "Web"]
-heroImage: "/images/placeholder.jpg"
+heroImage: "/images/blogs/2-1-2.webp"
 ---
 
 The internet, a tool that transformed the world by providing a network of networks that allowed us to share, log, analyze and produce information. Following decades of development led by governments and private entities, the internet became widely accessible to the public in the late 1990s. As of January 2024, there are 5.35 billion internet users across the world which is equivalent to 66% of the global population. Of this total, 5.04 billion users are social media users. These numbers point to the growing importance of the internet in the past 30 years. So, what is the internet? How was it developed and globalized? In this article, the development of the internet throughout time will be presented.
+
+![global network](/images/blogs/2-1.webp)
 
 ### PART-1: EARLY DEVELOPMENTS
 
@@ -14,11 +16,17 @@ The first computer networks were special purpose systems developed in the late 1
 
 By the early 1960s time-sharing systems were developed. Time-sharing systems allowed the resources of a computer -- host -- to be shared between multiple users by cycling through a queue of the users very fast so that nobody would feel the delay.
 
+![Time sharing representation](/images/blogs/2-2.webp)
+
 In 1969, the first host-to-host network connection system ARPANET was created by Advanced Research Projects Agency (ARPA). It connected time-sharing computers at government supported research sites and quickly became an essential part of infrastructure of the computer science research community. It also was the first time a message was sent via the internet. After a few years Jon Postel started to record socket numbers in a book which eventually evolved to be the Internet Assigned Names Authority (IANA) that used to manage the DNS.
+
+![ARPANET Map](/images/blogs/2-3.webp)
 
 Soon after, protocols like simple mail transfer protocol (SMTP, known as e-mail) for sending short messages and file transfer protocol (FTP) for longer transmissions were developed.
 
 Afterwards, packet switching technology emerged. The logic behind it was breaking down the data that needed to be sent, into smaller parts that were called 'packets' so that the transmission wouldn't take up a lot of joint space. This system accelerated the transfer operations between users.
+
+![Packet switching representation](/images/blogs/2-4.webp)
 
 In the 1970s DARPA (formerly ARPA) supported the development of ground-based and satellite-based packet networks. While ground-based packet networks mobilized access to computer systems, satellite-based packet networks connected the USA to several countries across the world.
 
@@ -29,6 +37,8 @@ Although ground-based packet networks enabled connecting mobilized terminals to 
 After time-sharing systems, host-to-host connections and packet switching technique DARPA launched "Internetting" program to investigate the interconnection of heterogeneous networks (networks connecting devices that have significant differences in operating systems and protocols). The program aimed to connect networks with standard interfaces through gateways. But a new protocol and a new system architecture were required.
 
 In 1974 DARPA, Standford University and a couple of computer scientists worked on such a system and came up with transmission control protocol (TCP), which made heterogeneous networks possible across the globe and enabled users to process data packets from different devices.
+
+![TCP/IP protocol representation](/images/blogs/2-5.webp)
 
 The TCP also included internet protocol, which acted as an addressing system and enabled the routers to direct data packets to their final destination. In the 1980s TCP/IP protocol was adopted by US Department of Defense and soon after, the protocol was also adopted by some businessmen.
 
@@ -46,7 +56,11 @@ During the early 90s a few commercial networks had come into existence and since
 
 In 1993, the University of Illinois brought the first internet browser with graphical interface, Mosaic, into existence by utilizing the tools that the World Wide Web (WWW) application provided. The WWW was developed at CERN by Tim Berners-Lee and his colleagues inventing and integrating many access protocols. Towards the late 90s many other browsers were introduced, and the WWW had millions of active users. Also, around 10 thousand ISPs were founded at this time.
 
+![Mosaic browser](/images/blogs/2-6.webp)
+
 Beginning in 1995, dot-com enterprises were entering the sector and stock markets with huge newcomer investor expectations which led to an almost sevenfold increase in Nasdaq-100 index evaluations in dot-com companies. But by the year 2000, after seeing no development, the investors began to lose hope. At the same year the Federal Reserve increased interest rates triggering investors selling-off their shares and leading to shrinking in the dot-com industry. This phenomenon was later named "**The Internet Bubble**".
+
+![Nasdaq 500 Price Chart](/images/blogs/2-7.webp)
 
 After the internet bubble burst, Web 2.0 emerged providing better opportunities for social networking, and focusing on user generated content as well as cloud computing. With this development social media sites like Facebook and Twitter gained popularity. After the mobile phone access to the internet also was introduced an enormous rise in active internet user numbers was seen. The new concept allowed many modern technologies to emerge and overall made access to information a lot easier than it was.
 
@@ -58,7 +72,7 @@ Today, in 2024, we are globally still in the early stages of a transition betwee
 
 - [World Wide Web | History, Uses & Benefits](https://www.britannica.com/topic/World-Wide-Web)
 - [Dot-com bubble | Definition, History, & Facts](https://www.britannica.com/event/dot-com-bubble)
-- [The Traitorous Eight & the Start of Something | by Alan Philips --- The Age of Ideas | Medium](https://medium.com/@alan_46156/the-traitorous-eight-the-start-of-something-fd6a5f40a870#id_token=eyJhbGciOiJSUzI1NiIsImtpZCI6IjkzYjQ5NTE2MmFmMGM4N2NjN2E1MTY4NjI5NDA5NzA0MGRhZjNiNDMiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmdvb2dsZS5jb20iLCJhenAiOiIyMTYyOTYwMzU4MzQtazFrNnFlMDYwczJ0cDJhMmphbTRsamRjbXMwMHN0dGcuYXBwcy5nb29nbGV1c2VyY29udGVudC5jb20iLCJhdWQiOiIyMTYyOTYwMzU4MzQtazFrNnFlMDYwczJ0cDJhMmphbTRsamRjbXMwMHN0dGcuYXBwcy5nb29nbGV1c2VyY29udGVudC5jb20iLCJzdWIiOiIxMTc1Njc5NzI1MDY4OTUzNzA5MDgiLCJlbWFpbCI6ImZhaXNhbGR1cmJhYTA3QGdtYWlsLmNvbSIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJuYmYiOjE3MTI5NDI2ODEsIm5hbWUiOiJGYWlzYWwgRHVyYmFhIiwicGljdHVyZSI6Imh0dHBzOi8vbGgzLmdvb2dsZXVzZXJjb250ZW50LmNvbS9hL0FDZzhvY0pWeWh4NDlSZl96NEpEc0Z6YkJOSnJNVE9oTDlSOUhxYng0QkE0QUxvT01xUkRxdkFsPXM5Ni1jIiwiZ2l2ZW5fbmFtZSI6IkZhaXNhbCIsImZhbWlseV9uYW1lIjoiRHVyYmFhIiwiaWF0IjoxNzEyOTQyOTgxLCJleHAiOjE3MTI5NDY1ODEsImp0aSI6IjM1MWZhMDE1NmJmODc3ZDgwMWFiMGY1MjFjY2RiMDM4NGQ0MjU4OTAifQ.rrfFUE4AYTJiOVC3f8tK33S2lQ1y3pedZ-Hwe5iN8mcE7yCfrh7wPZFL_sm0BCd7klwP_niymYEC4kTzQyD60JVYtbIczcTLSDT_KuoXaVFXJSgj5zfWMMOXnmVyXjBBEzNC187BH0jkHBI286euPKXbsX1s-KKYroJzEgHONbVjSgsjMmTn8l1sp7eOFJbro6U4TIEJt6jHGYQvTp1BMm94-unrOGb0EuGIk03_OwylVbA4GPZ8M_Cu9CLPu3yrMZ0Z6OI3Mz3RPQCrX1CprC0Kr19VUEBz7gXi5DUDJrC0TqBcWgg2gPmHTPY6ka_25Zq5USiOeR9VrbKGmjIASw)
+- [The Traitorous Eight & the Start of Something | by Alan Philips --- The Age of Ideas | Medium](https://medium.com/@alan_46156/the-traitorous-eight-the-start-of-something-fd6a5f40a870)
 - [Internet - Networking, Protocols, ARPANET](https://www.britannica.com/technology/Internet/Foundation-of-the-Internet)
 - [IETF | Introduction](https://www.ietf.org/about/introduction/)
 - [Ethernet | Definition & Facts](https://www.britannica.com/technology/Ethernet)
