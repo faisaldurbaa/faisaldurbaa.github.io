@@ -1,44 +1,163 @@
 ---
 // src/pages/about.astro
 import { Image } from 'astro:assets';
+import { Icon } from 'astro-icon/components';
 import Layout from '../layouts/Layout.astro';
 import FadeIn from '../components/FadeIn.astro';
-import profilePic from '../assets/profile.jpg';
+import profilePic from '../assets/profile.webp';
 
 const seo = {
   title: "About Me",
-  description: "Learn more about Joe Snow, his skills, and professional background."
+  description: "Learn more about Faisal Durbaa, his skills, and professional background."
 };
+
+const skills = [
+  { name: 'Python', icon: 'mdi:language-python' },
+  { name: 'AI/ML', icon: 'mdi:brain' },
+  { name: 'Prompt Engineering', icon: 'mdi:robot' },
+  { name: 'Linux', icon: 'mdi:linux' },
+  { name: 'HTML', icon: 'mdi:language-html5' },
+  { name: 'TypeScript', icon: 'mdi:language-typescript' },
+  { name: 'MS Office', icon: 'mdi:microsoft-office' },
+  { name: 'Data Analysis', icon: 'mdi:chart-line' },
+  { name: 'Multilingualism', icon: 'mdi:translate' }
+];
+
+const desktopIcons = [
+  { name: 'mdi:language-python', classes: 'top-[8%] left-[15%] w-16 h-16 -rotate-12 text-gray-300/70' },
+  { name: 'mdi:language-typescript', classes: 'bottom-[15%] right-[18%] w-14 h-14 rotate-6 text-gray-300/70' },
+  { name: 'mdi:git', classes: 'top-[55%] left-[12%] w-16 h-16 rotate-12 text-gray-300/60' },
+  { name: 'mdi:terminal', classes: 'top-[12%] right-[25%] w-14 h-14 -rotate-6 text-gray-300/70' },
+  { name: 'mdi:brain', classes: 'top-[20%] left-[25%] w-18 h-18 -rotate-8 text-gray-300/80' },
+  { name: 'mdi:security', classes: 'top-[35%] right-[12%] w-16 h-16 rotate-15 text-gray-300/70' },
+  { name: 'mdi:chart-bar', classes: 'bottom-[35%] right-[25%] w-16 h-16 rotate-3 text-gray-300/70' },
+  { name: 'mdi:robot', classes: 'top-[65%] right-[20%] w-14 h-14 rotate-12 text-gray-300/80' },
+  { name: 'mdi:cube-outline', classes: 'bottom-[18%] left-[20%] w-20 h-20 -rotate-12 text-gray-300/70' },
+  { name: 'mdi:language-html5', classes: 'top-[40%] left-[8%] w-14 h-14 rotate-15 text-gray-300/70' },
+  { name: 'mdi:nodejs', classes: 'bottom-[40%] left-[25%] w-16 h-16 -rotate-15 text-gray-300/60' },
+  { name: 'mdi:database', classes: 'top-[75%] left-[35%] w-14 h-14 rotate-8 text-gray-300/80' },
+  { name: 'mdi:cloud-outline', classes: 'top-[5%] left-[35%] w-18 h-18 -rotate-8 text-gray-300/60' },
+  { name: 'mdi:code-braces', classes: 'top-[70%] right-[10%] w-12 h-12 rotate-15 text-gray-300/70' },
+  { name: 'mdi:linux', classes: 'bottom-[25%] left-[10%] w-14 h-14 -rotate-15 text-gray-300/80' },
+  { name: 'mdi:atom', classes: 'bottom-[8%] right-[35%] w-16 h-16 rotate-10 text-gray-300/60' },
+  { name: 'mdi:chart-bubble', classes: 'bottom-[55%] right-[40%] w-12 h-12 -rotate-10 text-gray-300/70' },
+  { name: 'mdi:server', classes: 'top-[50%] right-[35%] w-14 h-14 rotate-5 text-gray-300/80' },
+  { name: 'mdi:flask', classes: 'bottom-[30%] left-[35%] w-12 h-12 -rotate-5 text-gray-300/60' },
+  { name: 'mdi:api', classes: 'top-[25%] right-[45%] w-14 h-14 rotate-8 text-gray-300/65' },
+  { name: 'mdi:react', classes: 'top-[3%] right-[15%] w-16 h-16 rotate-12 text-gray-300/70' },
+  { name: 'mdi:docker', classes: 'top-[6%] left-[8%] w-14 h-14 -rotate-15 text-gray-300/65' },
+  { name: 'mdi:kubernetes', classes: 'top-[15%] right-[8%] w-12 h-12 rotate-8 text-gray-300/60' },
+  { name: 'mdi:github', classes: 'top-[2%] left-[25%] w-14 h-14 -rotate-6 text-gray-300/75' },
+  { name: 'mdi:matrix', classes: 'top-[10%] left-[5%] w-16 h-16 rotate-10 text-gray-300/70' },
+  { name: 'mdi:vuejs', classes: 'top-[4%] right-[35%] w-14 h-14 -rotate-12 text-gray-300/65' },
+  { name: 'mdi:jquery', classes: 'top-[18%] right-[5%] w-12 h-12 rotate-15 text-gray-300/60' },
+  { name: 'mdi:angular', classes: 'top-[1%] left-[45%] w-14 h-14 -rotate-8 text-gray-300/70' },
+  { name: 'mdi:webpack', classes: 'top-[8%] right-[45%] w-12 h-12 rotate-6 text-gray-300/65' },
+  { name: 'mdi:npm', classes: 'top-[22%] left-[5%] w-14 h-14 -rotate-10 text-gray-300/70' }
+];
+
+const mobileIcons = [
+  { name: 'mdi:code-braces', classes: 'top-[12%] left-[5%] w-10 h-10 -rotate-12 text-gray-300/70' },
+  { name: 'mdi:brain', classes: 'top-[18%] right-[8%] w-12 h-12 rotate-12 text-gray-300/80' },
+  { name: 'mdi:chart-line', classes: 'bottom-[12%] right-[5%] w-10 h-10 rotate-6 text-gray-300/70' },
+  { name: 'mdi:security', classes: 'bottom-[18%] left-[8%] w-12 h-12 -rotate-6 text-gray-300/60' },
+  { name: 'mdi:terminal', classes: 'top-[35%] right-[5%] w-10 h-10 -rotate-6 text-gray-300/70' },
+  { name: 'mdi:robot', classes: 'top-[45%] left-[5%] w-11 h-11 rotate-8 text-gray-300/75' }
+];
 ---
 <Layout seo={seo}>
-  <!-- 1. Added max-w-4xl to constrain the width -->
-  <div class="container mx-auto max-w-4xl p-4 sm:p-8">
-    <FadeIn>
-      <div class="bg-white p-6 sm:p-8 border border-gray-200 rounded-lg shadow-sm">
-        <div class="flex flex-col md:flex-row items-center justify-center gap-8 md:gap-12">
-          
-          <div class="flex-shrink-0">
-            <Image 
-              src={profilePic} 
-              alt="A photo of Joe Snow"
-              width={200}
-              height={200}
-              class="w-40 h-40 md:w-48 md:h-48 rounded-full border-4 border-white shadow-lg object-cover"
-            />
-          </div>
+  <div class="relative min-h-screen bg-gradient-to-br from-[#eaf2f7] via-[#f5f8fa] to-[#eaf2f7] py-20">
+    <!-- Floating Background Icons -->
+    <div class="absolute inset-0 z-0 hidden md:block">
+      {desktopIcons.map((icon, index) => (
+        <Icon 
+          name={icon.name} 
+          class:list={[ "absolute animate-float", icon.classes ]}
+          style={`animation-delay: ${index * 600}ms; animation-duration: ${8 + index % 5}s;`}
+        />
+      ))}
+    </div>
 
-          <div class="text-center md:text-left">
-            <!-- 2. Updated Title and added Subtitle -->
-            <h1 class="text-4xl font-bold mb-2">Joe Snow</h1>
-            <p class="text-xl text-gray-600 mb-6">
-              A passionate developer building efficient and user-friendly web applications.
+    <!-- Mobile Icons -->
+    <div class="absolute inset-0 z-0 block md:hidden">
+      {mobileIcons.map((icon, index) => (
+        <Icon 
+          name={icon.name} 
+          class:list={[ "absolute animate-float", icon.classes ]}
+          style={`animation-delay: ${index * 600}ms; animation-duration: ${8 + index % 5}s;`}
+        />
+      ))}
+    </div>
+
+    <div class="container mx-auto max-w-5xl px-4 sm:px-8 relative z-10">
+      <FadeIn>
+        <!-- Hero Section -->
+        <div class="text-center mb-10">
+          <Image 
+            src={profilePic} 
+            alt="A photo of Faisal Durbaa"
+            width={600}
+            height={600}
+            quality={90}
+            class="w-72 h-72 rounded-full border-4 border-accent shadow-xl mx-auto mb-4 object-cover"
+          />
+          <h1 class="text-4xl sm:text-5xl font-bold text-gray-900 mb-3">Faisal Durbaa</h1>
+          <p class="text-xl text-gray-600 mb-6">A Curious Young Man</p>
+        </div>
+
+        <!-- About Content -->
+        <div class="bg-white/60 backdrop-blur-sm border border-gray-200/50 rounded-2xl p-8 sm:p-12 shadow-lg mb-12">
+          <div class="prose prose-lg max-w-none text-gray-700">
+            <p class="text-lg leading-relaxed mb-6">
+              Hey there! I'm a high school student passionate about the intersection of artificial intelligence, cybersecurity, and human-computer interaction. My journey began with Python programming and quickly evolved into exploring machine learning algorithms, prompt engineering techniques, and security analysis.
             </p>
-            <p class="text-lg text-gray-700 leading-relaxed">
-              This portfolio is a showcase of my work, including personal projects, academic coursework, and blog posts where I share my learnings. Feel free to explore and get in touch!
+            <p class="text-lg leading-relaxed mb-6">
+              Currently, I'm diving deep into AI/ML research and exploring the fascinating world of prompt engineering. I believe that understanding how to effectively communicate with AI systems is becoming as crucial as traditional programming skills.
+            </p>
+            <p class="text-lg leading-relaxed mb-6">
+              When I'm not coding or studying, you'll find me experimenting with Linux systems, analyzing cybersecurity trends, or working on web development projects. I'm particularly interested in how technology can solve real-world problems and make data more accessible and secure.
+            </p>
+            <p class="text-lg leading-relaxed">
+              As someone who believes that facts are powerful tools, I'm committed to using technology ethically and transparently. I'm always eager to collaborate on innovative projects and connect with fellow tech enthusiasts who share a passion for learning and building.
             </p>
           </div>
         </div>
-      </div>
-    </FadeIn>
+
+        <!-- Skills Section -->
+        <div class="bg-white/60 backdrop-blur-sm border border-gray-200/50 rounded-2xl p-8 sm:p-12 shadow-lg mb-12">
+          <h2 class="text-2xl font-bold text-gray-900 mb-8 text-center">Skills & Interests</h2>
+          <div class="grid grid-cols-2 md:grid-cols-3 gap-6">
+            {skills.map((skill) => (
+              <div class="flex items-center space-x-3 bg-white/50 backdrop-blur-sm border border-gray-200/30 rounded-xl p-4 hover:bg-white/70 transition-all duration-200 hover:scale-105">
+                <Icon name={skill.icon} class="w-6 h-6 text-accent flex-shrink-0" />
+                <span class="font-medium text-gray-800">{skill.name}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <!-- Quote Section -->
+        <div class="bg-gradient-to-r from-accent/5 to-accent/10 border border-accent/20 rounded-2xl p-8 sm:p-12 mb-12">
+          <div class="text-center">
+            <Icon name="mdi:format-quote-open" class="w-8 h-8 text-accent/60 mx-auto mb-4" />
+            <blockquote class="text-xl sm:text-2xl font-medium text-gray-800 italic mb-4">
+              If you own the facts, you may distort them as you like
+            </blockquote>
+            <cite class="text-accent font-semibold">— John McAfee</cite>
+          </div>
+        </div>
+
+        <!-- CTA Section -->
+        <div class="text-center">
+          <a 
+            href="/contact/" 
+            class="inline-flex items-center space-x-2 bg-accent text-white font-semibold px-8 py-4 rounded-xl shadow-lg hover:bg-accent/90 transition-all duration-200 hover:scale-105 hover:shadow-xl"
+          >
+            <Icon name="mdi:email" class="w-5 h-5" />
+            <span>Get in Touch</span>
+          </a>
+        </div>
+      </FadeIn>
+    </div>
   </div>
 </Layout>

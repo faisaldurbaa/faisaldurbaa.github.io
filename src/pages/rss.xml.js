@@ -9,7 +9,7 @@ export async function GET(context) {
   const blog = await getCollection('blog');
   
   return rss({
-    title: 'Joe Snow | Blog',
+    title: 'Faisal Durbaa | Blog',
     description: 'A collection of articles on technology, data, and design.',
     site: context.site,
     items: blog.map((post) => ({
