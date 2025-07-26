@@ -13,11 +13,11 @@ const {
   noindex = false,
 } = Astro.props;
 
-const defaultImage = '/placeholder-social.jpg'; 
+const defaultImage = '/placeholder.png'; 
 const imageSrc = (heroImage && typeof heroImage === 'string') ? heroImage : defaultImage;
 const finalImageUrl = new URL(imageSrc, Astro.site);
 
-const siteName = "Joe Snow's Portfolio";
+const siteName = "Faisal Durbaa";
 const fullTitle = `${title} | ${siteName}`;
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 ---

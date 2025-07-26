@@ -1,7 +1,7 @@
 ---
 import { Image } from 'astro:assets';
 import { Icon } from 'astro-icon/components';
-import profilePic from '../assets/profile.jpg';
+import profilePic from '../assets/profile.webp';
 
 const desktopIcons = [
 
@@ -60,14 +60,15 @@ const mobileIcons = [
   <div class="relative z-10">
     <Image 
       src={profilePic}
-      alt="A photo of Joe Snow"
-      width={300}
-      height={300}
-      class="w-72 h-72 rounded-full border-4 border-white shadow-lg mx-auto mb-6"
+      alt="A photo of Faisal Durbaa"
+      width={600}
+      height={600}
+      quality={90}
+      class="w-72 h-72 rounded-full border-4 border-accent shadow-lg mx-auto mb-6"
     />
-    <h1 class="text-5xl font-bold">Joe Snow</h1>
+    <h1 class="text-5xl font-bold">Faisal Durbaa</h1>
     <p class="text-xl text-gray-600 mt-4 max-w-2xl mx-auto px-4">
-      A passionate developer building efficient and user-friendly web applications.
+      A Curious Young Man
     </p>
   </div>
 </section>
