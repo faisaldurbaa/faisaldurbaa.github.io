@@ -22,56 +22,44 @@ const htmlContent = marked.parse(content);
   </div>
 </details>
 
-<script is:inline>
-  document.querySelectorAll('.accordion-details').forEach((details) => {
-    // Skip if already initialized
-    if (details.dataset.initialized) return;
-    details.dataset.initialized = 'true';
-    
+<script>
+  document.querySelectorAll('.accordion-details').forEach(details => {
     const summary = details.querySelector('summary');
     const contentWrapper = details.querySelector('.content-wrapper');
-    let isAnimating = false;
 
-    const handleClick = (event) => {
-      if (isAnimating) return; // Prevent rapid clicking issues
-      
+    if (!summary || !contentWrapper) {
+      return;
+    }
+
+    summary.addEventListener('click', (event) => {
+      event.preventDefault();
       if (details.open) {
-        // Only prevent default when closing to add animation
-        event.preventDefault();
-        isAnimating = true;
-        contentWrapper.style.maxHeight = '0px';
-        setTimeout(() => {
-          details.open = false;
-          isAnimating = false;
-        }, 500);
-      }
-      // For opening: let browser handle it naturally, toggle event will handle height
-    };
-
-    const handleToggle = () => {
-      if (details.open && !isAnimating) {
-        isAnimating = true;
-        // Calculate real height by temporarily removing constraints
-        contentWrapper.style.maxHeight = 'none';
-        
-        // Simple approach: measure after a short delay to allow content to render
-        setTimeout(() => {
-          const height = contentWrapper.scrollHeight;
-          contentWrapper.style.maxHeight = '0px';
-          
-          // Animate to real height
+        // Start closing animation
+        const height = contentWrapper.scrollHeight;
+        // Set to current height to animate from
+        requestAnimationFrame(() => {
+          contentWrapper.style.maxHeight = `${height}px`;
           requestAnimationFrame(() => {
-            contentWrapper.style.maxHeight = `${height}px`;
-            // Reset animation flag after animation completes
-            setTimeout(() => {
-              isAnimating = false;
-            }, 500);
+            contentWrapper.style.maxHeight = '0px';
           });
-        }, 10); // Small delay to ensure content is rendered
-      }
-    };
+        });
+        
+        // After animation, close the details
+        contentWrapper.addEventListener('transitionend', () => {
+          details.open = false;
+        }, { once: true });
 
-    summary.addEventListener('click', handleClick);
-    details.addEventListener('toggle', handleToggle);
+      } else {
+        // Start opening animation
+        details.open = true;
+        const height = contentWrapper.scrollHeight;
+        contentWrapper.style.maxHeight = `${height}px`;
+
+        // When animation is done, set height to auto
+        contentWrapper.addEventListener('transitionend', () => {
+          contentWrapper.style.maxHeight = 'none';
+        }, { once: true });
+      }
+    });
   });
 </script>
