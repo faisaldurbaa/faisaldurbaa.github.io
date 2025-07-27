@@ -1,5 +1,4 @@
 ---
-// src/components/Accordion.astro
 import { marked } from 'marked';
 
 export interface Props {
@@ -23,9 +22,10 @@ const htmlContent = marked.parse(content);
 </details>
 
 <script>
-  document.querySelectorAll('.accordion-details').forEach(details => {
-    const summary = details.querySelector('summary');
-    const contentWrapper = details.querySelector('.content-wrapper');
+  document.querySelectorAll('.accordion-details').forEach(detailsElement => {
+    const details = detailsElement as HTMLDetailsElement;
+    const summary = details.querySelector('summary') as HTMLElement | null;
+    const contentWrapper = details.querySelector('.content-wrapper') as HTMLElement | null;
 
     if (!summary || !contentWrapper) {
       return;
@@ -34,9 +34,7 @@ const htmlContent = marked.parse(content);
     summary.addEventListener('click', (event) => {
       event.preventDefault();
       if (details.open) {
-        // Start closing animation
         const height = contentWrapper.scrollHeight;
-        // Set to current height to animate from
         requestAnimationFrame(() => {
           contentWrapper.style.maxHeight = `${height}px`;
           requestAnimationFrame(() => {
@@ -44,18 +42,15 @@ const htmlContent = marked.parse(content);
           });
         });
         
-        // After animation, close the details
         contentWrapper.addEventListener('transitionend', () => {
           details.open = false;
         }, { once: true });
 
       } else {
-        // Start opening animation
         details.open = true;
         const height = contentWrapper.scrollHeight;
         contentWrapper.style.maxHeight = `${height}px`;
 
-        // When animation is done, set height to auto
         contentWrapper.addEventListener('transitionend', () => {
           contentWrapper.style.maxHeight = 'none';
         }, { once: true });

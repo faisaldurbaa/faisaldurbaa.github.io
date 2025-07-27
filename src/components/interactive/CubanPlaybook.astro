@@ -1,6 +1,6 @@
 ---
-// src/components/interactive/CubanPlaybook.astro
 import ShareButton from '../ShareButton.astro';
+import RelatedContent from '../RelatedContent.astro';
 ---
 <div class="px-4 sm:px-6 lg:px-8">
     <style>
@@ -287,4 +287,6 @@ import ShareButton from '../ShareButton.astro';
             observer.observe(section);
         });
     </script>
+
+    <RelatedContent currentSlug="the-mark-cuban-playbook" />
 </div>

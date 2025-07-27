@@ -1,15 +1,12 @@
 @import "tailwindcss";
 
 @layer base {
-  /* Custom base styles if needed */
 }
 
 @layer components {
-  /* Custom component classes if needed */
 }
 
 @layer utilities {
-  /* Custom utility classes if needed */
   .animate-float {
     animation: float 6s ease-in-out infinite;
   }
@@ -27,7 +24,6 @@
   }
 }
 
-/* Ensure line-clamp works */
 .line-clamp-2 {
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -42,4 +38,3 @@
   overflow: hidden;
 }
 
-/* Add any other global styles here */
