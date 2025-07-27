@@ -24,26 +24,54 @@ const htmlContent = marked.parse(content);
 
 <script is:inline>
   document.querySelectorAll('.accordion-details').forEach((details) => {
+    // Skip if already initialized
+    if (details.dataset.initialized) return;
+    details.dataset.initialized = 'true';
+    
     const summary = details.querySelector('summary');
     const contentWrapper = details.querySelector('.content-wrapper');
+    let isAnimating = false;
 
-    summary.addEventListener('click', (event) => {
+    const handleClick = (event) => {
+      if (isAnimating) return; // Prevent rapid clicking issues
+      
       if (details.open) {
+        // Only prevent default when closing to add animation
         event.preventDefault();
-        
+        isAnimating = true;
         contentWrapper.style.maxHeight = '0px';
-        
         setTimeout(() => {
           details.open = false;
+          isAnimating = false;
         }, 500);
-      } else {
       }
-    });
+      // For opening: let browser handle it naturally, toggle event will handle height
+    };
 
-    details.addEventListener('toggle', () => {
-      if (details.open) {
-        contentWrapper.style.maxHeight = `${contentWrapper.scrollHeight}px`;
+    const handleToggle = () => {
+      if (details.open && !isAnimating) {
+        isAnimating = true;
+        // Calculate real height by temporarily removing constraints
+        contentWrapper.style.maxHeight = 'none';
+        
+        // Simple approach: measure after a short delay to allow content to render
+        setTimeout(() => {
+          const height = contentWrapper.scrollHeight;
+          contentWrapper.style.maxHeight = '0px';
+          
+          // Animate to real height
+          requestAnimationFrame(() => {
+            contentWrapper.style.maxHeight = `${height}px`;
+            // Reset animation flag after animation completes
+            setTimeout(() => {
+              isAnimating = false;
+            }, 500);
+          });
+        }, 10); // Small delay to ensure content is rendered
       }
-    });
+    };
+
+    summary.addEventListener('click', handleClick);
+    details.addEventListener('toggle', handleToggle);
   });
 </script>
