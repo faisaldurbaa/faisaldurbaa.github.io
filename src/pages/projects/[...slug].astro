@@ -5,6 +5,7 @@ import FadeIn from '../../components/FadeIn.astro';
 import Accordion from '../../components/Accordion.astro';
 import { Icon } from 'astro-icon/components';
 import ShareButton from '../../components/ShareButton.astro';
+import RelatedContent from '../../components/RelatedContent.astro';
 
 export async function getStaticPaths() {
   const projectEntries = await getCollection('projects');
@@ -89,6 +90,8 @@ const accordionItems = sections.reduce((acc, section) => {
           <div class="prose max-w-none px-4 sm:px-0"><Content /></div>
         )}
       </div>
+
+      <RelatedContent currentSlug={entry.slug} />
 
     </FadeIn>
   </article>

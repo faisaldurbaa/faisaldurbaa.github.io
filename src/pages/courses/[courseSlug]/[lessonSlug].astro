@@ -18,9 +18,25 @@ export async function getStaticPaths() {
 
 const { entry } = Astro.props as { entry: CollectionEntry<'courses'> };
 const courseSlug = entry.slug.split('/')[0];
+
+// Get all lessons for this course to determine navigation
+const allCourseLessons = (await getCollection('courses'))
+  .filter(lesson => 
+    lesson.slug?.startsWith(courseSlug + '/') && 
+    !(lesson.id.endsWith('index.mdx') || lesson.id.endsWith('index.md'))
+  )
+  .sort((a, b) => (a.data.lessonNumber || 0) - (b.data.lessonNumber || 0));
+
+const currentLessonNumber = entry.data.lessonNumber || 0;
+const currentIndex = allCourseLessons.findIndex(lesson => lesson.data.lessonNumber === currentLessonNumber);
+const previousLesson = currentIndex > 0 ? allCourseLessons[currentIndex - 1] : null;
+const nextLesson = currentIndex < allCourseLessons.length - 1 ? allCourseLessons[currentIndex + 1] : null;
 ---
 <ArticleLayout 
   entry={entry}
   backLink={`/courses/${courseSlug}/`}
   backText="Back to Course"
+  previousLesson={previousLesson}
+  nextLesson={nextLesson}
+  courseSlug={courseSlug}
 />

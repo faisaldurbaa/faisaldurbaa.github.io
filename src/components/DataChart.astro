@@ -1,5 +1,4 @@
 ---
-// src/components/DataChart.astro
 import type { ChartData } from 'chart.js';
 
 export interface Props {
@@ -18,14 +17,12 @@ const { type, data, title, id } = Astro.props;
   </div>
 </div>
 
-<script define:vars={{ type, data, id }}>
-  // This script assumes Chart.js has been loaded globally.
+<script is:inline define:vars={{ type, data, id }}>
   if (typeof window !== 'undefined') {
     const initChart = () => {
       const canvas = document.getElementById(id);
       if (!canvas || !window.Chart) return;
 
-      // Check if a chart already exists and destroy it to prevent errors on hot-reload
       const existingChart = window.Chart.getChart(canvas);
       if (existingChart) {
         existingChart.destroy();
@@ -91,7 +88,6 @@ const { type, data, title, id } = Astro.props;
     const observer = new IntersectionObserver((entries, observer) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
-          // A small delay to ensure the global Chart.js script has had time to execute
           setTimeout(() => {
             initChart();
             observer.unobserve(entry.target);

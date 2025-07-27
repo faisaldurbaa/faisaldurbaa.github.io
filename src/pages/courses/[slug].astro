@@ -1,9 +1,9 @@
 ---
-// src/pages/courses/[slug].astro
 import { getCollection, type CollectionEntry } from 'astro:content';
 import Layout from '../../layouts/Layout.astro';
 import FadeIn from '../../components/FadeIn.astro';
 import ShareButton from '../../components/ShareButton.astro';
+import RelatedContent from '../../components/RelatedContent.astro';
 
 export async function getStaticPaths() {
   const courseEntries = (await getCollection('courses')).filter(entry => 
@@ -85,6 +85,9 @@ const sortedLessons = allLessons.sort((a, b) =>
           ))}
         </ol>
       </div>
+
+      <RelatedContent currentSlug={courseSlug} />
+      
     </FadeIn>
   </div>
 </Layout>

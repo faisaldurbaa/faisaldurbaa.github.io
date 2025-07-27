@@ -1,5 +1,4 @@
 ---
-// src/components/ShareButton.astro
 import { Icon } from "astro-icon/components";
 
 export interface Props {
@@ -26,10 +25,7 @@ export interface Props {
       try {
         await navigator.clipboard.writeText(window.location.href);
         
-        // Show the toast
         toast.classList.remove('opacity-0');
-        
-        // Hide the toast after 2 seconds
         setTimeout(() => {
           toast.classList.add('opacity-0');
         }, 2000);
