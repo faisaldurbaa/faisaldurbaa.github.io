@@ -1,0 +1,213 @@
+---
+import ShareButton from '../ShareButton.astro';
+import RelatedContent from '../RelatedContent.astro';
+---
+
+<div class="px-4 sm:px-6 lg:px-8">
+    <style>
+        .timeline-item { transition: all 0.3s ease; }
+        .timeline-item.active { transform: scale(1.05); border-color: rgb(30 41 59); }
+        .timeline-item.active .timeline-logo { filter: grayscale(0%); }
+        .timeline-logo { transition: all 0.3s ease; filter: grayscale(80%); }
+        .content-panel { transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out; }
+        .content-panel.loading { opacity: 0; transform: translateY(10px); }
+        .section-fade-in { opacity: 0; transform: translateY(20px); transition: opacity 0.6s ease-out, transform 0.6s ease-out; }
+        .section-fade-in.visible { opacity: 1; transform: translateY(0); }
+    </style>
+
+    <section class="mb-16">
+        <div class="bg-white p-6 sm:p-8 border border-gray-200 rounded-lg shadow-sm">
+            <div class="flex justify-between items-center mb-4">
+                <p class="text-accent font-semibold">
+                    <a href="/portfolio" class="inline-flex items-center gap-2 hover:underline">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+                        Back to Portfolio
+                    </a>
+                </p>
+                <ShareButton title="From Skype to Etsy: Leadership Lessons from Josh Silverman" />
+            </div>
+            <div class="text-center">
+                <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight text-slate-900">
+                    From Skype to Etsy: Leadership Lessons from Josh Silverman
+                </h1>
+                <hr class="border-t border-gray-200 my-4 max-w-sm mx-auto" />
+                <p class="mt-4 max-w-3xl mx-auto text-lg text-slate-600">
+                    An interactive timeline exploring the leadership lessons of Josh Silverman. Discover how his core principles were forged through the challenges and triumphs at Evite, Skype, American Express, and Etsy. This content is based on his speech at the 2025 Harvard Undergraduate Ventures-TECH Summer Program.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <section id="journey" class="mb-24 section-fade-in">
+        <div class="text-center mb-12">
+            <h2 class="text-3xl font-bold tracking-tight text-slate-900">Leadership Timeline</h2>
+            <p class="mt-2 max-w-2xl mx-auto text-md text-slate-500">
+               Select a company to explore the key challenges, pivotal insights, and lasting lessons from that chapter of his career.
+            </p>
+        </div>
+
+        <div id="timeline-nav" class="flex flex-col md:flex-row justify-center items-center space-y-4 md:space-y-0 md:space-x-8 lg:space-x-12 mb-12">
+            <div class="timeline-item cursor-pointer p-4 border-b-4 border-transparent" data-company="evite">
+                <div class="timeline-logo h-10 flex items-center justify-center text-white font-bold text-xl px-4 rounded" style="background-color: #0284c7;">Evite</div>
+            </div>
+            <div class="text-slate-300 text-2xl hidden md:block">&rarr;</div>
+            <div class="timeline-item cursor-pointer p-4 border-b-4 border-transparent" data-company="skype">
+                <div class="timeline-logo h-10 flex items-center justify-center text-white font-bold text-xl px-4 rounded" style="background-color: #0ea5e9;">Skype</div>
+            </div>
+            <div class="text-slate-300 text-2xl hidden md:block">&rarr;</div>
+            <div class="timeline-item cursor-pointer p-4 border-b-4 border-transparent" data-company="amex">
+                <div class="timeline-logo h-10 flex items-center justify-center text-white font-bold text-xl px-4 rounded" style="background-color: #2563eb;">AmEx</div>
+            </div>
+             <div class="text-slate-300 text-2xl hidden md:block">&rarr;</div>
+            <div class="timeline-item cursor-pointer p-4 border-b-4 border-transparent" data-company="etsy">
+                <div class="timeline-logo h-10 flex items-center justify-center text-white font-bold text-xl px-4 rounded" style="background-color: #f97316;">Etsy</div>
+            </div>
+        </div>
+
+        <div id="content-container" class="relative min-h-[400px]">
+            <div id="content-panel" class="content-panel bg-white p-8 rounded-2xl shadow-xl w-full">
+                <!-- Content will be injected here by JS -->
+            </div>
+        </div>
+    </section>
+
+    <section id="career-philosophy" class="mb-24 section-fade-in">
+         <div class="text-center mb-12">
+            <h2 class="text-3xl font-bold tracking-tight text-slate-900">Career Philosophy: The 3-Year Sprint</h2>
+            <p class="mt-2 max-w-2xl mx-auto text-md text-slate-500">
+               Silverman advises against rigid, long-term plans. Instead, he uses a simple three-part framework to evaluate opportunities in 3-4 year "sprints."
+            </p>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+            <div class="bg-white p-8 rounded-lg shadow-lg">
+                <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-cyan-100 text-cyan-700 text-2xl font-bold">1</div>
+                <h3 class="text-xl font-bold mt-5">Is it Impactful?</h3>
+                <p class="text-slate-600 mt-2">Can you do something you will be genuinely proud of? Does the work have meaning and a tangible outcome?</p>
+            </div>
+            <div class="bg-white p-8 rounded-lg shadow-lg">
+                <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-cyan-100 text-cyan-700 text-2xl font-bold">2</div>
+                <h3 class="text-xl font-bold mt-5">Will You Learn from Great People?</h3>
+                <p class="text-slate-600 mt-2">Will you be surrounded by smart people who will challenge you and from whom you can learn valuable skills?</p>
+            </div>
+            <div class="bg-white p-8 rounded-lg shadow-lg">
+                <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-cyan-100 text-cyan-700 text-2xl font-bold">3</div>
+                <h3 class="text-xl font-bold mt-5">Will It Create More Options?</h3>
+                <p class="text-slate-600 mt-2">After 3-4 years, will you have more opportunities and a more valuable skillset than when you started, not fewer?</p>
+            </div>
+        </div>
+    </section>
+
+    <div class="pb-16">
+        <RelatedContent currentSlug="the-silverman-journey" />
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const timelineData = {
+            evite: {
+                title: "Evite: The Dot-Com Crucible",
+                quote: "You need your own internal compass... the broader market will typically overreact.",
+                situation: "Founded Evite in 1998, pioneering online invitations when many Americans didn't have email. The company experienced massive hype during the dot-com bubble, followed by extreme pessimism when it burst.",
+                challenge: "Navigating the extreme volatility of the market, which valued the company at hundreds of millions on paper before declaring all internet companies 'a fad' just months later.",
+                insight: "He learned the hard way not to trust market sentiment. Believing the pessimists, he sold the company for a fraction of its potential value to return some capital to investors.",
+                outcome: "A formative lesson in trusting your own assessment of a business's health over market hysteria. Evite continued to be a solid business long after the sale."
+            },
+            skype: {
+                title: "Skype: Finding the Human Connection",
+                quote: "Listen to what they mean, not what they say.",
+                situation: "Joined as CEO when Skype was a 'failing company' within eBay, with declining metrics and a recent $1 billion write-down. Morale was low.",
+                challenge: "To rediscover the core value of Skype and reignite growth. The company was also too attached to its legacy peer-to-peer technology.",
+                insight: "By talking to customers, he realized the product wasn't about 'free calls'; it was about 'being together when you can't be in the same place.' This insight directly led to the strategic pivot to video calling, which was finally viable due to widespread broadband and built-in webcams.",
+                outcome: "A complete renaissance for the brand. The shift to video recharged growth and made Skype a household name for a new generation of communication."
+            },
+            amex: {
+                title: "American Express: Discipline at Scale",
+                quote: "The constraints is where the elegance and the beauty is.",
+                situation: "Joined the 160-year-old financial giant as President of Consumer Services, a leap from nimble tech startups to a massive, established corporation.",
+                challenge: "To apply an agile, tech-focused mindset to a legacy company while operating under immense financial discipline. Instead of vast resources for experiments, the task was often to cut hundreds of millions in expenses.",
+                insight: "Learned that true innovation comes from working within tight constraints. The need for discipline forced a ruthless focus on the 'fewest things we need to do super well to delight our customers.'",
+                outcome: "Gained invaluable experience in operational excellence and strategic focus, learning that legacy companies have world-class processes that startups often lack."
+            },
+            etsy: {
+                title: "Etsy: The Turnaround of Radical Focus",
+                quote: "What are the fewest things we need to do in the core business in order to succeed?",
+                situation: "Stepped in as CEO during a crisis. Growth had stalled, an investor was pushing for a sale, and 90% of resources were being spent on 'hobby projects' outside the core marketplace.",
+                challenge: "To save the company from being sold and reignite growth in the core business, which leadership had implicitly given up on.",
+                insight: "Believed the core Etsy marketplace was massively undervalued and underdeveloped. His 'one idea' was to stop all side projects and apply radical focus to improving the core experience (e.g., search, checkout, marketing).",
+                outcome: "A historic turnaround. By cutting 80% of projects and focusing the team, the company's growth re-accelerated from near-zero to over 20% year-over-year, growing from a $2.5B to a $13B marketplace."
+            }
+        } as const;
+
+        const timelineNav = document.getElementById('timeline-nav');
+        const contentPanel = document.getElementById('content-panel');
+        const timelineItems = document.querySelectorAll('.timeline-item');
+
+        function updateContent(companyKey: keyof typeof timelineData) {
+            const data = timelineData[companyKey];
+            if (!data || !contentPanel) return;
+
+            contentPanel.classList.add('loading');
+            
+            setTimeout(() => {
+                if (!contentPanel) return;
+                contentPanel.innerHTML = `
+                    <h3 class="text-2xl md:text-3xl font-bold text-slate-900 mb-2">${data.title}</h3>
+                    <p class="text-md italic text-slate-500 mb-6">"${data.quote}"</p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <h4 class="font-semibold text-lg mb-2 text-cyan-600">The Situation</h4>
+                            <p class="text-slate-700">${data.situation}</p>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-lg mb-2 text-cyan-600">The Core Challenge</h4>
+                            <p class="text-slate-700">${data.challenge}</p>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-lg mb-2 text-cyan-600">The Pivotal Insight</h4>
+                            <p class="text-slate-700">${data.insight}</p>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-lg mb-2 text-cyan-600">The Outcome & Lesson</h4>
+                            <p class="text-slate-700">${data.outcome}</p>
+                        </div>
+                    </div>
+                `;
+                contentPanel.classList.remove('loading');
+            }, 300);
+
+            timelineItems.forEach(item => {
+                const htmlElement = item as HTMLElement;
+                htmlElement.classList.toggle('active', htmlElement.dataset.company === companyKey);
+            });
+        }
+
+        if (timelineNav) {
+            timelineNav.addEventListener('click', (e) => {
+                if (!e.target) return;
+                const targetItem = (e.target as Element).closest('.timeline-item') as HTMLElement;
+                if (targetItem && targetItem.dataset.company) {
+                    updateContent(targetItem.dataset.company as keyof typeof timelineData);
+                }
+            });
+        }
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, { threshold: 0.1 });
+        
+        document.querySelectorAll('.section-fade-in').forEach(section => {
+            observer.observe(section);
+        });
+
+        // Initial load
+        const firstItem = document.querySelector('.timeline-item') as HTMLElement;
+        if (firstItem && firstItem.dataset.company) {
+            updateContent(firstItem.dataset.company as keyof typeof timelineData);
+        }
+    });
+</script>
