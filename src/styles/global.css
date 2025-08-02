@@ -38,3 +38,6 @@
   overflow: hidden;
 }
 
+.grecaptcha-badge { 
+  visibility: visible !important;
+}
