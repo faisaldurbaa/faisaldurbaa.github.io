@@ -1,0 +1,246 @@
+---
+import ShareButton from '../ShareButton.astro';
+import RelatedContent from '../RelatedContent.astro';
+---
+<div class="px-4 sm:px-6 lg:px-8">
+    <section class="mb-12 section-fade-in">
+        <div class="bg-white p-6 sm:p-8 border border-gray-200 rounded-lg shadow-sm">
+            <div class="flex justify-between items-center mb-4">
+                <p class="text-accent font-semibold">
+                    <a href="/portfolio" class="inline-flex items-center gap-2 hover:underline">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+                        Back to Portfolio
+                    </a>
+                </p>
+                <ShareButton title="The Google Cloud Playbook: An Interactive Analysis" />
+            </div>
+            <div class="text-center">
+                <h1 class="text-4xl md:text-6xl font-extrabold tracking-tight text-slate-900">
+                    The Kurian & Mowry Playbook
+                </h1>
+                <hr class="border-t border-gray-200 my-4 max-w-sm mx-auto"/>
+                <p class="mt-4 max-w-3xl mx-auto text-lg text-slate-600">
+                    An interactive analysis of the leadership principles, technical strategies, and actionable advice powering Google Cloud's growth, featuring CEO Thomas Kurian and VP of Global Startups Darren Mowry. All insights in this analysis are derived from Kurian and Mowry's interview at the 2025 HUVTSP.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <main class="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
+        <section id="philosophy" class="mb-20 section-fade-in">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold tracking-tight text-slate-900">Thomas Kurian's Leadership Philosophy</h2>
+                <p class="mt-2 max-w-3xl mx-auto text-md text-slate-500">
+                   Kurian's approach combines structured, decentralized decision-making with a clear-eyed view of market dynamics. This section explores the core tenets of his strategy.
+                </p>
+            </div>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+                <div class="space-y-8">
+                    <div class="bg-white p-6 rounded-lg shadow-md card-hover">
+                        <h3 class="font-bold text-xl mb-2 flex items-center"><span class="text-2xl mr-3">🔄</span>Turn Weaknesses into Strengths</h3>
+                        <p class="text-slate-600 mb-2">Joining with only 2% market share, Kurian framed this "weakness" as a strategic advantage, justifying an open, multi-cloud approach that customers desired.</p>
+                        <p class="font-semibold text-blue-600 italic">"We realized you can take a weakness...but make it a strength."</p>
+                    </div>
+                     <div class="bg-white p-6 rounded-lg shadow-md card-hover">
+                        <h3 class="font-bold text-xl mb-2 flex items-center"><span class="text-2xl mr-3">🎯</span>Follow The Pareto Principle</h3>
+                        <p class="text-slate-600 mb-2">Kurian operates on the principle that 20% of products drive 80% of revenue, using this as a framework to force intense focus on what truly matters.</p>
+                        <p class="font-semibold text-blue-600 italic">"The important thing is not how do I build 150 products. But, how do I build the 10 that are going to make 90% of the money?"</p>
+                    </div>
+                     <div class="bg-white p-6 rounded-lg shadow-md card-hover">
+                        <h3 class="font-bold text-xl mb-2 flex items-center"><span class="text-2xl mr-3">🤝</span>Empower the Organization to Decide</h3>
+                        <p class="text-slate-600">He avoids being a bottleneck, providing frameworks so his teams can make coherent decisions quickly and independently, stimulating speed and autonomy.</p>
+                    </div>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-lg">
+                    <h3 class="text-center font-bold text-lg mb-4">Growth Story: Market Share (2019-Present)</h3>
+                    <div class="chart-container relative h-80 w-full max-w-xl mx-auto">
+                        <canvas id="marketShareChart"></canvas>
+                    </div>
+                    <p class="text-center text-sm text-slate-500 mt-4">This philosophy fueled Google Cloud's growth from 2% to nearly 19% market share, making it the fastest-growing major cloud provider.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="strategy" class="mb-20 section-fade-in">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold tracking-tight text-slate-900">Core Technical & Go-to-Market Strategy</h2>
+                <p class="mt-2 max-w-3xl mx-auto text-md text-slate-500">
+                   Google Cloud's differentiation is built on three technical pillars, supported by a disciplined global expansion plan.
+                </p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <div class="bg-white p-6 rounded-lg shadow-md card-hover lg:col-span-3">
+                    <h3 class="font-bold text-xl mb-4">The Three Pillars of Technical Strategy</h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                        <div>
+                            <div class="font-bold text-blue-600 mb-2">1. Performance & Efficiency</div>
+                            <p class="text-slate-600 text-sm">Leveraging custom TPUs to provide a more cost-effective and reliable platform, turning AI from a research cost into a predictable part of a company's cost of goods sold.</p>
+                        </div>
+                        <div>
+                            <div class="font-bold text-green-600 mb-2">2. Open Ecosystem</div>
+                             <p class="text-slate-600 text-sm">Operating on the principle that "one model won't rule it all," the platform offers choice, integrating Google's Gemini with models from partners like Anthropic and Meta.</p>
+                        </div>
+                        <div>
+                            <div class="font-bold text-red-600 mb-2">3. Focus on Agents</div>
+                             <p class="text-slate-600 text-sm">Moving beyond simple apps to "agents"—autonomous systems that can plan, reason, and act. Google builds foundational agents and enables partners to build specialized ones.</p>
+                        </div>
+                    </div>
+                </div>
+                 <div class="bg-white p-6 rounded-lg shadow-md card-hover lg:col-span-1">
+                     <h3 class="font-bold text-xl mb-4">Global Expansion</h3>
+                     <p class="text-slate-600 text-sm">A measured approach to scaling: start small (8 countries), build fully integrated local teams, and empower them to operate independently. <span class="font-bold">"It's better to be great in 15 countries than be terrible in 40."</span></p>
+                </div>
+            </div>
+        </section>
+        
+        <section id="future" class="mb-20 section-fade-in">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold tracking-tight text-slate-900">AI & The Future of Work</h2>
+                <p class="mt-2 max-w-3xl mx-auto text-md text-slate-500">
+                   Kurian sees AI not as a replacement for human jobs, but as a powerful assistant that will democratize complex fields and create unprecedented opportunities.
+                </p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="bg-white p-6 rounded-lg shadow-md card-hover">
+                    <div class="flex items-center mb-3">
+                        <span class="text-3xl mr-4 g-blue">⚕️</span>
+                        <h4 class="font-bold text-lg">AI in Medicine</h4>
+                    </div>
+                    <p class="text-slate-600">AI will be an indispensable tool to digest patient info, find clinical trials, and answer questions—freeing medical professionals to focus on human care.</p>
+                </div>
+                 <div class="bg-white p-6 rounded-lg shadow-md card-hover">
+                    <div class="flex items-center mb-3">
+                        <span class="text-3xl mr-4 g-green">💻</span>
+                        <h4 class="font-bold text-lg">AI in Programming</h4>
+                    </div>
+                    <p class="text-slate-600">Value will shift from expert coding to strategic thinking. AI will generate the code, but humans are needed to define the problems and design the solutions.</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-md card-hover">
+                     <div class="flex items-center mb-3">
+                        <span class="text-3xl mr-4 g-red">🎨</span>
+                        <h4 class="font-bold text-lg">AI in Creative Arts</h4>
+                    </div>
+                    <p class="text-slate-600">Just as smartphones made everyone a photographer, AI will give anyone the tools to create amazing content, lowering the barrier to entry in creative fields.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="advice" class="section-fade-in">
+             <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold tracking-tight text-slate-900">Actionable Advice for the Next Generation</h2>
+                <p class="mt-2 max-w-3xl mx-auto text-md text-slate-500">
+                  Key takeaways and strategies for founders and aspiring leaders from Thomas Kurian and Darren Mowry.
+                </p>
+            </div>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div class="bg-white p-8 rounded-lg shadow-lg">
+                    <h3 class="font-bold text-xl mb-4 text-slate-800">For Aspiring Leaders (from Thomas Kurian)</h3>
+                    <div class="space-y-4">
+                        <div class="border-l-4 border-blue-500 pl-4">
+                            <h4 class="font-semibold">On Taking Risks</h4>
+                            <p class="text-slate-600 text-sm">Once you decide to take a risk, your hard work is what manages the downside. "You do control how you influence the outcome."</p>
+                        </div>
+                    </div>
+                </div>
+                 <div class="bg-white p-8 rounded-lg shadow-lg">
+                    <h3 class="font-bold text-xl mb-4 text-slate-800">For Founders (from Darren Mowry)</h3>
+                     <div class="space-y-4">
+                        <div class="border-l-4 border-green-500 pl-4">
+                            <h4 class="font-semibold">Focus on the Right Layer</h4>
+                            <p class="text-slate-600 text-sm">The biggest opportunity is in building applications and agents on top of existing models, not in building the models themselves.</p>
+                        </div>
+                         <div class="border-l-4 border-green-500 pl-4">
+                            <h4 class="font-semibold">Leverage Your Partners</h4>
+                            <p class="text-slate-600 text-sm">Use the engineering resources from cloud providers like Google to experiment quickly and fill talent gaps before you can afford a large team.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <div class="pb-16">
+        <RelatedContent currentSlug="the-google-cloud-playbook" />
+    </div>
+</div>
+
+<style>
+    .g-blue { color: #4285F4; }
+    .g-red { color: #EA4335; }
+    .g-yellow { color: #FBBC05; }
+    .g-green { color: #34A853; }
+    
+    .section-fade-in { opacity: 0; transform: translateY(20px); transition: opacity 0.6s ease-out, transform 0.6s ease-out; }
+    .section-fade-in.visible { opacity: 1; transform: translateY(0); }
+
+    .card-hover { transition: transform 0.3s ease, box-shadow 0.3s ease; }
+    .card-hover:hover { transform: translateY(-5px); box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1); }
+</style>
+
+<script>
+    // --- Intersection Observer for fade-in animations ---
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+                observer.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.1 });
+    
+    document.querySelectorAll('.section-fade-in').forEach(section => {
+        observer.observe(section);
+    });
+
+    // --- Chart.js for Market Share ---
+    // Ensure Chart is available globally
+    declare const Chart: any;
+
+    const chartElement = document.getElementById('marketShareChart') as HTMLCanvasElement;
+    if (chartElement && typeof Chart !== 'undefined') {
+        const existingChart = Chart.getChart(chartElement);
+        if (existingChart) {
+            existingChart.destroy();
+        }
+
+        const marketShareCtx = chartElement.getContext('2d');
+        if (marketShareCtx) {
+            new Chart(marketShareCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Market Share 2019', 'Market Share 2024'],
+                    datasets: [{
+                        label: 'Market Share %',
+                        data: [2, 19],
+                        backgroundColor: ['#cccccc', '#4285F4'],
+                        borderColor: ['#999999', '#4285F4'],
+                        borderWidth: 1,
+                        barThickness: 50
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: (context: any) => `${context.raw}%`
+                            }
+                        },
+                    },
+                    scales: {
+                        x: {
+                            beginAtZero: true,
+                            max: 25,
+                            ticks: {
+                                callback: (value: any) => `${value}%`
+                            }
+                        }
+                    }
+                }
+            });
+        }
+    }
+</script>
