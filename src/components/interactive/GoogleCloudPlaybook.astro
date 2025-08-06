@@ -178,69 +178,66 @@ import RelatedContent from '../RelatedContent.astro';
 </style>
 
 <script>
-    // --- Intersection Observer for fade-in animations ---
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add('visible');
-                observer.unobserve(entry.target);
-            }
+    import { Chart, registerables } from 'chart.js';
+    import type { TooltipItem } from 'chart.js';
+
+    document.addEventListener('DOMContentLoaded', () => {
+        Chart.register(...registerables);
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.1 });
+        
+        document.querySelectorAll('.section-fade-in').forEach(section => {
+            observer.observe(section);
         });
-    }, { threshold: 0.1 });
-    
-    document.querySelectorAll('.section-fade-in').forEach(section => {
-        observer.observe(section);
-    });
 
-    // --- Chart.js for Market Share ---
-    // Ensure Chart is available globally
-    declare const Chart: any;
-
-    const chartElement = document.getElementById('marketShareChart') as HTMLCanvasElement;
-    if (chartElement && typeof Chart !== 'undefined') {
-        const existingChart = Chart.getChart(chartElement);
-        if (existingChart) {
-            existingChart.destroy();
-        }
-
-        const marketShareCtx = chartElement.getContext('2d');
-        if (marketShareCtx) {
-            new Chart(marketShareCtx, {
-                type: 'bar',
-                data: {
-                    labels: ['Market Share 2019', 'Market Share 2024'],
-                    datasets: [{
-                        label: 'Market Share %',
-                        data: [2, 19],
-                        backgroundColor: ['#cccccc', '#4285F4'],
-                        borderColor: ['#999999', '#4285F4'],
-                        borderWidth: 1,
-                        barThickness: 50
-                    }]
-                },
-                options: {
-                    indexAxis: 'y',
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { display: false },
-                        tooltip: {
-                            callbacks: {
-                                label: (context: any) => `${context.raw}%`
-                            }
-                        },
+        const canvas = document.getElementById('marketShareChart') as HTMLCanvasElement;
+        if (canvas) {
+            const ctx = canvas.getContext('2d');
+            if (ctx) {
+                new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Market Share 2019', 'Market Share 2024'],
+                        datasets: [{
+                            label: 'Market Share %',
+                            data: [2, 19],
+                            backgroundColor: ['#cccccc', '#4285F4'],
+                            borderColor: ['#999999', '#4285F4'],
+                            borderWidth: 1,
+                            barThickness: 50
+                        }]
                     },
-                    scales: {
-                        x: {
-                            beginAtZero: true,
-                            max: 25,
-                            ticks: {
-                                callback: (value: any) => `${value}%`
+                    options: {
+                        indexAxis: 'y',
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { display: false },
+                            tooltip: {
+                                callbacks: {
+                                    label: (context: TooltipItem<'bar'>) => `${context.raw}%`
+                                }
+                            },
+                        },
+                        scales: {
+                            x: {
+                                beginAtZero: true,
+                                max: 25,
+                                ticks: {
+                                    callback: (value: number | string) => `${value}%`
+                                }
                             }
                         }
                     }
-                }
-            });
+                });
+            }
         }
-    }
+    });
 </script>
