@@ -3,23 +3,23 @@ title: "Earthquake Damage Prediction with Deep Learning"
 description: "A machine learning project to predict post-earthquake building damage using the Nepal 2015 Earthquake Dataset and deep neural networks."
 publishDate: 2025-05-04
 tags: ["AI", "ML", "Earthquake", "Keras", "Python"]
-featured: true
 repoUrl: "https://colab.research.google.com/drive/18HbOpe4-QWwrWUYsObeiZMY4cvRVV8uI?usp=sharing"
+img1: "/images/projects/1/img1.webp"
 heroImage: "/images/projects/1/thumbnail.webp"
 intro: "This project aims to develop an AI model to predict post-earthquake building damage, supporting rescue teams in making informed decisions. The model leverages the Nepal 2015 Earthquake Dataset and deep learning techniques for optimal accuracy and class balance."
 datasetUrl: "https://www.drivendata.org/competitions/57/nepal-earthquake"
 ---
+import Accordion from '../../components/Accordion.astro';
 
-## Introduction
-
+<Accordion summary="Introduction">
 One of the biggest problems rescue operations face after a devastating earthquake is not knowing where to go because of the mess the destruction creates. In some regions neighborhoods may have collapsed, and in other regions only a couple of buildings may have collapsed. Additionally, in most cases communications are disrupted as well. Hence, it is impossible to reach real-time information. This situation forces rescue teams to make uninformed decisions to save as many lives as possible with the limited available information at that time.
 
 However, earthquakes and their effects are not completely random phenomena. There are many statistical analyses that can be used to predict the extent of an earthquake's effects. Especially, with the development of modern AI technologies, making such predictions more feasible than ever.
 
 This study focuses on developing an AI model that can make predictions about the damage a building will get post-earthquake based on structural characteristics to contribute to an informed decision-making process during rescue operations.
+</Accordion>
 
-## Phase 1: Definition & Data Collection
-
+<Accordion summary="Phase 1: Definition & Data Collection">
 Key features needed in the dataset:
 1.  Main Structural Characteristics: Age, height, foundation type etc.
 2.  Geologic Characteristics: Ground type, ground slope, etc.
@@ -42,9 +42,9 @@ As a result, the statistical models developed are limited to the conditions of t
 4.  The Turkey 2023 Earthquake was a recent and highly destructive occurrence that represents a valuable data source. It contains post-earthquake data from 10+ regions. However, most numerical datasets are not publicly available, and the available datasets are mostly low-resolution post-earthquake imagery data. Using this dataset may require extensive processing power and time with potentially limited favorable results.
 
 Considering the available data collection options, the best practice is to train the model on the Nepal 2015 Earthquake Dataset while utilizing every aspect of DNN accuracy optimization.
+</Accordion>
 
-## Phase 2: Exploratory Data Analysis
-
+<Accordion summary="Phase 2: Exploratory Data Analysis">
 The objective of this EDA is to understand the dataset's structure, identify key characteristics of the features, analyze the distribution of the target variable (building damage grade), and uncover relationships between features and damage outcomes. These insights are crucial for guiding subsequent data preprocessing, feature engineering, and model development steps aimed at predicting building damage levels.
 
 ### 1. Data Overview
@@ -130,9 +130,9 @@ Key numerical features analyzed include count_floors_pre_eq, age, area_percentag
 
 ### 7. Conclusion (EDA)
 This EDA confirms the dataset's richness and suitability for building a machine learning model to predict earthquake building damage. The analysis highlights the dominant influence of construction materials and location-based factors (proxied by geo IDs) in this specific event. Key challenges include handling the imbalanced target variable and efficiently encoding high-cardinality geographic features.
+</Accordion>
 
-## Phase 3: Preprocessing
-
+<Accordion summary="Phase 3: Preprocessing">
 ### 1. Dropping Features
 In this step, the features that proved to be ineffective in damage prediction in EDA will be dropped.
 
@@ -207,9 +207,9 @@ y_val_final = y_val.to_numpy()
 y_test_final = y_test.to_numpy()
 ```
 Now, all three sets are encoded and scaled. Additionally, all sets were converted to numpy arrays for their efficient structure, which contributes to faster training.
+</Accordion>
 
-## Phase 4: Model Development & Training
-
+<Accordion summary="Phase 4: Model Development & Training">
 I used scikit-learn, keras, pandas, numpy, and matplotlib libraries in python to develop the model. In order to account for the lack of data with desired quality and relation a DNN model will be used.
 
 The model was initiated with the following structure:
@@ -262,9 +262,9 @@ history = model.fit(
     verbose=1
 )
 ```
+</Accordion>
 
-## Phase 5: Testing & Evaluation
-
+<Accordion summary="Phase 5: Testing & Evaluation">
 <img src="/images/projects/1/9.webp" alt="Initial Model Loss and Accuracy Plots" class="my-6 rounded-lg shadow-md mx-auto block w-full h-auto" loading="lazy" />
 
 <div class="flex flex-col md:flex-row gap-6 my-6 items-start">
@@ -335,9 +335,9 @@ history = model.fit(
 The initial accuracy of the model at 73% is promisingly high without any optimization methods used.
 
 However, the distribution of accuracy across classes is very imbalanced. Especially in grade-1, the model has an accuracy below 50%. This is probably due to the imbalance in the original dataset. We can try to balance the weights in training to fix this issue. Afterwards, we can tune hyperparameters and optimize model structure to optimize model accuracy.
+</Accordion>
 
-## Phase 6: Optimization and Refinement
-
+<Accordion summary="Phase 6: Optimization and Refinement">
 ### 1. Balancing Weights Across Damage Categories
 At first, I tried balancing the weights statistically using class_weight function from scikit-learn. The function over-balanced the weights, causing the accuracy for grade-2 predictions to decrease significantly. Additionally, overall accuracy decreased by 5%.
 ```python
@@ -554,9 +554,9 @@ I did about 5–6 trials to manually optimize hyperparameters in this step. Neve
     </div>
 </div>
 Here, I made about 10 trials to optimize hidden layer, neuron and dropout layer numbers. I tried multiple structures and complexified the model as much as possible to enhance accuracy. However, I didn't see a substantial increase in overall accuracy, although there were some improvements in per-class metrics.
+</Accordion>
 
-## Phase 7: Final Model
-
+<Accordion summary="Phase 7: Final Model">
 After completing all 3 steps of the optimization phase and tens of trials, I built the final optimized model. This model was chosen as the optimum of the following features:
 - Accuracy
 - Efficiency
@@ -671,9 +671,9 @@ history_final = final_model.fit(
       </div>
     </div>
 </div>
+</Accordion>
 
-## Conclusion
-
+<Accordion summary="Conclusion">
 This project aimed to develop a ML model to predict post-earthquake damage in buildings to help rescue teams make informed decisions and plan the rescue operations more accurately to save more lives.
 
 The model was trained on the best dataset available: Nepal 2015 Earthquake Dataset. Because of limitations in the dataset (e.g., lack of earthquake diversity, missing seismic intensity measures) and challenges during training (e.g., dimensionality explosion from encoding), the model has limitations in generalizability.
@@ -681,12 +681,12 @@ The model was trained on the best dataset available: Nepal 2015 Earthquake Datas
 Afterwards, weight balancing, model structure optimization, and hyperparameter tuning methodologies were utilized to improve model accuracy. The final model achieved around 70–75% accuracy across all 3 damage grades. Although the model have not reached the desired accuracy results in this field, the potential of this modeling approach remains valid.
 
 I am confident that reliable models that can be used in real life scenarios can be achieved if the limitations faced during data collection and training are resolved.
+</Accordion>
 
-## Reflections
-
+<Accordion summary="Reflections">
 Firstly, the most challenging aspect of the project was finding the required data to train the model. I had to review tens of datasets and articles. Some datasets required authorization, some were randomly collected, and others complied only partially with the requirements. As I could not access the desired datasets, the model had serious limitations from the beginning. Despite all these challenges, I decided to try building a model. This experience highlighted the value of attempting to build a prototype even under imperfect conditions.
 
 Secondly, during the initial stages of development and preprocessing, I mistakenly applied encoding and scaling before splitting the dataset. This resulted in data leakage and inconsistencies in performance across the training, validation, and testing sets. I had to fix the problem by updating preprocessing from the beginning.
 
 Lastly, over-organizing the code slowed down the refinement process too much for me. Initially, I separated the model training into multiple cells. I then duplicated these cells for each refinement trial, adjusting the desired values. The separation of cells slowed down the process and required repetitive steps. Near the end, I re-organized the code into a single cell and started doing the adjustments on it to speed the process up.
-
+</Accordion>
