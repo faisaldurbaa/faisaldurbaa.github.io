@@ -58,13 +58,14 @@ const relatedContent = allContent
 ---
 
 {relatedContent.length > 0 && (
-  <section class="bg-white p-6 sm:p-8 border border-gray-200 rounded-lg shadow-sm mt-8">
-    <div class="text-center mb-12">
-      <h3 class="text-3xl font-bold text-gray-900 mb-2">Continue Exploring</h3>
-      <p class="text-gray-600">Discover more articles and projects</p>
-    </div>
-    
-    <div class="relative">
+  <section class="py-20 px-4">
+    <div class="container mx-auto max-w-7xl">
+      <div class="text-center mb-12">
+        <h3 class="text-3xl font-bold text-gray-900 mb-2">Continue Exploring</h3>
+        <p class="text-gray-600">Discover more articles and projects</p>
+      </div>
+      
+      <div class="relative mx-4">
       <div 
         id="related-content-scroll" 
         class="flex gap-6 overflow-x-auto scroll-smooth pb-4 scrollbar-hide"
@@ -108,6 +109,7 @@ const relatedContent = allContent
           </button>
         </>
       )}
+      </div>
     </div>
   </section>
 )}

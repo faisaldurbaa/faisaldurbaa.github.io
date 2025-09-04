@@ -10,6 +10,15 @@ const currentPath = Astro.url.pathname.replace(/\/$/, "");
 
 const isActiveLink = (linkHref: string) => {
   const normalizedLink = linkHref.replace(/\/$/, "");
+  
+  // Show Portfolio as active for all content pages
+  if (linkHref === "/portfolio/") {
+    return currentPath === normalizedLink || 
+           currentPath.startsWith("/blog/") ||
+           currentPath.startsWith("/projects/") ||
+           currentPath.startsWith("/courses/");
+  }
+  
   return currentPath === normalizedLink;
 };
 ---
