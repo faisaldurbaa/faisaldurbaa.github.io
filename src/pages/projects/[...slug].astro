@@ -103,9 +103,7 @@ const accordionItems = sections.reduce((acc, section) => {
     </FadeIn>
   </article>
   
-  <div class="container mx-auto max-w-7xl px-4 sm:px-8 pb-16">
-    <FadeIn>
-      <RelatedContent currentSlug={entry.slug} />
-    </FadeIn>
-  </div>
+  <FadeIn>
+    <RelatedContent currentSlug={entry.slug} />
+  </FadeIn>
 </Layout>
