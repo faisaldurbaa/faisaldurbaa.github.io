@@ -2,7 +2,7 @@
 title: "The History of the Internet"
 description: "The Internet's Evolution: From ARPANET to Web 3.0."
 publishDate: 2024-03-15
-tags: ["Internet", "History", "Technology", "Web"]
+tags: ["Technology", "Web"]
 heroImage: "/images/blogs/2-1-2.webp"
 ---
 
