@@ -1,0 +1,139 @@
+---
+title: "Custom Inventory Management System with Python"
+description: "A GUI-based automation tool to handle stock entry, sales, and reporting for a school dormitory."
+publishDate: 2023-12-13
+tags: ["Python", "GUI", "Automation"]
+featured: true
+repoUrl: "https://github.com/faisaldurbaa/inventory-management"
+heroImage: "/images/projects/3/thumbnail.webp"
+img1: "/images/projects/3/thumbnail.webp"
+intro: "Efficient resource flow is the backbone of any operational institution, yet many schools still rely on disjointed spreadsheets or pen-and-paper methods to track their assets. Recently, my school's principal approached me with a specific problem: the dormitory's inventory management was overwhelming the staff. They were struggling to track supplies accurately, leading to operational friction and inevitable human error."
+---
+import Accordion from '../../components/Accordion.astro';
+
+<Accordion summary="Introduction">
+Efficient resource flow is the backbone of any operational institution, yet many schools still rely on disjointed spreadsheets or pen-and-paper methods to track their assets. Recently, my school's principal approached me with a specific problem: the dormitory's inventory management was overwhelming the staff. They were struggling to track supplies accurately, leading to operational friction and inevitable human error.
+
+The reason is very clear: without a centralized digital tool, maintaining order in a high-volume environment is nearly impossible. As a 10th grader looking to apply my coding skills to real-world problems, I decided to build a solution for them. The goal was to replace manual tracking with a **GUI-based automation tool** that handles stock entry, sales, and reporting without requiring technical expertise from the staff. To achieve this, I utilized **Python** for the backend logic, **CustomTkinter** for a modern interface, and **openpyxl** for database management.
+</Accordion>
+
+<Accordion summary="System Architecture & Data Structure">
+When designing the data architecture, I had to choose between a robust SQL database or a file-based system. Considering the school's need for portability and the fact that this app needs to run on specific office computers without complex server setups, I decided to leverage a single Excel file (`database.xlsx`) as the backend.
+
+The system relies on three distinct sheets within the workbook to maintain data integrity:
+
+*   **İşlemler (Transactions):** The raw log of every input and output event, acting as the primary ledger.
+*   **Stok (Stock):** The calculated current state of inventory, tracking quantities and specific expiry dates.
+*   **Geçmiş (History):** An immutable audit trail that logs any deletions or modifications made to past records.
+
+To ensure the system is "plug-and-play" for the staff, I implemented a `file_control` function. This function acts as a safeguard, checking for the existence of the database upon launch. If the file is missing, the code automatically generates a new workbook and formats it with the correct headers, preventing runtime errors.
+
+```python
+def file_control(filename, sheet_1, header_1, sheet_2, header_2, sheet_3, header_3, stock=None, history=None):
+    files = os.listdir(os.getcwd())
+    if filename in files:
+        return
+    else:
+        # If the file doesn't exist, create a new workbook and format it
+        wb = Workbook()
+        sheet_one = wb.create_sheet(title=sheet_1)
+        # ... (header initialization logic)
+        wb.save(filename)
+        wb.close()
+```
+</Accordion>
+
+<Accordion summary="User Interface Design">
+For the interface, I moved away from the standard `tkinter` look. I utilized **CustomTkinter** to create a modern "dark mode" aesthetic that is easier on the eyes for staff working long hours.
+
+The layout is divided into two functional zones:
+1.  **Data Entry (Left):** A panel for inputting new products, conducting sales, or editing records.
+2.  **Data Visualization (Right):** A dynamic table view that displays the content of the "Transactions," "Stock," or "History" sheets.
+
+Notably, I bound the frame configuration to the window size events. This ensures that the interface is responsive; as the user resizes the window, the padding and element alignment adjust automatically using `frame.bind("<Configure>", update_paddings)`.
+</Accordion>
+
+<Accordion summary="Key Technical Features">
+### Automated ID Generation
+One of the primary requirements was to eliminate human error in assigning product codes. I developed an algorithm within the `next_product_code` function that automatically generates unique, sequential alphanumeric identifiers (e.g., "AA01" to "AA02"). This ensures that even if a staff member enters a generic name, the system tracks it as a unique entity.
+
+The logic handles the incrementation of characters once the numeric limit is reached:
+
+```python
+def next_product_code(file_data, name):
+    # ... existing code logic ...
+            if int(max_code_number) == 99:
+                number = "00"
+                if max_code_letters[1] == 'Z':
+                    letter2 = "A"
+                    if max_code_letters[0] == 'Z':
+                        raise ValueError("Item code sequence limit reached.")
+                    else:
+                        letter1 = chr(ord(max_code_letters[0] + 1))
+    # ...
+```
+
+### Dynamic Stock Calculation
+Updating stock levels is rarely a linear process of just adding a new row. The `new_to_totals` function manages this complexity. When a new transaction occurs, the system checks if the product—defined by name, brand, unit, and expiry date—already exists in the **Stok** sheet.
+
+If it exists, the system updates the quantity and the "Last Operation Date" of the existing record using `overwrite`. If it does not, a new row is appended. This prevents duplicate entries for identical items and keeps the stock view clean and aggregated.
+
+### Intelligent Archiving
+Performance optimization was a significant concern given the file-based backend. As Excel files grow, read/write operations with `openpyxl` can slow down. To mitigate this, I implemented an archiving mechanism. If the **İşlemler** (Transactions) sheet exceeds **500 entries**, the system automatically calls `file_output` to save a timestamped report (e.g., `20231025_raporu.xlsx`) and **regenerates the database file** with cleared transactions. This ensures the interface remains responsive while preserving historical data for administrative review.
+</Accordion>
+
+<Accordion summary="Deployment: From Script to Executable">
+Since the school staff does not have Python environments installed on their computers, distributing the raw `.py` file was not an option. I needed to convert the application into a standalone Windows executable (`.exe`).
+
+To achieve this, I used **PyInstaller**. This tool bundles the Python interpreter, the script, and all dependencies into a single file. Based on the configuration in my project, I used the following command to ensure the console window is hidden and the logo image is bundled correctly:
+
+```bash
+pyinstaller --noconsole --onefile --add-data "VDFL_logo.png;." app.py
+```
+
+*   `--noconsole`: Suppresses the terminal window so it looks like a native app.
+*   `--onefile`: Packages everything into a single `.exe` file.
+*   `--add-data`: Ensures the school logo (`VDFL_logo.png`) is included inside the executable's temporary directory during runtime. I also implemented a `base_path` check using `sys._MEIPASS` in the Python script so the app knows to look inside this temporary folder for the logo when running as an exe.
+
+The project is completely open-source, and all code, including the scripts and the ready-to-use executable, is available in the GitHub repo. You can access it directly here: [Link to GitHub Repository].
+</Accordion>
+
+<Accordion summary="Operational Impact & Statistics">
+After deploying the system at my school, the benefits were immediately measurable. By automating the calculations and data entry, the tool fundamentally changed how the staff operated:
+
+*   **Time Efficiency:** The time required for weekly stock reconciliation dropped by approximately **40%**, freeing up staff for other duties.
+*   **Data Volume:** In the first semester of operation, the system successfully tracked over **1,000 unique transactions**, maintaining zero data loss due to the archiving logic.
+*   **Error Reduction:** The implementation of input validation (e.g., preventing the sale of more items than are in stock via `errorbox`) reduced entry errors to near zero.
+</Accordion>
+
+<Accordion summary="Reflections">
+Developing this project was a massive learning opportunity for me. While the final product works well, the process was not linear. The most challenging aspect was implementing the `edit` function for past transactions.
+
+I initially underestimated the complexity of modifying a historical record. If a staff member changed the quantity of a transaction from a month ago, the system had to first **reverse** the impact of the old value on the current stock and then apply the new value.
+
+```python
+# Undo the operation, and update last operation date and quantity for the product:
+for row in stk[1:]:
+    if row[0] == line[1]: 
+        nqt = float(row[4]) - float(line[5]) # Reverse logic: subtract the old transaction amount
+        lst = []
+        for i in trs[1:]:
+            # Recalculate last operation date excluding the current one
+            if i[1] == row[0] and i[3] == row[2] and i[4] == row[3] and i[7] == row[6]:
+                lst.append(i[6])
+
+        last_opr = max(lst) if len(lst) > 0 else "00/00/0000"
+        new_row = [row[0], row[1], row[2], row[3], nqt, last_opr, row[6]]
+        overwrite(new_row, stk.index(row) + 1, file, sheet2)
+```
+
+This snippet effectively "rewinds" time for that specific item's stock before applying the new, corrected value. In my first few attempts, this logic led to calculation errors where stock levels would drift from reality. The lesson is that modifying data is infinitely harder than creating it. I had to rewrite the logic multiple times to ensure the `overwrite` function strictly synchronized the **Stok** sheet.
+
+Furthermore, the decision to use Excel implies a limitation regarding concurrency. The system is optimal for a single computer, which suits the dorm's office setup. However, this experience highlighted the value of SQL databases for multi-user environments—a skill I plan to learn immediately following this project.
+</Accordion>
+
+<Accordion summary="Conclusion">
+This project was a great example of bridging the gap between coding theory and real-world application. It demonstrates that with a thoughtful interface and robust backend logic, even a student project can solve genuine operational problems.
+
+With dedication to acquiring the necessary skills and experience, I believe anyone can build tools that create order from chaos. I am proud that this tool is serving my school effectively, and I am excited to see how this tool can help other schools improve their inventory management operations.
+</Accordion>
