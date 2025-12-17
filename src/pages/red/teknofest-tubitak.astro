@@ -3,8 +3,8 @@ import Layout from '../../layouts/Layout.astro';
 import FadeIn from '../../components/FadeIn.astro';
 
 const seo = {
-  title: "Teknofest & TUBITAK Project Reports",
-  description: "Select TEKNOFEST and TUBITAK competition projects with concise summaries and report links.",
+  title: "TEKNOFEST & TUBITAK Project Showcase",
+  description: "Flagship TEKNOFEST and TUBITAK competition projects I represented my school with, including concise summaries and report links.",
 };
 
 type ProjectLink = { label: string; href: string };
@@ -39,21 +39,24 @@ const projects: Project[] = [
     ],
     theme: "safety",
   },
+
   {
-    title: "Dynamic Truck Underride Guard",
-    focus: "Smart Transportation",
-    roles: ["Co-Lead Developer"],
-    competition: "Smart Transportation",
-    yearTag: "TEKNOFEST 2023",
+    title: "E-seed — Autonomous Reforestation",
+    focus: "Disaster Management",
+    roles: ["Co-Lead Developer", 'Mechatronics'],
+    competition: "Disaster Management",
+    yearTag: "TEKNOFEST 2024",
     problem:
-      "Rear-end underride crashes are fatal when trucks lack effective guards; fixed bars hinder reversing to docks so they're often unusable or absent.",
+      "Erosion and deforestation persist because reforestation is slow, labor-heavy, and often late to high-risk areas.",
     solution:
-      "Hydraulic rear guard controlled by Arduino: stays low during driving for underride protection, auto-raises only in reverse for dock access.",
+      "UAV with LIDAR/camera maps terrain, on-board analysis flags erosion hotspots, then drops humidity-triggered self-burying E-seeds into target zones.",
     links: [
-      { label: "Project Report", href: "https://pdfhost.io/v/qJdG3th3XJ_truck-project-teknofest-2023" },
+      { label: "Project Report", href: "https://pdfhost.io/v/HvCKNaAZb7_eseed-project-teknofest-2024" },
+      { label: "Presentation", href: "https://pdfhost.io/v/eu9KPjnYaB_eseed-presentation-teknofest-2024" },
     ],
-    theme: "safety",
+    theme: "environment",
   },
+
   {
     title: "AIPTS — AI ICU Patient Monitoring",
     focus: "Health & First Aid",
@@ -69,6 +72,55 @@ const projects: Project[] = [
     ],
     theme: "health",
   },
+
+  {
+    title: "AI-Powered Physics Graph Generator",
+    focus: "Educational Technology",
+    roles: ["Team Lead"],
+    competition: "Educational Technologies",
+    yearTag: "TEKNOFEST 2025",
+    problem:
+      "Students struggle to turn physics word problems into correct motion graphs, hindering comprehension of core concepts.",
+    solution:
+      "Web app using a Gemini LLM parses uploaded questions and generates position/velocity/energy graphs in real time for immediate visual feedback.",
+    links: [
+      { label: "Project Report", href: "https://pdfhost.io/v/BTZe5pjbs6_physics-teknofest-2025" },
+    ],
+    theme: "education",
+  },
+
+  {
+    title: "Dynamic Truck Underride Guard",
+    focus: "Smart Transportation",
+    roles: ["Co-Lead Developer"],
+    competition: "Smart Transportation",
+    yearTag: "TEKNOFEST 2023",
+    problem:
+      "Rear-end underride crashes are fatal when trucks lack effective guards; fixed bars hinder reversing to docks so they're often unusable or absent.",
+    solution:
+      "Hydraulic rear guard controlled by Arduino: stays low during driving for underride protection, auto-raises only in reverse for dock access.",
+    links: [
+      { label: "Project Report", href: "https://pdfhost.io/v/qJdG3th3XJ_truck-project-teknofest-2023" },
+    ],
+    theme: "safety",
+  },
+
+  {
+    title: "DURAY — School Nutrition Planner",
+    focus: "Data-Driven Health",
+    roles: ["Team Lead"],
+    competition: "TUBITAK Research Projects",
+    yearTag: "TUBITAK 2024",
+    problem:
+      "School cafeterias use generic menus, causing both obesity and malnutrition across BMI groups.",
+    solution:
+      "Python tool classifies students by BMI, applies Schofield-based needs, and adjusts weekly menus with substitution suggestions to balance nutrition and reduce waste.",
+    links: [
+      { label: "Project Report", href: "https://pdfhost.io/v/Y93fYtywb5_DURAYPROJERAPORU" },
+    ],
+    theme: "health",
+  },
+
   {
     title: "Piezo-Powered Wheelchair Visibility",
     focus: "Barrier-Free Mobility",
@@ -85,52 +137,7 @@ const projects: Project[] = [
     ],
     theme: "accessibility",
   },
-  {
-    title: "DURAY — School Nutrition Planner",
-    focus: "Data-Driven Health",
-    roles: ["Team Lead"],
-    competition: "TUBITAK Research Projects",
-    yearTag: "TUBITAK 2024",
-    problem:
-      "School cafeterias use generic menus, causing both obesity and malnutrition across BMI groups.",
-    solution:
-      "Python tool classifies students by BMI, applies Schofield-based needs, and adjusts weekly menus with substitution suggestions to balance nutrition and reduce waste.",
-    links: [
-      { label: "Project Report", href: "https://pdfhost.io/v/Y93fYtywb5_DURAYPROJERAPORU" },
-    ],
-    theme: "health",
-  },
-  {
-    title: "E-seed — Autonomous Reforestation",
-    focus: "Disaster Management",
-    roles: ["Team Member"],
-    competition: "Disaster Management",
-    yearTag: "TEKNOFEST 2024",
-    problem:
-      "Erosion and deforestation persist because reforestation is slow, labor-heavy, and often late to high-risk areas.",
-    solution:
-      "UAV with LIDAR/camera maps terrain, on-board analysis flags erosion hotspots, then drops humidity-triggered self-burying E-seeds into target zones.",
-    links: [
-      { label: "Project Report", href: "https://pdfhost.io/v/HvCKNaAZb7_eseed-project-teknofest-2024" },
-      { label: "Presentation", href: "https://pdfhost.io/v/eu9KPjnYaB_eseed-presentation-teknofest-2024" },
-    ],
-    theme: "environment",
-  },
-  {
-    title: "AI-Powered Physics Graph Generator",
-    focus: "Educational Technology",
-    roles: ["Team Lead"],
-    competition: "Educational Technologies",
-    yearTag: "TEKNOFEST 2025",
-    problem:
-      "Students struggle to turn physics word problems into correct motion graphs, hindering comprehension of core concepts.",
-    solution:
-      "Web app using a Gemini LLM parses uploaded questions and generates position/velocity/energy graphs in real time for immediate visual feedback.",
-    links: [
-      { label: "Project Report", href: "https://pdfhost.io/v/BTZe5pjbs6_physics-teknofest-2025" },
-    ],
-    theme: "education",
-  },
+
 ];
 
 const themeBadges: Record<Project["theme"], { label: string; color: string }> = {
@@ -142,14 +149,17 @@ const themeBadges: Record<Project["theme"], { label: string; color: string }> = 
 };
 ---
 <Layout seo={seo}>
-  <div class="container mx-auto max-w-6xl px-4 sm:px-8 py-16">
+  <div class="container mx-auto max-w-6xl px-4 sm:px-8 py-8">
     <FadeIn>
-      <section class="bg-white/70 backdrop-blur-sm border border-gray-200/60 rounded-2xl shadow-lg p-8 sm:p-10">
-        <p class="text-sm font-semibold text-accent uppercase tracking-wide mb-3">Competition Showcase</p>
-        <h1 class="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">Project Reports</h1>
-        <p class="text-lg text-gray-700 leading-relaxed mb-6">
-          Curated TEKNOFEST and TUBITAK projects with concise summaries and direct report links.
+      <section class="bg-white/70 backdrop-blur-sm border border-gray-200/60 rounded-2xl shadow-lg p-5 sm:p-6">
+        <h1 class="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">TEKNOFEST & TUBITAK PROJECT SHOWCASE</h1>
+        <p class="text-base text-gray-700 leading-relaxed mb-2">
+          Main competition projects I represented my school with across TEKNOFEST and TUBITAK, with concise summaries and direct report links.
         </p>
+        <div class="text-sm text-gray-700 space-y-1.5 mb-3">
+          <p><span class="font-semibold text-gray-900">TEKNOFEST</span> — Aviation, Space, and Technology Festival; Türkiye's national competition for student-led hardware and software innovation.</p>
+          <p><span class="font-semibold text-gray-900">TUBITAK</span> — Scientific and Technological Research Council of Turkey; runs nationwide research project contests for students.</p>
+        </div>
         <div class="flex flex-wrap gap-3">
           <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gray-100 text-gray-700 text-sm font-semibold">
             7 projects
@@ -164,7 +174,7 @@ const themeBadges: Record<Project["theme"], { label: string; color: string }> = 
       </section>
     </FadeIn>
 
-    <div class="mt-10 grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch">
+    <div class="mt-6 grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch">
       {projects.map((project) => {
         const badge = themeBadges[project.theme];
         return (
