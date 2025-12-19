@@ -2,6 +2,8 @@
   "extends": "astro/tsconfigs/strictest",
   "compilerOptions": {
     "jsx": "preserve",
-    "jsxImportSource": "astro"
-  }
+    "jsxImportSource": "astro",
+    "verbatimModuleSyntax": false
+  },
+  "include": ["src", ".astro/types.d.ts", "src/env.d.ts"]
 }
