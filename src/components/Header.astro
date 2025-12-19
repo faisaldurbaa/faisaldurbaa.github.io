@@ -118,13 +118,15 @@ const isActiveLink = (linkHref: string) => {
     const hamburgerIcon = document.getElementById('hamburger-icon');
     const closeIcon = document.getElementById('close-icon');
     const navShell = document.getElementById('nav-shell');
-    if (navShell?.dataset.bound === 'true') return;
-    if (navShell) navShell.dataset.bound = 'true';
+    if (!navShell) return;
+    const isBound = navShell.dataset.bound === 'true';
+    if (!isBound) navShell.dataset.bound = 'true';
     
     // Sliding Pill Logic
     const desktopNav = document.querySelector('nav.hidden.md\\:flex');
     const pill = document.getElementById('nav-pill');
-    const navLinks = desktopNav?.querySelectorAll('a');
+    const desktopLinks = desktopNav?.querySelectorAll<HTMLAnchorElement>('a') ?? [];
+    const mobileLinks = mobileMenu?.querySelectorAll<HTMLAnchorElement>('a') ?? [];
 
     const computeActive = (href: string) => {
       const currentPath = window.location.pathname.replace(/\/$/, '');
@@ -143,22 +145,48 @@ const isActiveLink = (linkHref: string) => {
     };
 
     const updateActiveLinks = () => {
-      const allLinks = document.querySelectorAll<HTMLAnchorElement>('nav a');
-      allLinks.forEach((link) => {
+      const desktopActiveClasses = ['text-accent', 'bg-gray-900/5'];
+      const desktopInactiveClasses = ['text-gray-600', 'hover:text-accent'];
+      const mobileActiveClasses = ['bg-accent', 'text-white', 'font-semibold', 'pl-6', 'shadow-md'];
+      const mobileInactiveClasses = ['text-gray-600', 'hover:bg-gray-100/50', 'hover:text-accent', 'hover:pl-5'];
+
+      desktopLinks.forEach((link) => {
         const href = link.getAttribute('href') || '';
         const active = computeActive(href);
         link.dataset.active = active ? 'true' : 'false';
+        link.classList.remove(
+          'text-white',
+          ...desktopActiveClasses,
+          ...desktopInactiveClasses
+        );
         if (active) {
-          link.classList.add('text-accent', 'bg-gray-900/5');
+          link.classList.add(...desktopActiveClasses);
           link.setAttribute('aria-current', 'page');
         } else {
-          link.classList.remove('text-accent', 'bg-gray-900/5');
+          link.classList.add(...desktopInactiveClasses);
+          link.removeAttribute('aria-current');
+        }
+      });
+
+      mobileLinks.forEach((link) => {
+        const href = link.getAttribute('href') || '';
+        const active = computeActive(href);
+        link.dataset.active = active ? 'true' : 'false';
+        link.classList.remove(
+          ...mobileActiveClasses,
+          ...mobileInactiveClasses
+        );
+        if (active) {
+          link.classList.add(...mobileActiveClasses);
+          link.setAttribute('aria-current', 'page');
+        } else {
+          link.classList.add(...mobileInactiveClasses);
           link.removeAttribute('aria-current');
         }
       });
     };
 
-    function updatePill(target : any) {
+    function updatePill(target: HTMLElement | null) {
       if (!desktopNav || !pill || !target) return;
 
       const navRect = desktopNav.getBoundingClientRect();
@@ -174,7 +202,7 @@ const isActiveLink = (linkHref: string) => {
       pill.style.opacity = '1';
 
       // Update text colors for contrast
-      navLinks?.forEach(link => {
+      desktopLinks.forEach(link => {
         if (link === target) {
           link.classList.remove('text-gray-600', 'hover:text-accent', 'text-accent');
           link.classList.add('text-white');
@@ -185,42 +213,34 @@ const isActiveLink = (linkHref: string) => {
       });
     }
 
-    if (desktopNav && pill && navLinks) {
-        updateActiveLinks();
-        // Initial Position
-        const activeLink = desktopNav.querySelector('[data-active="true"]');
-        if (activeLink) {
-            // Disable transition for initial placement
-            pill.style.transition = 'none';
-            // Use requestAnimationFrame to ensure layout is ready
-            requestAnimationFrame(() => {
-               updatePill(activeLink);
-               // Force reflow to apply the position without transition
-               void pill.offsetWidth;
-               // Re-enable transition
-               pill.style.transition = '';
-            });
-        }
+    const positionPill = (immediate = false) => {
+      if (!desktopNav || !pill || desktopLinks.length === 0) return;
+      const activeLink = desktopNav.querySelector('[data-active="true"]') as HTMLElement | null;
+      if (!activeLink) {
+        pill.style.opacity = '0';
+        return;
+      }
+      const previous = pill.style.transition;
+      if (immediate) pill.style.transition = 'none';
+      requestAnimationFrame(() => {
+        updatePill(activeLink);
+        void pill.offsetWidth;
+        if (immediate) pill.style.transition = previous;
+      });
+    };
 
-        // Hover Effects
-        navLinks.forEach(link => {
-            link.addEventListener('mouseenter', () => updatePill(link));
-        });
-
-        desktopNav.addEventListener('mouseleave', () => {
-            const active = desktopNav.querySelector('[data-active="true"]');
-            if (active) updatePill(active);
-            else pill.style.opacity = '0'; // Hide if no active link
-        });
+    function setMenuState(open: boolean) {
+      if (!mobileMenuButton || !mobileMenu || !hamburgerIcon || !closeIcon) return;
+      mobileMenuButton.setAttribute('aria-expanded', open ? 'true' : 'false');
+      mobileMenu.classList.toggle('hidden', !open);
+      hamburgerIcon.classList.toggle('hidden', open);
+      closeIcon.classList.toggle('hidden', !open);
     }
 
     function toggleMenu() {
       if (!mobileMenuButton || !mobileMenu || !hamburgerIcon || !closeIcon) return;
       const isExpanded = mobileMenuButton.getAttribute('aria-expanded') === 'true';
-      mobileMenuButton.setAttribute('aria-expanded', (!isExpanded).toString());
-      mobileMenu.classList.toggle('hidden');
-      hamburgerIcon.classList.toggle('hidden');
-      closeIcon.classList.toggle('hidden');
+      setMenuState(!isExpanded);
     }
 
     function updateNavState(immediate = false) {
@@ -267,28 +287,33 @@ const isActiveLink = (linkHref: string) => {
     }
 
     function setupNavClickListeners() {
-      const links = document.querySelectorAll('nav a, a[href^="/"]');
-      links.forEach((link) => {
-        link.addEventListener('click', () => {
-          if (navShell && navShell.dataset.scrolled === 'true') {
-            sessionStorage.setItem('nav-was-floating', 'true');
-          }
-        });
+      document.addEventListener('click', (event) => {
+        const target = event.target as HTMLElement | null;
+        const link = target?.closest('a[href]') as HTMLAnchorElement | null;
+        if (!link) return;
+        const href = link.getAttribute('href') || '';
+        if (!href.startsWith('/')) return;
+        if (navShell.dataset.scrolled === 'true') {
+          sessionStorage.setItem('nav-was-floating', 'true');
+        }
       });
     }
 
     // Event Listeners
-    if (mobileMenuButton) {
-      mobileMenuButton.addEventListener('click', toggleMenu);
-    }
+    if (!isBound) {
+      if (mobileMenuButton) {
+        mobileMenuButton.addEventListener('click', toggleMenu);
+      }
 
-    if (mobileMenu) {
-      mobileMenu.addEventListener('click', (e) => {
-        const target = e.target as HTMLElement | null;
-        if (target && target.tagName === 'A') {
-          toggleMenu();
-        }
-      });
+      if (mobileMenu) {
+        mobileMenu.addEventListener('click', (e) => {
+          const target = e.target as HTMLElement | null;
+          const link = target?.closest('a');
+          if (link) {
+            setMenuState(false);
+          }
+        });
+      }
     }
 
     // Scroll handling with cleanup
@@ -303,17 +328,28 @@ const isActiveLink = (linkHref: string) => {
         }
     };
     
-    window.addEventListener('scroll', onScroll, { passive: true });
+    if (!isBound) {
+      window.addEventListener('scroll', onScroll, { passive: true });
+      setupNavClickListeners();
 
-    // Cleanup on navigation to prevent memory leaks and stale references
-    document.addEventListener('astro:before-swap', () => {
-        window.removeEventListener('scroll', onScroll);
-    }, { once: true });
+      if (desktopNav && pill && desktopLinks.length > 0) {
+        desktopLinks.forEach(link => {
+          link.addEventListener('mouseenter', () => updatePill(link));
+        });
 
-    // Initial run
-    setupNavClickListeners();
-    handleStickBack();
+        desktopNav.addEventListener('mouseleave', () => {
+          const active = desktopNav.querySelector('[data-active="true"]') as HTMLElement | null;
+          if (active) updatePill(active);
+          else pill.style.opacity = '0';
+        });
+      }
+    }
+
+    // Initial run / refresh
     updateActiveLinks();
+    positionPill(true);
+    setMenuState(false);
+    handleStickBack();
   }
 
   // Run on initial load and after every navigation
@@ -323,8 +359,6 @@ const isActiveLink = (linkHref: string) => {
     init();
   }
   document.addEventListener('astro:after-swap', () => {
-    const navShell = document.getElementById('nav-shell');
-    if (navShell) navShell.dataset.bound = 'false';
     init();
   });
 </script>

@@ -18,8 +18,9 @@ pnpm-debug.log*
 
 devnotes.md
 
-CLAUDE.md
+
 .vscode/
 *.code-workspace
+CLAUDE.md
 AGENTS.md
 GEMINI.md
