@@ -19,8 +19,8 @@ interface Props {
 const { seo: seoProp, frontmatter } = Astro.props;
 
 const seo = seoProp || {
-  title: frontmatter?.title,
-  description: frontmatter?.description,
+  title: frontmatter?.title ?? '',
+  description: frontmatter?.description ?? '',
   image: frontmatter?.heroImage,
 };
 ---
