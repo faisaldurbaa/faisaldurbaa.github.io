@@ -1,76 +1,158 @@
 ---
 import { Image } from 'astro:assets';
+import { getCollection, type CollectionEntry } from 'astro:content';
 import { Icon } from 'astro-icon/components';
 import profilePic from '../assets/profile.webp';
+import competitionProjects from '../data/competitionProjects';
 
-const desktopIcons = [
+const blogEntries = await getCollection('blog');
+const projectEntries = await getCollection('projects');
+const courseEntries = (await getCollection('courses')).filter(
+  (course: CollectionEntry<'courses'>) => course.id.endsWith('index.mdx') || course.id.endsWith('index.md')
+);
 
-  { name: 'mdi:language-python', classes: 'top-[15%] left-[20%] w-16 h-16 -rotate-12 text-gray-400/90' },
-  { name: 'mdi:language-typescript', classes: 'bottom-[18%] right-[22%] w-14 h-14 rotate-6 text-gray-400/90' },
-  { name: 'mdi:git', classes: 'top-[60%] left-[15%] w-16 h-16 rotate-12 text-gray-400/80' },
-  { name: 'mdi:terminal', classes: 'top-[15%] right-[35%] w-14 h-14 -rotate-6 text-gray-400/90' },
-  { name: 'mdi:atom', classes: 'top-[45%] right-[15%] w-24 h-24 -rotate-12 text-gray-400/95' },
-  { name: 'mdi:dna', classes: 'top-[20%] right-[22%] w-14 h-14 rotate-12 text-gray-400/80' },
-  { name: 'mdi:chart-bar', classes: 'bottom-[40%] right-[30%] w-16 h-16 rotate-3 text-gray-400/90' },
-  { name: 'mdi:brain', classes: 'top-[25%] left-[30%] w-12 h-12 -rotate-6 text-gray-400/80' },
-  { name: 'mdi:sigma', classes: 'top-[70%] right-[30%] w-14 h-14 rotate-12 text-gray-400/95' },
-  { name: 'mdi:cube-outline', classes: 'bottom-[20%] left-[25%] w-20 h-20 -rotate-12 text-gray-400/90' },
-  { name: 'mdi:react', classes: 'top-[5%] right-[48%] w-14 h-14 rotate-15 text-gray-400/90' },
-  { name: 'mdi:nodejs', classes: 'bottom-[40%] left-[30%] w-16 h-16 -rotate-15 text-gray-400/80' },
-  { name: 'mdi:database', classes: 'top-[80%] left-[40%] w-14 h-14 rotate-8 text-gray-400/95' },
-  { name: 'mdi:cloud-outline', classes: 'top-[12%] left-[35%] w-20 h-20 -rotate-8 text-gray-400/80' },
-  { name: 'mdi:test-tube', classes: 'top-[75%] right-[15%] w-12 h-12 rotate-15 text-gray-400/90' },
-  { name: 'mdi:satellite-variant', classes: 'bottom-[40%] left-[18%] w-14 h-14 -rotate-15 text-gray-400/95' },
-  { name: 'mdi:robot-industrial', classes: 'bottom-[5%] right-[40%] w-16 h-16 rotate-10 text-gray-400/80' },
-  { name: 'mdi:chart-bubble', classes: 'bottom-[60%] right-[45%] w-12 h-12 -rotate-10 text-gray-400/90' },
-  { name: 'mdi:server', classes: 'top-[55%] right-[40%] w-14 h-14 rotate-5 text-gray-400/95' },
-  { name: 'mdi:flask', classes: 'bottom-[35%] left-[40%] w-12 h-12 -rotate-5 text-gray-400/80' },
-];
+const stats = {
+  totalProjects: projectEntries.length + competitionProjects.length + courseEntries.length,
+  blogPosts: blogEntries.length,
+  awards: 3,
+};
 
-const mobileIcons = [
-  { name: 'mdi:code-braces', classes: 'top-[15%] left-[8%] w-10 h-10 -rotate-12 text-gray-400/90' },
-  { name: 'mdi:atom', classes: 'top-[20%] right-[5%] w-14 h-14 rotate-12 text-gray-400/95' },
-  { name: 'mdi:chart-line', classes: 'bottom-[15%] right-[8%] w-12 h-12 rotate-6 text-gray-400/90' },
-  { name: 'mdi:brain', classes: 'bottom-[20%] left-[5%] w-12 h-12 -rotate-6 text-gray-400/80' },
-  { name: 'mdi:terminal', classes: 'top-[15%] right-[35%] w-14 h-14 -rotate-6 text-gray-400/90' },
+const backgroundIcons = [
+  { name: 'mdi:language-python', style: 'top: 15%; left: 5%; transform: rotate(-15deg);' },
+  { name: 'mdi:database', style: 'top: 10%; right: 10%; transform: rotate(10deg);' },
+  { name: 'mdi:cloud', style: 'top: 35%; left: 7%; transform: rotate(5deg);' },
+  { name: 'mdi:api', style: 'bottom: 55%; right: 5%; transform: rotate(-10deg);' },
+  { name: 'mdi:docker', style: 'bottom: 65%; right: 75%; transform: rotate(-20deg);' },
+  { name: 'mdi:git', style: 'top: 5%; left: 26%; transform: rotate(10deg);' },
+  { name: 'mdi:linux', style: 'bottom: 45%; right: 23%; transform: rotate(-5deg);' },
+  { name: 'mdi:aws', style: 'top: 25%; right: 20%; transform: rotate(25deg);' },
+  { name: 'mdi:code-braces', style: 'bottom: 45%; left: 20%; transform: rotate(-15deg);' },
+  { name: 'mdi:terminal', style: 'top: 50%; left: 85%; transform: rotate(10deg);' },
+  { name: 'mdi:chip', style: 'top: 55%; right: 85%; transform: rotate(-10deg);' },
+  { name: 'mdi:web', style: 'top: 7%; right: 25%; transform: rotate(5deg);' },
 ];
 ---
-<section class="relative text-center py-20 overflow-hidden">
-  
-  <div class="absolute inset-0 z-0 hidden md:block">
-    {desktopIcons.map((icon, index) => (
-      <Icon 
-        name={icon.name} 
-        class:list={[ "absolute animate-float", icon.classes ]}
-        style={`animation-delay: ${index * 600}ms; animation-duration: ${8 + index % 5}s;`}
-      />
-    ))}
-  </div>
+<section class="relative overflow-hidden py-20">
+  <div class="mx-auto w-full max-w-[1800px] px-[clamp(3.25rem,8vw,7.25rem)]">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-10 items-stretch">
+      <div class="flex flex-col justify-center space-y-6 h-full">
+        <div class="space-y-3">
+          <h1 class="text-4xl md:text-5xl font-bold text-gray-900 leading-tight">
+            I build AI-first tools and launch-ready prototypes.
+          </h1>
+          <p class="text-lg text-gray-700 max-w-2xl">
+            Student developer shipping across AI, data science, web, and software - focused on functionality, performance, and reliability.
+          </p>
+        </div>
+        <div class="flex flex-col sm:flex-row gap-3 w-full">
+          <a href="/projects/" class="flex-1 inline-flex items-center justify-center gap-3 px-5 py-3 rounded-xl bg-gradient-to-r from-accent to-slate-900 text-white font-semibold shadow-lg shadow-accent/25 hover:shadow-accent/35 transition-all duration-200 hover:-translate-y-[1px] w-full sm:w-auto">
+            <Icon name="mdi:rocket-launch" class="w-5 h-5" />
+            <span>View Projects</span>
+          </a>
+          <a href="/contact/" class="flex-1 inline-flex items-center justify-center gap-3 px-5 py-3 rounded-xl border border-accent/30 bg-white/80 text-accent font-semibold shadow-sm hover:border-accent hover:bg-accent/10 hover:shadow-md transition-all duration-200 w-full sm:w-auto">
+            <Icon name="mdi:email-fast-outline" class="w-5 h-5" />
+            <span>Contact Me</span>
+          </a>
+        </div>
+        <div class="grid grid-cols-3 gap-3 sm:gap-4 text-center">
+          <div class="stat-card">
+            <p class="text-xs sm:text-sm text-gray-500 whitespace-nowrap">Projects</p>
+            <p class="text-xl sm:text-3xl font-bold text-gray-900 counter leading-none whitespace-nowrap" data-target={stats.totalProjects}>0</p>
+          </div>
+          <div class="stat-card">
+            <p class="text-xs sm:text-sm text-gray-500 whitespace-nowrap">Blog posts</p>
+            <p class="text-xl sm:text-3xl font-bold text-gray-900 counter leading-none whitespace-nowrap" data-target={stats.blogPosts}>0</p>
+          </div>
+          <div class="stat-card">
+            <p class="text-xs sm:text-sm text-gray-500 whitespace-nowrap">Awards</p>
+            <p class="text-xl sm:text-3xl font-bold text-gray-900 counter leading-none whitespace-nowrap" data-target={stats.awards}>0</p>
+          </div>
+        </div>
+      </div>
 
-  <div class="absolute inset-0 z-0 block md:hidden">
-    {mobileIcons.map((icon, index) => (
-      <Icon 
-        name={icon.name} 
-        class:list={[ "absolute animate-float", icon.classes ]}
-        style={`animation-delay: ${index * 600}ms; animation-duration: ${8 + index % 5}s;`}
-      />
-    ))}
-  </div>
+      <div class="relative h-full">
+        <div class="absolute -inset-1 bg-gradient-to-br from-accent/10 via-white to-white rounded-3xl blur-2xl"></div>
+        <div class="relative rounded-3xl bg-white/80 backdrop-blur-xl border border-white/70 shadow-xl p-6 flex flex-col items-center gap-4 overflow-hidden h-full min-h-[400px] justify-center">
+           {/* Background Icons */}
+           <div class="absolute inset-0 pointer-events-none overflow-hidden">
+            {backgroundIcons.map((icon) => (
+              <div class="absolute text-slate-900/10" style={icon.style}>
+                <Icon name={icon.name} class="w-12 h-12" />
+              </div>
+            ))}
+          </div>
 
-  <div class="relative z-10">
-    <Image 
-      src={profilePic}
-      alt="A photo of Faisal Durbaa"
-      width={600}
-      height={600}
-      quality={90}
-      loading="eager"
-      fetchpriority="high"
-      class="w-72 h-72 rounded-full border-4 border-accent shadow-lg mx-auto mb-6"
-    />
-    <h1 class="text-5xl font-bold">Faisal Durbaa</h1>
-    <p class="text-xl text-gray-600 mt-4 max-w-2xl mx-auto px-4">
-      A Curious Young Man
-    </p>
+          <div class="relative z-10">
+            <span class="absolute inset-0 rounded-full bg-accent/10 blur-2xl"></span>
+            <Image 
+              src={profilePic}
+              alt="A photo of Faisal Durbaa"
+              width={320}
+              height={320}
+              quality={90}
+              loading="eager"
+              fetchpriority="high"
+              class="relative w-48 h-48 md:w-56 md:h-56 rounded-full border-4 border-white shadow-lg object-cover"
+            />
+          </div>
+          <div class="text-center space-y-1 z-10">
+            <h2 class="text-2xl font-bold text-gray-900">Faisal Durbaa</h2>
+            <p class="text-gray-600">Student developer — AI, Data, Web</p>
+          </div>
+          <div class="w-full rounded-2xl bg-accent/5 border border-accent/10 p-4 text-sm text-gray-800 flex items-center justify-center gap-2 z-10">
+            <span class="h-2.5 w-2.5 rounded-full bg-emerald-500 animate-pulse shrink-0"></span>
+            <span class="font-semibold text-center">Currently building an AI based TOEFL prep app.</span>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </section>
+
+<style>
+  .stat-card {
+    background: rgba(255, 255, 255, 0.8);
+    border: 1px solid rgba(229, 231, 235, 0.8);
+    border-radius: 1rem;
+    padding: 1rem;
+    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
+  }
+</style>
+
+<script is:inline>
+  function setupCounters() {
+    const counters = document.querySelectorAll('.counter:not([data-animated])');
+    if (!counters.length) return;
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          const el = entry.target;
+          el.setAttribute('data-animated', 'true');
+          const target = Number(el.dataset.target || 0);
+          const duration = 900;
+          const start = performance.now();
+
+          function tick(now) {
+            const progress = Math.min((now - start) / duration, 1);
+            const value = Math.floor(progress * target);
+            el.textContent = value.toString();
+            if (progress < 1) requestAnimationFrame(tick);
+            else el.textContent = target.toString();
+          }
+
+          requestAnimationFrame(tick);
+          observer.unobserve(el);
+        }
+      });
+    }, { threshold: 0.4 });
+
+    counters.forEach((counter) => {
+      counter.textContent = '0';
+      observer.observe(counter);
+    });
+  }
+
+  setupCounters();
+  document.addEventListener('astro:after-swap', setupCounters);
+</script>

@@ -20,39 +20,55 @@ const { summary } = Astro.props;
 </details>
 
 <script>
-  document.querySelectorAll('.accordion-details').forEach(detailsElement => {
-    const details = detailsElement as HTMLDetailsElement;
-    const summary = details.querySelector('summary') as HTMLElement | null;
-    const contentWrapper = details.querySelector('.content-wrapper') as HTMLElement | null;
+  function bindAccordions() {
+    document.querySelectorAll('.accordion-details').forEach((detailsElement) => {
+      const details = detailsElement as HTMLDetailsElement;
+      const summary = details.querySelector('summary') as HTMLElement | null;
+      const contentWrapper = details.querySelector('.content-wrapper') as HTMLElement | null;
 
-    if (!summary || !contentWrapper) {
-      return;
-    }
-
-    summary.addEventListener('click', (event) => {
-      event.preventDefault();
-      if (details.open) {
-        const height = contentWrapper.scrollHeight;
-        requestAnimationFrame(() => {
-          contentWrapper.style.maxHeight = `${height}px`;
-          requestAnimationFrame(() => {
-            contentWrapper.style.maxHeight = '0px';
-          });
-        });
-        
-        contentWrapper.addEventListener('transitionend', () => {
-          details.open = false;
-        }, { once: true });
-
-      } else {
-        details.open = true;
-        const height = contentWrapper.scrollHeight;
-        contentWrapper.style.maxHeight = `${height}px`;
-
-        contentWrapper.addEventListener('transitionend', () => {
-          contentWrapper.style.maxHeight = 'none';
-        }, { once: true });
+      if (!summary || !contentWrapper || summary.dataset.bound === 'true') {
+        return;
       }
+
+      summary.dataset.bound = 'true';
+
+      summary.addEventListener('click', (event) => {
+        event.preventDefault();
+        if (details.open) {
+          const height = contentWrapper.scrollHeight;
+          requestAnimationFrame(() => {
+            contentWrapper.style.maxHeight = `${height}px`;
+            requestAnimationFrame(() => {
+              contentWrapper.style.maxHeight = '0px';
+            });
+          });
+
+          contentWrapper.addEventListener(
+            'transitionend',
+            () => {
+              details.open = false;
+            },
+            { once: true }
+          );
+        } else {
+          details.open = true;
+          const height = contentWrapper.scrollHeight;
+          contentWrapper.style.maxHeight = `${height}px`;
+
+          contentWrapper.addEventListener(
+            'transitionend',
+            () => {
+              contentWrapper.style.maxHeight = 'none';
+            },
+            { once: true }
+          );
+        }
+      });
     });
-  });
+  }
+
+  if (typeof window !== 'undefined') {
+    bindAccordions();
+    document.addEventListener('astro:after-swap', bindAccordions);
+  }
 </script>

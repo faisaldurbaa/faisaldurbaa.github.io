@@ -1,0 +1,181 @@
+---
+import { getCollection, type CollectionEntry } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+import FadeIn from '../../components/FadeIn.astro';
+import Card from '../../components/Card.astro';
+import CompetitionCard from '../../components/CompetitionCard.astro';
+import competitionProjects from '../../data/competitionProjects';
+
+const projectEntries = await getCollection('projects');
+const courseEntries = (await getCollection('courses')).filter(
+  (course: CollectionEntry<'courses'>) => course.id.endsWith('index.mdx') || course.id.endsWith('index.md')
+);
+const fallbackDate = new Date('1970-01-01');
+
+const combinedBuilds = [
+  ...projectEntries.map((item: CollectionEntry<'projects'>) => ({ ...item, type: 'project' as const })),
+  ...courseEntries.map((item: CollectionEntry<'courses'>) => ({ ...item, type: 'course' as const })),
+].sort((a, b) =>
+  (b.data.publishDate ? new Date(b.data.publishDate) : fallbackDate).valueOf() -
+  (a.data.publishDate ? new Date(a.data.publishDate) : fallbackDate).valueOf()
+);
+
+const softwareCount = projectEntries.length;
+const competitionCount = competitionProjects.length;
+const courseCount = courseEntries.length;
+
+const seo = {
+  title: "Projects",
+  description: "All my software builds, courses, and competition projects in one place.",
+};
+---
+<Layout seo={seo}>
+  <div class="mx-auto w-full px-[clamp(3.25rem,8vw,7.25rem)] py-14 max-w-[1800px] space-y-12">
+    <FadeIn>
+      <div class="rounded-3xl bg-gradient-to-br from-white via-[#eef3fb] to-[#dfe9f5] border border-white/60 shadow-xl px-6 py-8 md:px-10 md:py-10">
+        <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+          <div class="space-y-2">
+            <h1 class="text-4xl font-bold text-gray-900">PROJECTS</h1>
+            <p class="text-gray-600 max-w-2xl">A single hub for my open-source projects, courses, and competition builds.</p>
+          </div>
+          <div class="grid grid-cols-3 gap-1.5 sm:gap-3 w-full md:w-auto justify-center md:justify-end">
+            <div class="stat-pill">
+              <span class="text-[10px] sm:text-xs uppercase text-gray-600 text-center w-full leading-[1.05] truncate">Projects</span>
+              <span class="text-lg sm:text-xl font-bold text-gray-900 text-center w-full counter leading-tight" data-target={softwareCount}>0</span>
+            </div>
+            <div class="stat-pill">
+              <span class="text-[10px] sm:text-xs uppercase text-gray-600 text-center w-full leading-[1.05] truncate">Courses</span>
+              <span class="text-lg sm:text-xl font-bold text-gray-900 text-center w-full counter leading-tight" data-target={courseCount}>0</span>
+            </div>
+            <div class="stat-pill">
+              <span class="text-[10px] sm:text-xs uppercase text-gray-600 text-center w-full leading-[1.05] truncate">Competition</span>
+              <span class="text-lg sm:text-xl font-bold text-gray-900 text-center w-full counter leading-tight" data-target={competitionCount}>0</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </FadeIn>
+
+    <section class="space-y-6">
+      <div class="flex items-center gap-3">
+        <div class="h-12 w-12 rounded-2xl bg-accent text-white flex items-center justify-center shadow-lg shadow-accent/25">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8l5 4-5 4M19 8l-5 4 5 4M12 5v14" />
+          </svg>
+        </div>
+        <div>
+          <h2 class="text-2xl font-semibold text-gray-900">Projects & Courses</h2>
+          <p class="text-gray-600 text-sm">Open-source projects and Courses</p>
+        </div>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-8 items-stretch">
+        {combinedBuilds.map((item) => (
+          <FadeIn>
+            <Card
+              title={item.data.title}
+              description={item.data.description}
+              href={
+                item.type === 'project'
+                  ? `/projects/${item.slug}/`
+                  : `/courses/${item.slug.replace(/\/index$/, '')}/`
+              }
+              tags={item.data.tags ?? []}
+              type={item.type}
+              publishDate={item.data.publishDate}
+              heroImage={item.data.heroImage}
+            />
+          </FadeIn>
+        ))}
+      </div>
+    </section>
+
+    <section class="space-y-6">
+      <div class="flex items-center gap-3">
+        <div class="h-12 w-12 rounded-2xl bg-gradient-to-br from-emerald-500 to-emerald-700 text-white flex items-center justify-center shadow-lg shadow-emerald-300/30">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6h4m6 0a10 10 0 11-20 0 10 10 0 0120 0z" />
+          </svg>
+        </div>
+        <div>
+          <h2 class="text-2xl font-semibold text-gray-900">Competition Builds</h2>
+          <p class="text-gray-600 text-sm">Teknofest & TUBITAK projects with reports</p>
+        </div>
+      </div>
+      <FadeIn>
+        <div class="rounded-2xl border border-accent/10 bg-white/70 backdrop-blur-md shadow-lg p-5">
+          <h3 class="text-lg font-semibold text-gray-900 mb-1">What are TEKNOFEST & TUBITAK?</h3>
+          <p class="text-sm text-gray-700 leading-relaxed">
+            TEKNOFEST is Turkey's national aviation, space, and technology festival featuring student-led hardware/software competitions.
+            TUBITAK is the Scientific and Technological Research Council of Turkey, running nationwide research contests for students.
+          </p>
+        </div>
+      </FadeIn>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-stretch">
+        {competitionProjects.map((project) => (
+          <FadeIn>
+            <CompetitionCard project={project} />
+          </FadeIn>
+        ))}
+      </div>
+    </section>
+  </div>
+</Layout>
+
+<script>
+  function setupCounters() {
+    const counters = document.querySelectorAll('.counter:not([data-animated])');
+    if (!counters.length) return;
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          const el = entry.target as HTMLElement;
+          el.setAttribute('data-animated', 'true');
+          const target = Number(el.dataset?.target || 0);
+          const duration = 900;
+          const start = performance.now();
+
+          function tick(now: number) {
+            const progress = Math.min((now - start) / duration, 1);
+            const value = Math.floor(progress * target);
+            el.textContent = value.toString();
+            if (progress < 1) requestAnimationFrame(tick);
+            else el.textContent = target.toString();
+          }
+
+          requestAnimationFrame(tick);
+          observer.unobserve(el);
+        }
+      });
+    }, { threshold: 0.5 });
+
+    counters.forEach((counter) => {
+      counter.textContent = '0';
+      observer.observe(counter);
+    });
+  }
+
+  if (typeof window !== 'undefined') {
+    setupCounters();
+    document.addEventListener('astro:after-swap', () => {
+      const counters = document.querySelectorAll('.counter');
+      counters.forEach((c) => c.removeAttribute('data-animated'));
+      setupCounters();
+    });
+  }
+</script>
+<style>
+  .stat-pill {
+    display: inline-flex;
+    flex-direction: column;
+    gap: 0.1rem;
+    padding: 0.45rem 0.6rem;
+    border-radius: 0.85rem;
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid rgba(226, 232, 240, 0.9);
+    box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+    min-width: 0;
+    align-items: center;
+    text-align: center;
+  }
+</style>
