@@ -19,9 +19,9 @@ import RelatedContent from '../RelatedContent.astro';
         <div class="bg-white p-6 sm:p-8 border border-gray-200 rounded-lg shadow-sm">
             <div class="flex justify-between items-center mb-4">
                 <p class="text-accent font-semibold">
-                    <a href="/portfolio" class="inline-flex items-center gap-2 hover:underline">
+                    <a href="/blog/" class="inline-flex items-center gap-2 hover:underline">
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
-                        Back to Portfolio
+                        Back to Blogs
                     </a>
                 </p>
                 <ShareButton title="From Skype to Etsy: Leadership Lessons from Josh Silverman" />
@@ -102,7 +102,7 @@ import RelatedContent from '../RelatedContent.astro';
 <RelatedContent currentSlug="the-silverman-journey" />
 
 <script>
-    document.addEventListener('DOMContentLoaded', () => {
+    const initSilverman = () => {
         const timelineData = {
             evite: {
                 title: "Evite: The Dot-Com Crucible",
@@ -181,7 +181,8 @@ import RelatedContent from '../RelatedContent.astro';
             });
         }
 
-        if (timelineNav) {
+        if (timelineNav && !timelineNav.dataset.bound) {
+            timelineNav.dataset.bound = 'true';
             timelineNav.addEventListener('click', (e) => {
                 if (!e.target) return;
                 const targetItem = (e.target as Element).closest('.timeline-item') as HTMLElement;
@@ -191,22 +192,38 @@ import RelatedContent from '../RelatedContent.astro';
             });
         }
 
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('visible');
+        const sections = Array.from(document.querySelectorAll<HTMLElement>('.section-fade-in'));
+        if ('IntersectionObserver' in window) {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.1 });
+            
+            sections.forEach(section => {
+                if (!section.classList.contains('visible')) {
+                    observer.observe(section);
                 }
             });
-        }, { threshold: 0.1 });
-        
-        document.querySelectorAll('.section-fade-in').forEach(section => {
-            observer.observe(section);
-        });
+        } else {
+            sections.forEach(section => section.classList.add('visible'));
+        }
 
         // Initial load
         const firstItem = document.querySelector('.timeline-item') as HTMLElement;
         if (firstItem && firstItem.dataset.company) {
             updateContent(firstItem.dataset.company as keyof typeof timelineData);
         }
-    });
+    };
+
+    const runInit = () => {
+        initSilverman();
+    };
+
+    document.addEventListener('astro:page-load', runInit);
+    document.addEventListener('astro:after-swap', runInit);
+    if (document.readyState !== 'loading') runInit();
 </script>
