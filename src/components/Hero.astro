@@ -1,6 +1,7 @@
 ---
 import { Image } from 'astro:assets';
 import { getCollection } from 'astro:content';
+import { Icon } from 'astro-icon/components';
 import profilePic from '../assets/profile.webp';
 import competitionProjects from '../data/competitionProjects';
 
@@ -15,31 +16,42 @@ const stats = {
   blogPosts: blogEntries.length,
   awards: 3,
 };
+
+const backgroundIcons = [
+  { name: 'mdi:language-python', style: 'top: 15%; left: 5%; transform: rotate(-15deg);' },
+  { name: 'mdi:database', style: 'top: 10%; right: 10%; transform: rotate(10deg);' },
+  { name: 'mdi:cloud', style: 'top: 35%; left: 7%; transform: rotate(5deg);' },
+  { name: 'mdi:api', style: 'bottom: 55%; right: 5%; transform: rotate(-10deg);' },
+  { name: 'mdi:docker', style: 'bottom: 65%; right: 75%; transform: rotate(-20deg);' },
+  { name: 'mdi:git', style: 'top: 5%; left: 26%; transform: rotate(10deg);' },
+  { name: 'mdi:linux', style: 'bottom: 45%; right: 23%; transform: rotate(-5deg);' },
+  { name: 'mdi:aws', style: 'top: 25%; right: 20%; transform: rotate(25deg);' },
+  { name: 'mdi:code-braces', style: 'bottom: 45%; left: 20%; transform: rotate(-15deg);' },
+  { name: 'mdi:terminal', style: 'top: 50%; left: 85%; transform: rotate(10deg);' },
+  { name: 'mdi:chip', style: 'top: 55%; right: 85%; transform: rotate(-10deg);' },
+  { name: 'mdi:web', style: 'top: 7%; right: 25%; transform: rotate(5deg);' },
+];
 ---
 <section class="relative overflow-hidden py-20">
   <div class="container mx-auto px-4 max-w-6xl">
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
-      <div class="space-y-6">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-10 items-stretch">
+      <div class="flex flex-col justify-center space-y-6 h-full">
         <div class="space-y-3">
           <h1 class="text-4xl md:text-5xl font-bold text-gray-900 leading-tight">
             I build AI-first tools and launch-ready prototypes.
           </h1>
           <p class="text-lg text-gray-700 max-w-2xl">
-            Student developer shipping across web, AI, and hardware—focused on clear UX, fast delivery, and reliable systems.
+            Student developer shipping across AI, data science, web, and software - focused on functionality, performance, and reliability.
           </p>
         </div>
-        <div class="flex flex-wrap gap-3">
-          <a href="/projects/" class="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-gradient-to-r from-accent to-slate-900 text-white font-semibold shadow-lg shadow-accent/25 hover:shadow-accent/35 transition-all duration-200 hover:-translate-y-[1px]">
-            View Projects
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
-            </svg>
+        <div class="flex flex-col sm:flex-row gap-3 w-full">
+          <a href="/projects/" class="flex-1 inline-flex items-center justify-center gap-3 px-5 py-3 rounded-xl bg-gradient-to-r from-accent to-slate-900 text-white font-semibold shadow-lg shadow-accent/25 hover:shadow-accent/35 transition-all duration-200 hover:-translate-y-[1px] w-full sm:w-auto">
+            <Icon name="mdi:rocket-launch" class="w-5 h-5" />
+            <span>View Projects</span>
           </a>
-          <a href="/contact/" class="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl border border-accent/30 bg-white/80 text-accent font-semibold shadow-sm hover:border-accent hover:bg-accent/10 hover:shadow-md transition-all duration-200">
-            Contact
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
-            </svg>
+          <a href="/contact/" class="flex-1 inline-flex items-center justify-center gap-3 px-5 py-3 rounded-xl border border-accent/30 bg-white/80 text-accent font-semibold shadow-sm hover:border-accent hover:bg-accent/10 hover:shadow-md transition-all duration-200 w-full sm:w-auto">
+            <Icon name="mdi:email-fast-outline" class="w-5 h-5" />
+            <span>Contact Me</span>
           </a>
         </div>
         <div class="grid grid-cols-3 gap-3 sm:gap-4 text-center">
@@ -58,10 +70,19 @@ const stats = {
         </div>
       </div>
 
-      <div class="relative">
+      <div class="relative h-full">
         <div class="absolute -inset-1 bg-gradient-to-br from-accent/10 via-white to-white rounded-3xl blur-2xl"></div>
-        <div class="relative rounded-3xl bg-white/80 backdrop-blur-xl border border-white/70 shadow-xl p-6 flex flex-col items-center gap-4">
-          <div class="relative">
+        <div class="relative rounded-3xl bg-white/80 backdrop-blur-xl border border-white/70 shadow-xl p-6 flex flex-col items-center gap-4 overflow-hidden h-full min-h-[400px] justify-center">
+           {/* Background Icons */}
+           <div class="absolute inset-0 pointer-events-none overflow-hidden">
+            {backgroundIcons.map((icon) => (
+              <div class="absolute text-slate-900/10" style={icon.style}>
+                <Icon name={icon.name} class="w-12 h-12" />
+              </div>
+            ))}
+          </div>
+
+          <div class="relative z-10">
             <span class="absolute inset-0 rounded-full bg-accent/10 blur-2xl"></span>
             <Image 
               src={profilePic}
@@ -74,13 +95,13 @@ const stats = {
               class="relative w-48 h-48 md:w-56 md:h-56 rounded-full border-4 border-white shadow-lg object-cover"
             />
           </div>
-          <div class="text-center space-y-1">
+          <div class="text-center space-y-1 z-10">
             <h2 class="text-2xl font-bold text-gray-900">Faisal Durbaa</h2>
-            <p class="text-gray-600">Student developer — AI, web, hardware</p>
+            <p class="text-gray-600">Student developer — AI, Data, Web</p>
           </div>
-          <div class="w-full rounded-2xl bg-accent/5 border border-accent/10 p-4 text-sm text-gray-800 flex items-center gap-2">
+          <div class="w-full rounded-2xl bg-accent/5 border border-accent/10 p-4 text-sm text-gray-800 flex items-center justify-center gap-2 z-10">
             <span class="h-2.5 w-2.5 rounded-full bg-emerald-500 animate-pulse shrink-0"></span>
-            <span class="font-semibold">Currently building a TOEFL prep app with AI assessments.</span>
+            <span class="font-semibold text-center">Currently building an AI based TOEFL prep app.</span>
           </div>
         </div>
       </div>

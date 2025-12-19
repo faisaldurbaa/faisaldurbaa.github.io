@@ -7,7 +7,7 @@ export interface Props {
   tags?: string[];
   type: 'blog' | 'project' | 'course' | 'projects' | 'courses';
   publishDate?: Date | undefined;
-  heroImage?: string;
+  heroImage?: string | undefined;
 }
 
 const { title, description, href, tags, publishDate, heroImage, type } = Astro.props;
