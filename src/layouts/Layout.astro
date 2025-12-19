@@ -3,6 +3,7 @@ import Seo, { type Props as SeoProps } from '../components/Seo.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import Analytics from '../components/Analytics.astro';
+import { ClientRouter } from 'astro:transitions';
 
 interface Frontmatter {
   title: string;
@@ -33,6 +34,7 @@ const seo = seoProp || {
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'" />
   <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" /></noscript>
+  <ClientRouter />
   <Seo {...seo} />
   <Analytics />
 </head>
@@ -53,7 +55,7 @@ const seo = seoProp || {
   </div>
   
   <Header />
-  <main class="flex-grow pt-20 relative z-0">
+  <main class="flex-grow pt-20 relative z-0" transition:animate="fade">
     <slot />
   </main>
   <Footer />

@@ -1,0 +1,75 @@
+---
+import type { CompetitionProject } from "../data/competitionProjects";
+
+export interface Props {
+  project: CompetitionProject;
+}
+
+const { project } = Astro.props;
+
+const themeBadges: Record<CompetitionProject["theme"], { label: string; color: string; accent: string }> = {
+  safety: { label: "Public Safety", color: "bg-rose-100 text-rose-700", accent: "from-rose-50 to-white" },
+  health: { label: "Health", color: "bg-emerald-100 text-emerald-700", accent: "from-emerald-50 to-white" },
+  accessibility: { label: "Accessibility", color: "bg-indigo-100 text-indigo-700", accent: "from-indigo-50 to-white" },
+  environment: { label: "Environment", color: "bg-amber-100 text-amber-800", accent: "from-amber-50 to-white" },
+  education: { label: "Education", color: "bg-sky-100 text-sky-700", accent: "from-sky-50 to-white" },
+};
+
+const badge = themeBadges[project.theme];
+---
+<article class:list={[
+  "group relative border border-gray-200 rounded-2xl shadow-sm overflow-hidden transition-transform duration-300 hover:-translate-y-1 hover:shadow-lg h-full bg-gradient-to-br",
+  badge.accent
+]}>
+  <div class="absolute inset-0 pointer-events-none bg-gradient-to-br from-white/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+  <div class="relative p-6 flex flex-col gap-4 h-full">
+    <div class="flex items-start justify-between gap-3">
+      <div class="space-y-1">
+        <p class="text-xs font-semibold uppercase tracking-wide text-gray-500">{project.focus}</p>
+        <h2 class="text-xl font-bold text-gray-900 leading-tight">{project.title}</h2>
+      </div>
+      <span class:list={["px-3 py-1 rounded-full text-xs font-semibold", badge.color]}>
+        {badge.label}
+      </span>
+    </div>
+
+    <div class="flex flex-wrap gap-2 text-sm text-gray-700">
+      {project.roles.map(role => (
+        <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-white/70 border border-gray-200 font-medium">
+          {role}
+        </span>
+      ))}
+      <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-gray-900 text-white font-semibold">
+        {project.yearTag}
+      </span>
+      {project.achievement && (
+        <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-amber-100 text-amber-800 font-semibold">
+          {project.achievement}
+        </span>
+      )}
+    </div>
+
+    <div class="space-y-2 text-gray-700 text-sm">
+      <p><span class="font-semibold text-gray-900">Problem:</span> {project.problem}</p>
+      <p><span class="font-semibold text-gray-900">Solution:</span> {project.solution}</p>
+    </div>
+
+    {project.links && (
+      <div class="flex flex-wrap gap-3 pt-2 mt-auto">
+        {project.links.map(link => (
+          <a
+            href={link.href}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="inline-flex items-center gap-2 px-3 py-2 rounded-lg border border-gray-200 bg-white text-sm font-semibold text-accent hover:border-accent hover:bg-accent/10 transition-all duration-200"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+            </svg>
+            {link.label}
+          </a>
+        ))}
+      </div>
+    )}
+  </div>
+</article>

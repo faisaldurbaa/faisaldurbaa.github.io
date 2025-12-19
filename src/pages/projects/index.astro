@@ -1,0 +1,89 @@
+---
+import { getCollection } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+import FadeIn from '../../components/FadeIn.astro';
+import Card from '../../components/Card.astro';
+import CompetitionCard from '../../components/CompetitionCard.astro';
+import competitionProjects from '../../data/competitionProjects';
+
+const projectEntries = await getCollection('projects');
+const fallbackDate = new Date('1970-01-01');
+
+const sortedProjects = projectEntries.sort((a, b) =>
+  (b.data.publishDate ? new Date(b.data.publishDate) : fallbackDate).valueOf() -
+  (a.data.publishDate ? new Date(a.data.publishDate) : fallbackDate).valueOf()
+);
+
+const softwareCount = projectEntries.length;
+const competitionCount = competitionProjects.length;
+
+const seo = {
+  title: "Projects",
+  description: "All my software builds and competition projects in one place.",
+};
+---
+<Layout seo={seo}>
+  <div class="container mx-auto px-4 py-16 max-w-6xl">
+    <FadeIn>
+      <div class="flex flex-col gap-4 md:flex-row md:items-end md:justify-between mb-10">
+        <div>
+          <p class="text-sm font-semibold text-accent uppercase tracking-wide">Projects</p>
+          <h1 class="text-4xl font-bold text-gray-900">Builds & Competition Work</h1>
+          <p class="text-gray-600 mt-2">Software projects plus Teknofest/TUBITAK builds, all in one place.</p>
+        </div>
+        <div class="flex gap-3">
+          <div class="rounded-xl bg-white/80 border border-gray-200/70 px-4 py-3 shadow-sm">
+            <p class="text-xs text-gray-500 uppercase tracking-wide">Software</p>
+            <p class="text-2xl font-bold text-gray-900">{softwareCount}</p>
+          </div>
+          <div class="rounded-xl bg-white/80 border border-gray-200/70 px-4 py-3 shadow-sm">
+            <p class="text-xs text-gray-500 uppercase tracking-wide">Competition</p>
+            <p class="text-2xl font-bold text-gray-900">{competitionCount}</p>
+          </div>
+        </div>
+      </div>
+    </FadeIn>
+
+    <section class="space-y-6 mb-12">
+      <div class="flex items-center gap-3">
+        <div class="h-10 w-10 rounded-2xl bg-accent/10 border border-accent/20 flex items-center justify-center text-accent font-semibold">AI</div>
+        <div>
+          <h2 class="text-2xl font-semibold text-gray-900">Software & AI Builds</h2>
+          <p class="text-gray-600 text-sm">Projects from the content collection.</p>
+        </div>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 items-stretch">
+        {sortedProjects.map((item) => (
+          <FadeIn>
+            <Card
+              title={item.data.title}
+              description={item.data.description}
+              href={`/projects/${item.slug}/`}
+              tags={item.data.tags ?? []}
+              type="project"
+              publishDate={item.data.publishDate}
+              heroImage={item.data.heroImage}
+            />
+          </FadeIn>
+        ))}
+      </div>
+    </section>
+
+    <section class="space-y-6">
+      <div class="flex items-center gap-3">
+        <div class="h-10 w-10 rounded-2xl bg-accent/10 border border-accent/20 flex items-center justify-center text-accent font-semibold">C</div>
+        <div>
+          <h2 class="text-2xl font-semibold text-gray-900">Competition Builds</h2>
+          <p class="text-gray-600 text-sm">Teknofest & TUBITAK projects with direct report links.</p>
+        </div>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-stretch">
+        {competitionProjects.map((project) => (
+          <FadeIn>
+            <CompetitionCard project={project} />
+          </FadeIn>
+        ))}
+      </div>
+    </section>
+  </div>
+</Layout>
