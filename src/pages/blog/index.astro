@@ -12,41 +12,24 @@ const sortedContent = blogEntries.sort((a, b) =>
   (a.data.publishDate ? new Date(a.data.publishDate) : fallbackDate).valueOf()
 );
 
-const uniqueTags = Array.from(
-  new Set(
-    sortedContent.flatMap((entry) => entry.data.tags || [])
-  )
-).sort((a, b) => a.localeCompare(b));
-
 const seo = {
   title: "Blogs",
   description: "Explore my latest blog posts on AI, software, and technical strategy.",
 };
 ---
 <Layout seo={seo}>
-  <div class="container mx-auto px-4 py-16 max-w-6xl">
+  <div class="container mx-auto px-5 md:px-6 lg:px-8 py-16 max-w-6xl space-y-10">
     <FadeIn>
-      <div class="flex flex-col gap-4 md:flex-row md:items-end md:justify-between mb-10">
-        <div>
-          <p class="text-sm font-semibold text-accent uppercase tracking-wide">Blogs</p>
-          <h1 class="text-4xl font-bold text-gray-900">All Articles</h1>
-          <p class="text-gray-600 mt-2">Deep dives, notes, and experiments from my work.</p>
+      <div class="rounded-3xl bg-gradient-to-br from-white via-[#eef3fb] to-[#dfe9f5] border border-white/60 shadow-xl px-6 py-8 md:px-10 md:py-10 flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+        <div class="space-y-1">
+          <h1 class="text-4xl font-bold text-gray-900">BLOG POSTS</h1>
+          <p class="text-gray-600 max-w-2xl">Domesitcating technical advancements in technology and business.</p>
         </div>
-        <div class="flex flex-col gap-3 w-full md:w-[360px]">
-          <input
-            type="text"
-            id="blog-search-input"
-            placeholder="Search by title or description..."
-            class="w-full rounded-xl border border-gray-200 bg-white/80 backdrop-blur px-4 py-3 shadow-sm focus:outline-none focus:ring-2 focus:ring-accent/40 focus:border-accent/60"
-          />
-          {uniqueTags.length > 0 && (
-            <div class="flex flex-wrap gap-2" id="blog-tags">
-              <button data-tag="all" class="tag-pill active">All</button>
-              {uniqueTags.map((tag) => (
-                <button data-tag={tag} class="tag-pill">{tag}</button>
-              ))}
-            </div>
-          )}
+        <div class="flex gap-3">
+          <div class="stat-pill">
+            <span class="text-xs uppercase text-gray-600 text-center w-full">Articles</span>
+            <span class="text-2xl font-bold text-gray-900 text-center w-full counter" data-target={sortedContent.length}>0</span>
+          </div>
         </div>
       </div>
     </FadeIn>
@@ -54,21 +37,15 @@ const seo = {
     <div id="blog-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 items-stretch">
       {sortedContent.map((item) => (
         <FadeIn>
-          <div
-            class="blog-item h-full"
-            data-title={`${item.data.title} ${item.data.description}`.toLowerCase()}
-            data-tags={(item.data.tags || []).map(tag => tag.toLowerCase()).join(',')}
-          >
-            <Card
-              title={item.data.title}
-              description={item.data.description}
-              href={`/blog/${item.slug}/`}
-              tags={item.data.tags ?? []}
-              type="blog"
-              publishDate={item.data.publishDate}
-              heroImage={item.data.heroImage}
-            />
-          </div>
+          <Card
+            title={item.data.title}
+            description={item.data.description}
+            href={`/blog/${item.slug}/`}
+            tags={item.data.tags ?? []}
+            type="blog"
+            publishDate={item.data.publishDate}
+            heroImage={item.data.heroImage}
+          />
         </FadeIn>
       ))}
     </div>
@@ -76,57 +53,62 @@ const seo = {
 </Layout>
 
 <style>
-  .tag-pill {
+  .stat-pill {
     display: inline-flex;
+    flex-direction: column;
+    gap: 0.1rem;
+    padding: 0.65rem 0.9rem;
+    border-radius: 0.9rem;
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid rgba(226, 232, 240, 0.9);
+    box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+    min-width: 90px;
     align-items: center;
-    border-radius: 9999px;
-    border: 1px solid rgb(229 231 235);
-    background: rgba(255, 255, 255, 0.7);
-    color: rgb(55 65 81);
-    font-size: 0.875rem;
-    font-weight: 500;
-    padding: 0.375rem 0.75rem;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-    transition: all 150ms ease;
-  }
-  .tag-pill:hover {
-    border-color: rgba(30, 41, 59, 0.5);
-    color: rgb(30, 41, 59);
-  }
-  .tag-pill.active {
-    background: rgb(30, 41, 59);
-    color: #fff;
-    border-color: rgb(30, 41, 59);
-    box-shadow: 0 10px 20px rgba(30, 41, 59, 0.15);
+    justify-content: center;
+    text-align: center;
   }
 </style>
 
-<script is:inline>
-  const searchInput = document.getElementById('blog-search-input');
-  const tagButtons = document.querySelectorAll('#blog-tags .tag-pill');
-  const blogItems = document.querySelectorAll('.blog-item');
+<script>
+  function setupBlogCounters() {
+    const counters = document.querySelectorAll('.counter:not([data-animated])');
+    if (!counters.length) return;
 
-  function applyFilters() {
-    const searchTerm = (searchInput?.value || '').toLowerCase();
-    const activeTag = document.querySelector('#blog-tags .tag-pill.active')?.getAttribute('data-tag') || 'all';
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          const el = entry.target as HTMLElement;
+          el.setAttribute('data-animated', 'true');
+          const target = Number(el.dataset?.target || 0);
+          const duration = 900;
+          const start = performance.now();
 
-    blogItems.forEach((item) => {
-      const text = item.getAttribute('data-title') || '';
-      const tags = (item.getAttribute('data-tags') || '').split(',');
+          function tick(now: number) {
+            const progress = Math.min((now - start) / duration, 1);
+            const value = Math.floor(progress * target);
+            el.textContent = value.toString();
+            if (progress < 1) requestAnimationFrame(tick);
+            else el.textContent = target.toString();
+          }
 
-      const matchesSearch = text.includes(searchTerm);
-      const matchesTag = activeTag === 'all' || tags.includes(activeTag.toLowerCase());
+          requestAnimationFrame(tick);
+          observer.unobserve(el);
+        }
+      });
+    }, { threshold: 0.5 });
 
-      item.classList.toggle('hidden', !(matchesSearch && matchesTag));
+    counters.forEach((counter) => {
+      counter.textContent = '0';
+      observer.observe(counter);
     });
   }
 
-  searchInput?.addEventListener('input', applyFilters);
-  tagButtons.forEach((btn) => {
-    btn.addEventListener('click', () => {
-      tagButtons.forEach((b) => b.classList.remove('active'));
-      btn.classList.add('active');
-      applyFilters();
+  if (typeof window !== 'undefined') {
+    setupBlogCounters();
+    document.addEventListener('astro:after-swap', () => {
+      const counters = document.querySelectorAll('.counter');
+      counters.forEach((c) => c.removeAttribute('data-animated'));
+      setupBlogCounters();
     });
-  });
+  }
 </script>

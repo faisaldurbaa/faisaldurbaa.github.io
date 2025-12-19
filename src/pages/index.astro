@@ -48,7 +48,7 @@ const allContent = [
 const fallbackDate = new Date('1970-01-01');
 
 const featuredContent = allContent
-  .filter(item => item.featured)
+  .filter(item => item.featured === true)
   .sort((a, b) => (
     (b.publishDate ? new Date(b.publishDate) : fallbackDate).valueOf() -
     (a.publishDate ? new Date(a.publishDate) : fallbackDate).valueOf()

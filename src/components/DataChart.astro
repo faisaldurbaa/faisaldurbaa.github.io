@@ -27,79 +27,88 @@ const { type, data, title, id } = Astro.props;
 
 <script>
   const initChart = async (canvas: HTMLCanvasElement) => {
-    // Dynamically import Chart.js only when needed
-    const [{ Chart, registerables }, annotationPlugin] = await Promise.all([
-      import('chart.js'),
-      import('chartjs-plugin-annotation')
-    ]);
-    
-    Chart.register(...registerables, annotationPlugin.default);
-    const type = canvas.dataset.chartType as 'line' | 'bar';
-    const data = JSON.parse(canvas.dataset.chartData || '{}');
+    try {
+      const [{ default: Chart }, annotationPluginModule] = await Promise.all([
+        import('chart.js/auto'),
+        import('chartjs-plugin-annotation')
+      ]);
+      
+      const annotationPlugin = (annotationPluginModule as any).default || annotationPluginModule;
+      if (annotationPlugin) {
+        Chart.register(annotationPlugin);
+      }
 
-    if (!type || !data) return;
+      const type = canvas.dataset.chartType as 'line' | 'bar';
+      const data = JSON.parse(canvas.dataset.chartData || '{}');
 
-    const existingChart = Chart.getChart(canvas);
-    if (existingChart) {
-      existingChart.destroy();
+      if (!type || !data) return;
+
+      const existingChart = Chart.getChart(canvas);
+      if (existingChart) {
+        existingChart.destroy();
+      }
+
+      const options = {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: {
+          mode: 'index' as const,
+          intersect: false,
+        },
+        plugins: {
+          legend: {
+            display: data.datasets.length > 1,
+            position: 'top' as const,
+            labels: { font: { family: 'Inter, sans-serif' }, color: '#1f2937' },
+          },
+          tooltip: {
+            backgroundColor: '#ffffff',
+            titleColor: '#1f2937',
+            bodyColor: '#4b5563',
+            borderColor: '#e5e7eb',
+            borderWidth: 1,
+            padding: 10,
+            cornerRadius: 8,
+            displayColors: true,
+          },
+          annotation: data.annotation ? data.annotation : {}
+        },
+        scales: {
+          x: {
+            grid: { display: false },
+            ticks: {
+              font: { family: 'Inter, sans-serif', size: 10 },
+              color: '#4b5563',
+              maxRotation: 45,
+              minRotation: 45,
+            },
+          },
+          y: {
+            grid: { color: '#e5e7eb', borderDash: [5, 5] },
+            ticks: {
+              font: { family: 'Inter, sans-serif', size: 10 },
+              color: '#4b5563',
+            },
+          },
+        },
+        animation: { duration: 1000, easing: 'easeInOutCubic' as const },
+      };
+
+      new Chart(canvas, {
+        type: type,
+        data: data,
+        options: options,
+      });
+
+      // Hide loading and show chart
+      const loadingDiv = document.getElementById(`${canvas.id}-loading`);
+      if (loadingDiv) loadingDiv.style.display = 'none';
+      canvas.style.opacity = '1';
+    } catch (err) {
+      console.error('Failed to load chart modules', err);
+      const loadingDiv = document.getElementById(`${canvas.id}-loading`);
+      if (loadingDiv) loadingDiv.textContent = 'Chart failed to load';
     }
-
-    const options = {
-      responsive: true,
-      maintainAspectRatio: false,
-      interaction: {
-        mode: 'index' as const,
-        intersect: false,
-      },
-      plugins: {
-        legend: {
-          display: data.datasets.length > 1,
-          position: 'top' as const,
-          labels: { font: { family: 'Inter, sans-serif' }, color: '#1f2937' },
-        },
-        tooltip: {
-          backgroundColor: '#ffffff',
-          titleColor: '#1f2937',
-          bodyColor: '#4b5563',
-          borderColor: '#e5e7eb',
-          borderWidth: 1,
-          padding: 10,
-          cornerRadius: 8,
-          displayColors: true,
-        },
-        annotation: data.annotation ? data.annotation : {}
-      },
-      scales: {
-        x: {
-          grid: { display: false },
-          ticks: {
-            font: { family: 'Inter, sans-serif', size: 10 },
-            color: '#4b5563',
-            maxRotation: 45,
-            minRotation: 45,
-          },
-        },
-        y: {
-          grid: { color: '#e5e7eb', borderDash: [5, 5] },
-          ticks: {
-            font: { family: 'Inter, sans-serif', size: 10 },
-            color: '#4b5563',
-          },
-        },
-      },
-      animation: { duration: 1000, easing: 'easeInOutCubic' as const },
-    };
-
-    new Chart(canvas, {
-      type: type,
-      data: data,
-      options: options,
-    });
-
-    // Hide loading and show chart
-    const loadingDiv = document.getElementById(`${canvas.id}-loading`);
-    if (loadingDiv) loadingDiv.style.display = 'none';
-    canvas.style.opacity = '1';
   };
 
   const setupObserver = () => {
