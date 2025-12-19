@@ -51,49 +51,75 @@ const recaptchaSiteKey = import.meta.env.PUBLIC_RECAPTCHA_SITE_KEY;
   </FadeIn>
 </Layout>
 
-<script is:inline define:vars={{ recaptchaSiteKey }} src={`https://www.google.com/recaptcha/api.js?render=${recaptchaSiteKey}`}></script>
-
 <script is:inline define:vars={{ formspreeFormId, recaptchaSiteKey }}>
-  const form = document.getElementById('contact-form');
-  const successMessage = document.getElementById('success-message');
-  const errorMessage = document.getElementById('error-message');
-  const submitButton = document.getElementById('submit-button');
+  document.addEventListener('astro:page-load', () => {
+    const form = document.getElementById('contact-form');
+    // Only run if the form exists (i.e., we are on the contact page)
+    if (!form) return;
 
-  form.addEventListener('submit', function(e) {
-    e.preventDefault();
-    
-    grecaptcha.ready(function() {
-      grecaptcha.execute(recaptchaSiteKey, { action: 'submit' }).then(async function(token) {
-        
-        const formData = new FormData(form);
-        formData.append('g-recaptcha-response', token);
+    const successMessage = document.getElementById('success-message');
+    const errorMessage = document.getElementById('error-message');
+    const submitButton = document.getElementById('submit-button');
 
-        submitButton.disabled = true;
-        submitButton.textContent = 'Sending...';
+    // reCAPTCHA Loading Logic
+    const scriptId = 'recaptcha-script';
+    const existingScript = document.getElementById(scriptId);
+    const badge = document.querySelector('.grecaptcha-badge');
 
-        try {
-          const response = await fetch(`https://formspree.io/f/${formspreeFormId}`, {
-            method: 'POST',
-            body: formData,
-            headers: { 'Accept': 'application/json' }
-          });
+    if (!existingScript || (window.grecaptcha && !badge)) {
+      // Remove old script if it exists but badge is missing (cleanup for clean reload)
+      if (existingScript) existingScript.remove();
 
-          if (response.ok) {
-            form.reset();
-            successMessage.classList.remove('hidden');
-            errorMessage.classList.add('hidden');
-            setTimeout(() => successMessage.classList.add('hidden'), 5000);
-          } else {
+      const script = document.createElement('script');
+      script.id = scriptId;
+      script.src = `https://www.google.com/recaptcha/api.js?render=${recaptchaSiteKey}`;
+      script.async = true;
+      script.defer = true;
+      document.body.appendChild(script);
+    }
+
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      if (!window.grecaptcha) {
+        console.error("reCAPTCHA not loaded");
+        errorMessage.classList.remove('hidden');
+        return;
+      }
+
+      grecaptcha.ready(function() {
+        grecaptcha.execute(recaptchaSiteKey, { action: 'submit' }).then(async function(token) {
+          
+          const formData = new FormData(form);
+          formData.append('g-recaptcha-response', token);
+
+          submitButton.disabled = true;
+          submitButton.textContent = 'Sending...';
+
+          try {
+            const response = await fetch(`https://formspree.io/f/${formspreeFormId}`, {
+              method: 'POST',
+              body: formData,
+              headers: { 'Accept': 'application/json' }
+            });
+
+            if (response.ok) {
+              form.reset();
+              successMessage.classList.remove('hidden');
+              errorMessage.classList.add('hidden');
+              setTimeout(() => successMessage.classList.add('hidden'), 5000);
+            } else {
+              errorMessage.classList.remove('hidden');
+              successMessage.classList.add('hidden');
+            }
+          } catch (error) {
             errorMessage.classList.remove('hidden');
             successMessage.classList.add('hidden');
+          } finally {
+            submitButton.disabled = false;
+            submitButton.textContent = 'Send Message';
           }
-        } catch (error) {
-          errorMessage.classList.remove('hidden');
-          successMessage.classList.add('hidden');
-        } finally {
-          submitButton.disabled = false;
-          submitButton.textContent = 'Send Message';
-        }
+        });
       });
     });
   });
