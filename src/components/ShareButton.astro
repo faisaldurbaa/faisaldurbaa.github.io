@@ -5,34 +5,41 @@ export interface Props {
   title: string;
 }
 ---
-<div class="relative">
-  <button id="share-button" class="inline-flex items-center gap-2 text-gray-600 hover:text-accent transition-colors" title="Copy link to clipboard">
+<div class="relative" data-share-root>
+  <button data-share-button class="inline-flex items-center gap-2 text-gray-600 hover:text-accent transition-colors" title="Copy link to clipboard">
     <Icon name="mdi:link-variant" class="w-5 h-5" />
     <span class="text-sm font-semibold">Copy Link</span>
   </button>
-  
-  <div id="toast-notification" class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-max bg-gray-800 text-white text-sm font-semibold py-1 px-3 rounded-md opacity-0 transition-opacity duration-300 pointer-events-none">
+
+  <div data-share-toast class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-max bg-gray-800 text-white text-sm font-semibold py-1 px-3 rounded-md opacity-0 transition-opacity duration-300 pointer-events-none" role="status" aria-live="polite">
     URL copied to clipboard!
   </div>
 </div>
 
 <script>
-  const shareButton = document.getElementById('share-button');
-  const toast = document.getElementById('toast-notification');
+  function bindShareButtons() {
+    const roots = document.querySelectorAll<HTMLElement>('[data-share-root]');
+    roots.forEach((root) => {
+      const button = root.querySelector<HTMLButtonElement>('[data-share-button]');
+      const toast = root.querySelector<HTMLDivElement>('[data-share-toast]');
+      if (!button || !toast || button.dataset.bound === 'true') return;
 
-  if (shareButton && toast) {
-    shareButton.addEventListener('click', async () => {
-      try {
-        await navigator.clipboard.writeText(window.location.href);
-        
-        toast.classList.remove('opacity-0');
-        setTimeout(() => {
-          toast.classList.add('opacity-0');
-        }, 2000);
+      button.dataset.bound = 'true';
 
-      } catch (err) {
-        alert('Failed to copy link.');
-      }
+      button.addEventListener('click', async () => {
+        const url = window.location.href;
+        try {
+          await navigator.clipboard.writeText(url);
+
+          toast.classList.remove('opacity-0');
+          setTimeout(() => toast.classList.add('opacity-0'), 2000);
+        } catch (err) {
+          alert('Failed to copy link. Please copy it manually.');
+        }
+      });
     });
   }
+
+  bindShareButtons();
+  document.addEventListener('astro:after-swap', bindShareButtons);
 </script>
