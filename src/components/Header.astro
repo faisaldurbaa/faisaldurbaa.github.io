@@ -30,9 +30,9 @@ const isActiveLink = (linkHref: string) => {
 <header class="fixed top-0 left-0 right-0 z-50 flex flex-col items-center pointer-events-none">
   <div
     id="nav-shell"
-    class="pointer-events-auto relative z-50 flex items-center justify-between transition-all duration-700 ease-[cubic-bezier(0.4,0,0.2,1)] will-change-[width,max-width,transform,border-radius,margin,background-color,border-color,box-shadow,padding]
-           w-full max-w-full rounded-none border-b border-gray-200/50 bg-white/80 backdrop-blur-xl shadow-sm py-3 px-4 md:px-8 mt-0
-           data-[scrolled=true]:w-[92%] data-[scrolled=true]:md:w-full data-[scrolled=true]:md:max-w-5xl data-[scrolled=true]:rounded-3xl data-[scrolled=true]:border data-[scrolled=true]:border-white/50 data-[scrolled=true]:shadow-xl data-[scrolled=true]:mt-6 data-[scrolled=true]:py-2.5"
+    class="pointer-events-auto relative z-50 flex items-center justify-between transition-all duration-700 ease-[cubic-bezier(0.4,0,0.2,1)]
+           w-full max-w-full rounded-none border-b border-gray-200/50 bg-white/70 backdrop-blur-2xl shadow-sm py-3 px-4 md:px-8 mt-0
+           data-[scrolled=true]:w-[92%] data-[scrolled=true]:md:w-full data-[scrolled=true]:md:max-w-5xl data-[scrolled=true]:rounded-3xl data-[scrolled=true]:border data-[scrolled=true]:border-white/40 data-[scrolled=true]:shadow-xl data-[scrolled=true]:mt-6 data-[scrolled=true]:py-2.5"
     data-scrolled="false"
   >
     <a href="/" class="text-lg md:text-xl font-bold text-gray-900 hover:text-accent transition-colors flex items-center gap-2">
@@ -53,7 +53,7 @@ const isActiveLink = (linkHref: string) => {
           class:list={[
             "relative z-10 py-2 px-4 rounded-full text-sm font-medium transition-colors duration-300",
             isActiveLink(link.href)
-              ? 'text-white'
+              ? 'text-accent'
               : 'text-gray-600 hover:text-accent'
           ]}
         >
@@ -76,7 +76,7 @@ const isActiveLink = (linkHref: string) => {
   </div>
 
   <div id="mobile-menu" class="pointer-events-auto hidden md:hidden w-[92%] mt-2 z-40">
-    <div class="bg-white/90 backdrop-blur-xl border border-white/40 shadow-xl rounded-2xl p-2 transform origin-top animate-in fade-in slide-in-from-top-2 duration-300">
+    <div class="bg-white/70 backdrop-blur-2xl border border-white/40 shadow-xl rounded-2xl p-2 transform origin-top animate-in fade-in slide-in-from-top-2 duration-300">
       <nav class="flex flex-col gap-1">
         {navLinks.map(link => (
           <a
@@ -84,8 +84,8 @@ const isActiveLink = (linkHref: string) => {
             class:list={[
               "block py-3 px-4 rounded-xl text-base font-medium transition-all duration-200",
               isActiveLink(link.href)
-                ? 'bg-accent/10 text-accent font-semibold pl-6'
-                : 'text-gray-600 hover:bg-gray-50 hover:text-accent hover:pl-5'
+                ? 'bg-accent text-white font-semibold pl-6 shadow-md'
+                : 'text-gray-600 hover:bg-gray-100/50 hover:text-accent hover:pl-5'
             ]}
             aria-current={isActiveLink(link.href) ? 'page' : undefined}
           >
@@ -110,7 +110,7 @@ const isActiveLink = (linkHref: string) => {
     const pill = document.getElementById('nav-pill');
     const navLinks = desktopNav?.querySelectorAll('a');
 
-    function updatePill(target) {
+    function updatePill(target : any) {
       if (!desktopNav || !pill || !target) return;
 
       const navRect = desktopNav.getBoundingClientRect();
@@ -128,11 +128,11 @@ const isActiveLink = (linkHref: string) => {
       // Update text colors for contrast
       navLinks?.forEach(link => {
         if (link === target) {
-          link.classList.remove('text-gray-600', 'hover:text-accent');
+          link.classList.remove('text-gray-600', 'hover:text-accent', 'text-accent');
           link.classList.add('text-white');
         } else {
           link.classList.add('text-gray-600', 'hover:text-accent');
-          link.classList.remove('text-white');
+          link.classList.remove('text-white', 'text-accent');
         }
       });
     }
@@ -141,8 +141,16 @@ const isActiveLink = (linkHref: string) => {
         // Initial Position
         const activeLink = desktopNav.querySelector('[data-active="true"]');
         if (activeLink) {
+            // Disable transition for initial placement
+            pill.style.transition = 'none';
             // Use requestAnimationFrame to ensure layout is ready
-            requestAnimationFrame(() => updatePill(activeLink));
+            requestAnimationFrame(() => {
+               updatePill(activeLink);
+               // Force reflow to apply the position without transition
+               void pill.offsetWidth;
+               // Re-enable transition
+               pill.style.transition = '';
+            });
         }
 
         // Hover Effects
