@@ -3,6 +3,7 @@ import Seo, { type Props as SeoProps } from '../components/Seo.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import Analytics from '../components/Analytics.astro';
+import { ClientRouter } from 'astro:transitions';
 
 interface Frontmatter {
   title: string;
@@ -18,8 +19,8 @@ interface Props {
 const { seo: seoProp, frontmatter } = Astro.props;
 
 const seo = seoProp || {
-  title: frontmatter?.title,
-  description: frontmatter?.description,
+  title: frontmatter?.title ?? '',
+  description: frontmatter?.description ?? '',
   image: frontmatter?.heroImage,
 };
 ---
@@ -37,6 +38,7 @@ const seo = seoProp || {
   <Analytics />
 </head>
 <body class="relative bg-gradient-to-br from-[#d6e7f0] via-[#eaf2f7] to-[#d6e7f0] text-gray-900 font-sans flex flex-col min-h-screen overflow-x-hidden">
+  <ClientRouter fallback="animate" />
   <!-- Glassmorphism Background Orbs -->
   <div class="fixed inset-0 -z-10 overflow-hidden">
     <!-- Large central focal point -->
@@ -53,7 +55,7 @@ const seo = seoProp || {
   </div>
   
   <Header />
-  <main class="flex-grow pt-20 relative z-0">
+  <main class="flex-grow pt-20 relative z-0" transition:animate="fade">
     <slot />
   </main>
   <Footer />

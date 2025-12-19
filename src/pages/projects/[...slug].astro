@@ -1,5 +1,5 @@
 ---
-import { getCollection } from 'astro:content';
+import { getCollection, type CollectionEntry } from 'astro:content';
 import Layout from '../../layouts/Layout.astro';
 import FadeIn from '../../components/FadeIn.astro';
 import Accordion from '../../components/Accordion.astro';
@@ -9,19 +9,19 @@ import RelatedContent from '../../components/RelatedContent.astro';
 
 export async function getStaticPaths() {
   const projectEntries = await getCollection('projects');
-  return projectEntries.map(entry => ({
+  return projectEntries.map((entry: CollectionEntry<'projects'>) => ({
     params: { slug: entry.slug },
     props: { entry },
   }));
 }
 
 
-const { entry } = Astro.props;
+const { entry } = Astro.props as { entry: CollectionEntry<'projects'> };
 const { Content } = await entry.render();
 
 const sections = entry.body.split(/(?=^##\s)/m).filter(Boolean);
 
-const accordionItems = sections.reduce((acc, section) => {
+const accordionItems = sections.reduce((acc: { title: string; content: string }[], section: string) => {
   const lines = section.trim().split('\n');
   const titleLine = lines[0];
 
@@ -44,9 +44,9 @@ const accordionItems = sections.reduce((acc, section) => {
 
       <div class="bg-white p-6 sm:p-8 border border-gray-200 rounded-lg shadow-sm mb-8">
         <div class="flex justify-between items-center mb-8">
-          <a href="/portfolio/" class="text-accent hover:underline font-semibold inline-flex items-center gap-2">
+          <a href="/projects/" class="text-accent hover:underline font-semibold inline-flex items-center gap-2">
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
-            Back to Portfolio
+            Back to Projects
           </a>
           <ShareButton title={entry.data.title} />
         </div>
@@ -90,7 +90,7 @@ const accordionItems = sections.reduce((acc, section) => {
       
       <div class="bg-white p-4 sm:p-8 border border-gray-200 rounded-lg shadow-sm">
         <h2 class="text-2xl font-bold mb-4 px-4 sm:px-0">Project Phases</h2>
-        {accordionItems.map(item => (
+        {accordionItems.map((item: { title: string; content: string }) => (
           <Accordion summary={item.title}>
             <div set:html={item.content} />
           </Accordion>

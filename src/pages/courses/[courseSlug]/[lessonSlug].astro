@@ -3,16 +3,16 @@ import { getCollection, type CollectionEntry } from 'astro:content';
 import ArticleLayout from '../../../layouts/ArticleLayout.astro';
 
 export async function getStaticPaths() {
-  const lessonEntries = (await getCollection('courses')).filter(entry => 
-    !(entry.id.endsWith('index.mdx') || entry.id.endsWith('index.md'))
+  const lessonEntries = (await getCollection('courses')).filter(
+    (entry: CollectionEntry<'courses'>) => !(entry.id.endsWith('index.mdx') || entry.id.endsWith('index.md'))
   );
 
-  return lessonEntries.flatMap(entry => {
+  return lessonEntries.flatMap((entry: CollectionEntry<'courses'>) => {
     if (entry.slug && entry.slug.includes('/')) {
       const [courseSlug, lessonSlug] = entry.slug.split('/');
       return [{ params: { courseSlug, lessonSlug }, props: { entry } }];
     }
-    return []; 
+    return [];
   });
 }
 
@@ -21,14 +21,17 @@ const courseSlug = entry.slug.split('/')[0];
 
 // Get all lessons for this course to determine navigation
 const allCourseLessons = (await getCollection('courses'))
-  .filter(lesson => 
-    lesson.slug?.startsWith(courseSlug + '/') && 
-    !(lesson.id.endsWith('index.mdx') || lesson.id.endsWith('index.md'))
+  .filter(
+    (lesson: CollectionEntry<'courses'>) =>
+      lesson.slug?.startsWith(courseSlug + '/') && !(lesson.id.endsWith('index.mdx') || lesson.id.endsWith('index.md'))
   )
-  .sort((a, b) => (a.data.lessonNumber || 0) - (b.data.lessonNumber || 0));
+  .sort(
+    (a: CollectionEntry<'courses'>, b: CollectionEntry<'courses'>) =>
+      (a.data.lessonNumber || 0) - (b.data.lessonNumber || 0)
+  );
 
 const currentLessonNumber = entry.data.lessonNumber || 0;
-const currentIndex = allCourseLessons.findIndex(lesson => lesson.data.lessonNumber === currentLessonNumber);
+const currentIndex = allCourseLessons.findIndex((lesson: CollectionEntry<'courses'>) => lesson.data.lessonNumber === currentLessonNumber);
 const previousLesson = currentIndex > 0 ? allCourseLessons[currentIndex - 1] : null;
 const nextLesson = currentIndex < allCourseLessons.length - 1 ? allCourseLessons[currentIndex + 1] : null;
 ---
