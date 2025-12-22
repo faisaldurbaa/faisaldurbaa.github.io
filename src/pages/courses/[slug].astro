@@ -6,13 +6,13 @@ import ShareButton from '../../components/ShareButton.astro';
 import RelatedContent from '../../components/RelatedContent.astro';
 
 export async function getStaticPaths() {
-  const courseEntries = (await getCollection('courses')).filter(entry => 
+  const courseEntries = (await getCollection('courses')).filter((entry: CollectionEntry<'courses'>) =>
     entry.id.endsWith('index.mdx') || entry.id.endsWith('index.md')
   );
-  
+
   return courseEntries
-    .filter(entry => entry.slug)
-    .map(entry => {
+    .filter((entry: CollectionEntry<'courses'>) => Boolean(entry.slug))
+    .map((entry: CollectionEntry<'courses'>) => {
       const courseSlug = entry.slug!.split('/')[0];
       return {
         params: { slug: courseSlug },
@@ -26,12 +26,13 @@ const { entry, courseSlug } = Astro.props as {
   courseSlug: string; 
 };
 
-const allLessons = await getCollection('courses', ({ id }) => 
-  id.startsWith(courseSlug) && !(id.endsWith('index.mdx') || id.endsWith('index.md'))
+const allLessons = await getCollection(
+  'courses',
+  ({ id }: CollectionEntry<'courses'>) => id.startsWith(courseSlug) && !(id.endsWith('index.mdx') || id.endsWith('index.md'))
 );
 
-const sortedLessons = allLessons.sort((a, b) => 
-  (a.data.lessonNumber ?? 0) - (b.data.lessonNumber ?? 0)
+const sortedLessons = allLessons.sort(
+  (a: CollectionEntry<'courses'>, b: CollectionEntry<'courses'>) => (a.data.lessonNumber ?? 0) - (b.data.lessonNumber ?? 0)
 );
 ---
 <Layout seo={{
@@ -66,7 +67,7 @@ const sortedLessons = allLessons.sort((a, b) =>
       <div class="bg-white p-6 sm:p-8 border border-gray-200 rounded-lg shadow-sm">
         <h2 class="text-2xl font-bold mb-6">Table of Contents</h2>
         <ol class="list-none space-y-6">
-          {sortedLessons.map((lesson, index) => (
+          {sortedLessons.map((lesson: CollectionEntry<'courses'>, index: number) => (
             <li class="border-b border-gray-200 pb-4 last:border-b-0">
               <a href={`/courses/${courseSlug}/${lesson.slug.split('/')[1]}`} class="group">
                 <div class="flex items-start gap-4">

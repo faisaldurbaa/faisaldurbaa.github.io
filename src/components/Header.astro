@@ -7,7 +7,8 @@ const navLinks = [
   { name: "Contact", href: "/contact/" },
 ];
 
-const currentPath = Astro.url.pathname.replace(/\/$/, "");
+// Astro global is provided in .astro frontmatter; cast to avoid TS namespace error
+const currentPath: string = (Astro as unknown as { url: URL }).url.pathname.replace(/\/$/, "");
 
 const isActiveLink = (linkHref: string) => {
   const normalizedLink = linkHref.replace(/\/$/, "");
@@ -27,12 +28,12 @@ const isActiveLink = (linkHref: string) => {
   return currentPath === normalizedLink;
 };
 ---
-<header class="fixed top-0 left-0 right-0 z-50 flex flex-col items-center pointer-events-none">
+<header class="fixed top-0 left-0 right-0 z-50 flex flex-col items-center pointer-events-none" data-astro-transition-persist>
   <div
     id="nav-shell"
     class="pointer-events-auto relative z-50 flex items-center justify-between transition-all duration-700 ease-[cubic-bezier(0.4,0,0.2,1)]
            w-full max-w-full rounded-none border-b border-gray-200/50 bg-white/70 backdrop-blur-2xl shadow-sm py-3 px-4 md:px-8 mt-0
-           data-[scrolled=true]:w-[90%] data-[scrolled=true]:md:w-[75%] data-[scrolled=true]:max-w-7xl data-[scrolled=true]:rounded-3xl data-[scrolled=true]:border data-[scrolled=true]:border-white/40 data-[scrolled=true]:shadow-xl data-[scrolled=true]:mt-6 data-[scrolled=true]:py-2.5"
+    data-[scrolled=true]:w-[90%] data-[scrolled=true]:md:w-[75%] data-[scrolled=true]:max-w-7xl data-[scrolled=true]:rounded-3xl data-[scrolled=true]:border data-[scrolled=true]:border-white/40 data-[scrolled=true]:shadow-xl data-[scrolled=true]:mt-6 data-[scrolled=true]:py-2.5"
     data-scrolled="false"
   >
     <a href="/" class="text-lg md:text-xl font-bold text-gray-900 hover:text-accent transition-colors flex items-center gap-2">
@@ -53,7 +54,7 @@ const isActiveLink = (linkHref: string) => {
           class:list={[
             "relative z-10 py-2 px-4 rounded-full text-sm font-medium transition-colors duration-300",
             isActiveLink(link.href)
-              ? 'text-accent'
+              ? 'text-accent bg-gray-900/5'
               : 'text-gray-600 hover:text-accent'
           ]}
         >
@@ -98,19 +99,94 @@ const isActiveLink = (linkHref: string) => {
 </header>
 
 <script>
+  // Set initial state immediately to avoid first-paint flicker
+  {
+    const navShell = document.getElementById('nav-shell');
+    if (navShell) {
+      const shouldFloat = sessionStorage.getItem('nav-was-floating') === 'true' || window.scrollY > 20;
+      const previous = navShell.style.transition;
+      navShell.style.transition = 'none';
+      navShell.dataset.scrolled = shouldFloat ? 'true' : 'false';
+      void navShell.offsetWidth;
+      navShell.style.transition = previous;
+    }
+  }
+
   function init() {
     const mobileMenuButton = document.getElementById('mobile-menu-button');
     const mobileMenu = document.getElementById('mobile-menu');
     const hamburgerIcon = document.getElementById('hamburger-icon');
     const closeIcon = document.getElementById('close-icon');
     const navShell = document.getElementById('nav-shell');
+    if (!navShell) return;
+    const isBound = navShell.dataset.bound === 'true';
+    if (!isBound) navShell.dataset.bound = 'true';
     
     // Sliding Pill Logic
     const desktopNav = document.querySelector('nav.hidden.md\\:flex');
     const pill = document.getElementById('nav-pill');
-    const navLinks = desktopNav?.querySelectorAll('a');
+    const desktopLinks = desktopNav?.querySelectorAll<HTMLAnchorElement>('a') ?? [];
+    const mobileLinks = mobileMenu?.querySelectorAll<HTMLAnchorElement>('a') ?? [];
 
-    function updatePill(target : any) {
+    const computeActive = (href: string) => {
+      const currentPath = window.location.pathname.replace(/\/$/, '');
+      const normalizedLink = href.replace(/\/$/, '');
+      if (href === '/projects/') {
+        return (
+          currentPath === normalizedLink ||
+          currentPath.startsWith('/projects') ||
+          currentPath.startsWith('/courses')
+        );
+      }
+      if (href === '/blog/') {
+        return currentPath === normalizedLink || currentPath.startsWith('/blog');
+      }
+      return currentPath === normalizedLink;
+    };
+
+    const updateActiveLinks = () => {
+      const desktopActiveClasses = ['text-accent', 'bg-gray-900/5'];
+      const desktopInactiveClasses = ['text-gray-600', 'hover:text-accent'];
+      const mobileActiveClasses = ['bg-accent', 'text-white', 'font-semibold', 'pl-6', 'shadow-md'];
+      const mobileInactiveClasses = ['text-gray-600', 'hover:bg-gray-100/50', 'hover:text-accent', 'hover:pl-5'];
+
+      desktopLinks.forEach((link) => {
+        const href = link.getAttribute('href') || '';
+        const active = computeActive(href);
+        link.dataset.active = active ? 'true' : 'false';
+        link.classList.remove(
+          'text-white',
+          ...desktopActiveClasses,
+          ...desktopInactiveClasses
+        );
+        if (active) {
+          link.classList.add(...desktopActiveClasses);
+          link.setAttribute('aria-current', 'page');
+        } else {
+          link.classList.add(...desktopInactiveClasses);
+          link.removeAttribute('aria-current');
+        }
+      });
+
+      mobileLinks.forEach((link) => {
+        const href = link.getAttribute('href') || '';
+        const active = computeActive(href);
+        link.dataset.active = active ? 'true' : 'false';
+        link.classList.remove(
+          ...mobileActiveClasses,
+          ...mobileInactiveClasses
+        );
+        if (active) {
+          link.classList.add(...mobileActiveClasses);
+          link.setAttribute('aria-current', 'page');
+        } else {
+          link.classList.add(...mobileInactiveClasses);
+          link.removeAttribute('aria-current');
+        }
+      });
+    };
+
+    function updatePill(target: HTMLElement | null) {
       if (!desktopNav || !pill || !target) return;
 
       const navRect = desktopNav.getBoundingClientRect();
@@ -126,7 +202,7 @@ const isActiveLink = (linkHref: string) => {
       pill.style.opacity = '1';
 
       // Update text colors for contrast
-      navLinks?.forEach(link => {
+      desktopLinks.forEach(link => {
         if (link === target) {
           link.classList.remove('text-gray-600', 'hover:text-accent', 'text-accent');
           link.classList.add('text-white');
@@ -137,99 +213,107 @@ const isActiveLink = (linkHref: string) => {
       });
     }
 
-    if (desktopNav && pill && navLinks) {
-        // Initial Position
-        const activeLink = desktopNav.querySelector('[data-active="true"]');
-        if (activeLink) {
-            // Disable transition for initial placement
-            pill.style.transition = 'none';
-            // Use requestAnimationFrame to ensure layout is ready
-            requestAnimationFrame(() => {
-               updatePill(activeLink);
-               // Force reflow to apply the position without transition
-               void pill.offsetWidth;
-               // Re-enable transition
-               pill.style.transition = '';
-            });
-        }
+    const positionPill = (immediate = false) => {
+      if (!desktopNav || !pill || desktopLinks.length === 0) return;
+      const activeLink = desktopNav.querySelector('[data-active="true"]') as HTMLElement | null;
+      if (!activeLink) {
+        pill.style.opacity = '0';
+        return;
+      }
+      const previous = pill.style.transition;
+      if (immediate) pill.style.transition = 'none';
+      requestAnimationFrame(() => {
+        updatePill(activeLink);
+        void pill.offsetWidth;
+        if (immediate) pill.style.transition = previous;
+      });
+    };
 
-        // Hover Effects
-        navLinks.forEach(link => {
-            link.addEventListener('mouseenter', () => updatePill(link));
-        });
-
-        desktopNav.addEventListener('mouseleave', () => {
-            const active = desktopNav.querySelector('[data-active="true"]');
-            if (active) updatePill(active);
-            else pill.style.opacity = '0'; // Hide if no active link
-        });
+    function setMenuState(open: boolean) {
+      if (!mobileMenuButton || !mobileMenu || !hamburgerIcon || !closeIcon) return;
+      mobileMenuButton.setAttribute('aria-expanded', open ? 'true' : 'false');
+      mobileMenu.classList.toggle('hidden', !open);
+      hamburgerIcon.classList.toggle('hidden', open);
+      closeIcon.classList.toggle('hidden', !open);
     }
 
     function toggleMenu() {
       if (!mobileMenuButton || !mobileMenu || !hamburgerIcon || !closeIcon) return;
       const isExpanded = mobileMenuButton.getAttribute('aria-expanded') === 'true';
-      mobileMenuButton.setAttribute('aria-expanded', (!isExpanded).toString());
-      mobileMenu.classList.toggle('hidden');
-      hamburgerIcon.classList.toggle('hidden');
-      closeIcon.classList.toggle('hidden');
+      setMenuState(!isExpanded);
     }
 
-    function updateNavState() {
+    function updateNavState(immediate = false) {
       if (!navShell) return;
       const scrollY = window.scrollY;
       const floating = scrollY > 20;
+
+      const previous = navShell.style.transition;
+      if (immediate) navShell.style.transition = 'none';
 
       if (floating && navShell.dataset.scrolled !== 'true') {
         navShell.dataset.scrolled = 'true';
       } else if (!floating && navShell.dataset.scrolled !== 'false') {
         navShell.dataset.scrolled = 'false';
       }
+
+      if (immediate) {
+        requestAnimationFrame(() => {
+          navShell.style.transition = previous;
+        });
+      }
     }
 
     function handleStickBack() {
       if (!navShell) return;
       const wasFloating = sessionStorage.getItem('nav-was-floating') === 'true';
-      
+
       if (wasFloating && window.scrollY <= 20) {
+        const previous = navShell.style.transition;
         navShell.style.transition = 'none';
         navShell.dataset.scrolled = 'true';
         void navShell.offsetWidth;
-        navShell.style.transition = '';
-        
+        navShell.style.transition = previous;
+
         requestAnimationFrame(() => {
-            requestAnimationFrame(() => {
-                navShell.dataset.scrolled = 'false';
-                sessionStorage.removeItem('nav-was-floating');
-            });
+          requestAnimationFrame(() => {
+            navShell.dataset.scrolled = 'false';
+            sessionStorage.removeItem('nav-was-floating');
+          });
         });
       } else {
-        updateNavState();
+        updateNavState(true);
       }
     }
 
     function setupNavClickListeners() {
-        const links = document.querySelectorAll('nav a, a[href^="/"]');
-        links.forEach(link => {
-            link.addEventListener('click', () => {
-                if (navShell && navShell.dataset.scrolled === 'true') {
-                    sessionStorage.setItem('nav-was-floating', 'true');
-                }
-            });
-        });
+      document.addEventListener('click', (event) => {
+        const target = event.target as HTMLElement | null;
+        const link = target?.closest('a[href]') as HTMLAnchorElement | null;
+        if (!link) return;
+        const href = link.getAttribute('href') || '';
+        if (!href.startsWith('/')) return;
+        if (navShell.dataset.scrolled === 'true') {
+          sessionStorage.setItem('nav-was-floating', 'true');
+        }
+      });
     }
 
     // Event Listeners
-    if (mobileMenuButton) {
-      mobileMenuButton.addEventListener('click', toggleMenu);
-    }
+    if (!isBound) {
+      if (mobileMenuButton) {
+        mobileMenuButton.addEventListener('click', toggleMenu);
+      }
 
-    if (mobileMenu) {
-      mobileMenu.addEventListener('click', (e) => {
-        const target = e.target as HTMLElement | null;
-        if (target && target.tagName === 'A') {
-          toggleMenu();
-        }
-      });
+      if (mobileMenu) {
+        mobileMenu.addEventListener('click', (e) => {
+          const target = e.target as HTMLElement | null;
+          const link = target?.closest('a');
+          if (link) {
+            setMenuState(false);
+          }
+        });
+      }
     }
 
     // Scroll handling with cleanup
@@ -244,18 +328,37 @@ const isActiveLink = (linkHref: string) => {
         }
     };
     
-    window.addEventListener('scroll', onScroll, { passive: true });
+    if (!isBound) {
+      window.addEventListener('scroll', onScroll, { passive: true });
+      setupNavClickListeners();
 
-    // Cleanup on navigation to prevent memory leaks and stale references
-    document.addEventListener('astro:before-swap', () => {
-        window.removeEventListener('scroll', onScroll);
-    }, { once: true });
+      if (desktopNav && pill && desktopLinks.length > 0) {
+        desktopLinks.forEach(link => {
+          link.addEventListener('mouseenter', () => updatePill(link));
+        });
 
-    // Initial run
-    setupNavClickListeners();
+        desktopNav.addEventListener('mouseleave', () => {
+          const active = desktopNav.querySelector('[data-active="true"]') as HTMLElement | null;
+          if (active) updatePill(active);
+          else pill.style.opacity = '0';
+        });
+      }
+    }
+
+    // Initial run / refresh
+    updateActiveLinks();
+    positionPill(true);
+    setMenuState(false);
     handleStickBack();
   }
 
   // Run on initial load and after every navigation
-  document.addEventListener('astro:page-load', init);
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init, { once: true });
+  } else {
+    init();
+  }
+  document.addEventListener('astro:after-swap', () => {
+    init();
+  });
 </script>
