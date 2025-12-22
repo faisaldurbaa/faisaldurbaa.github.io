@@ -34,11 +34,11 @@ const seo = seoProp || {
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'" />
   <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" /></noscript>
-  <ClientRouter />
   <Seo {...seo} />
   <Analytics />
 </head>
 <body class="relative bg-gradient-to-br from-[#d6e7f0] via-[#eaf2f7] to-[#d6e7f0] text-gray-900 font-sans flex flex-col min-h-screen overflow-x-hidden">
+  <ClientRouter fallback="animate" />
   <!-- Glassmorphism Background Orbs -->
   <div class="fixed inset-0 -z-10 overflow-hidden">
     <!-- Large central focal point -->

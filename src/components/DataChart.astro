@@ -32,7 +32,7 @@ const { type, data, title, id } = Astro.props;
         import('chart.js/auto'),
         import('chartjs-plugin-annotation')
       ]);
-      
+
       const annotationPlugin = (annotationPluginModule as any).default || annotationPluginModule;
       if (annotationPlugin) {
         Chart.register(annotationPlugin);

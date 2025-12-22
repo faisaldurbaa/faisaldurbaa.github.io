@@ -1,5 +1,5 @@
 ---
-import { getCollection } from 'astro:content';
+import { getCollection, type CollectionEntry } from 'astro:content';
 import Layout from '../../layouts/Layout.astro';
 import FadeIn from '../../components/FadeIn.astro';
 import Card from '../../components/Card.astro';
@@ -8,13 +8,13 @@ import competitionProjects from '../../data/competitionProjects';
 
 const projectEntries = await getCollection('projects');
 const courseEntries = (await getCollection('courses')).filter(
-  (course) => course.id.endsWith('index.mdx') || course.id.endsWith('index.md')
+  (course: CollectionEntry<'courses'>) => course.id.endsWith('index.mdx') || course.id.endsWith('index.md')
 );
 const fallbackDate = new Date('1970-01-01');
 
 const combinedBuilds = [
-  ...projectEntries.map((item) => ({ ...item, type: 'project' as const })),
-  ...courseEntries.map((item) => ({ ...item, type: 'course' as const })),
+  ...projectEntries.map((item: CollectionEntry<'projects'>) => ({ ...item, type: 'project' as const })),
+  ...courseEntries.map((item: CollectionEntry<'courses'>) => ({ ...item, type: 'course' as const })),
 ].sort((a, b) =>
   (b.data.publishDate ? new Date(b.data.publishDate) : fallbackDate).valueOf() -
   (a.data.publishDate ? new Date(a.data.publishDate) : fallbackDate).valueOf()
@@ -30,7 +30,7 @@ const seo = {
 };
 ---
 <Layout seo={seo}>
-  <div class="container mx-auto px-5 md:px-6 lg:px-8 py-14 max-w-6xl space-y-12">
+  <div class="mx-auto w-full px-[clamp(3.25rem,8vw,7.25rem)] py-14 max-w-[1800px] space-y-12">
     <FadeIn>
       <div class="rounded-3xl bg-gradient-to-br from-white via-[#eef3fb] to-[#dfe9f5] border border-white/60 shadow-xl px-6 py-8 md:px-10 md:py-10">
         <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
@@ -38,18 +38,18 @@ const seo = {
             <h1 class="text-4xl font-bold text-gray-900">PROJECTS</h1>
             <p class="text-gray-600 max-w-2xl">A single hub for my open-source projects, courses, and competition builds.</p>
           </div>
-          <div class="flex flex-wrap gap-3 w-full md:w-auto justify-center md:justify-end max-md:flex-nowrap">
+          <div class="grid grid-cols-3 gap-1.5 sm:gap-3 w-full md:w-auto justify-center md:justify-end">
             <div class="stat-pill">
-              <span class="text-xs uppercase text-gray-600 text-center w-full">Projects</span>
-              <span class="text-2xl font-bold text-gray-900 text-center w-full counter" data-target={softwareCount}>0</span>
+              <span class="text-[10px] sm:text-xs uppercase text-gray-600 text-center w-full leading-[1.05] truncate">Projects</span>
+              <span class="text-lg sm:text-xl font-bold text-gray-900 text-center w-full counter leading-tight" data-target={softwareCount}>0</span>
             </div>
             <div class="stat-pill">
-              <span class="text-xs uppercase text-gray-600 text-center w-full">Courses</span>
-              <span class="text-2xl font-bold text-gray-900 text-center w-full counter" data-target={courseCount}>0</span>
+              <span class="text-[10px] sm:text-xs uppercase text-gray-600 text-center w-full leading-[1.05] truncate">Courses</span>
+              <span class="text-lg sm:text-xl font-bold text-gray-900 text-center w-full counter leading-tight" data-target={courseCount}>0</span>
             </div>
             <div class="stat-pill">
-              <span class="text-xs uppercase text-gray-600 text-center w-full">Competition</span>
-              <span class="text-2xl font-bold text-gray-900 text-center w-full counter" data-target={competitionCount}>0</span>
+              <span class="text-[10px] sm:text-xs uppercase text-gray-600 text-center w-full leading-[1.05] truncate">Competition</span>
+              <span class="text-lg sm:text-xl font-bold text-gray-900 text-center w-full counter leading-tight" data-target={competitionCount}>0</span>
             </div>
           </div>
         </div>
@@ -169,12 +169,13 @@ const seo = {
     display: inline-flex;
     flex-direction: column;
     gap: 0.1rem;
-    padding: 0.65rem 0.9rem;
-    border-radius: 0.9rem;
+    padding: 0.45rem 0.6rem;
+    border-radius: 0.85rem;
     background: rgba(255, 255, 255, 0.9);
     border: 1px solid rgba(226, 232, 240, 0.9);
     box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
-    min-width: 90px;
-    align-items: flex-start;
+    min-width: 0;
+    align-items: center;
+    text-align: center;
   }
 </style>
