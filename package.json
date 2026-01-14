@@ -11,13 +11,13 @@
     "lint": "eslint ."
   },
   "dependencies": {
-    "@astrojs/check": "^0.9.5",
-    "@astrojs/mdx": "^4.3.11",
-    "@astrojs/rss": "^4.0.13",
-    "@astrojs/sitemap": "^3.6.0",
+    "@astrojs/check": "^0.9.6",
+    "@astrojs/mdx": "^4.3.13",
+    "@astrojs/rss": "^4.0.14",
+    "@astrojs/sitemap": "^3.6.1",
     "@astrojs/tailwind": "^6.0.2",
     "@iconify-json/mdi": "^1.2.3",
-    "astro": "^5.15.9",
+    "astro": "^5.16.9",
     "astro-icon": "^1.1.5",
     "chart.js": "^4.5.1",
     "chartjs-plugin-annotation": "^3.1.0",

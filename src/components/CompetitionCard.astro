@@ -29,7 +29,7 @@ const badge = themeBadges[project.theme as CompetitionProject["theme"]];
         <h2 class="text-xl font-bold text-gray-900 leading-tight">{project.title}</h2>
       </div>
       <span class:list={[
-        "px-2.5 py-1 rounded-full text-[11px] sm:text-xs font-semibold shadow-sm shadow-black/10 whitespace-nowrap flex-shrink-0",
+        "px-3 py-1 rounded-full text-[11px] sm:text-xs font-semibold shadow-sm shadow-black/10 whitespace-nowrap flex-shrink-0 min-w-[8ch] text-center",
         badge.color
       ]}>
         {badge.label}

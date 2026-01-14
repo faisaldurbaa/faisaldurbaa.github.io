@@ -287,6 +287,7 @@ const isActiveLink = (linkHref: string) => {
     }
 
     function setupNavClickListeners() {
+      if (!navShell) return;
       document.addEventListener('click', (event) => {
         const target = event.target as HTMLElement | null;
         const link = target?.closest('a[href]') as HTMLAnchorElement | null;
