@@ -24,7 +24,7 @@ export const competitionProjects: CompetitionProject[] = [
     solution:
       "Arduino Nano + MQ135-driven iris vent that opens/closes automatically and spins a fan on unsafe readings, running off solar-charged battery for hands-off protection.",
     links: [
-      { label: "Detail Report", href: "https://pdfhost.io/v/jpTnZDh8qA_mezurobo-iris-teknofest-2020" },
+      { label: "Detail Report", href: "https://drive.google.com/file/d/12iYV3s9JaDqoctW9LlmiHW_XLMPQo4jl" },
       { label: "News", href: "https://www.afad.gov.tr/teknofestte-turkiye-kazandi" },
     ],
     theme: "safety",
@@ -40,8 +40,8 @@ export const competitionProjects: CompetitionProject[] = [
     solution:
       "UAV with LIDAR/camera maps terrain, on-board analysis flags erosion hotspots, then drops humidity-triggered self-burying E-seeds into target zones.",
     links: [
-      { label: "Project Report", href: "https://pdfhost.io/v/HvCKNaAZb7_eseed-project-teknofest-2024" },
-      { label: "Presentation", href: "https://pdfhost.io/v/eu9KPjnYaB_eseed-presentation-teknofest-2024" },
+      { label: "Project Report", href: "https://drive.google.com/file/d/1e1Ij0TicA8VDuTQ5E568X7snGpoiCh0V" },
+      { label: "Presentation", href: "https://drive.google.com/file/d/1czH8fFlw1w7w4qDl7xf1FBFrCjaN5AHT" },
     ],
     theme: "environment",
   },
@@ -56,9 +56,25 @@ export const competitionProjects: CompetitionProject[] = [
     solution:
       "ESP8266-based tracker ingests vitals, applies shock-index logic, and auto-calls/notifies clinicians with status and suggested actions via mobile app.",
     links: [
-      { label: "Project Report", href: "https://pdfhost.io/v/XD5FDLSUjJ_aipts-project-teknofest-2023" },
+      { label: "Project Report", href: "https://drive.google.com/file/d/1xxikFDnDCtWZxiwIbiOombTCniFkALND" },
     ],
     theme: "health",
+  },
+  {
+    title: "AI Earthquake Impact Analysis & Intervention",
+    focus: "Disaster Response Simulation",
+    roles: ["Researcher"],
+    competition: "STREAM It Up!-3",
+    yearTag: "STREAM It Up!-3",
+    problem:
+      "Turkey lacks adequate disaster planning for high-risk seismic zones, leaving evacuation and logistics paths under-modeled.",
+    solution:
+      "Six-stage AI crisis-management pipeline that aggregates regional population and route data to simulate quake damage, predict blocked corridors, and optimize intervention center placement.",
+    links: [
+      { label: "Abstract", href: "https://drive.google.com/file/d/1drt2yJatrtvsZhY0TmMY3L5XVnONyjyl" },
+      { label: "Slides", href: "https://drive.google.com/file/d/15I4thzZn-IV1vqyuU8I5ij8j8B3BR2kL" },
+    ],
+    theme: "safety",
   },
   {
     title: "AI-Powered Physics Graph Generator",
@@ -71,24 +87,9 @@ export const competitionProjects: CompetitionProject[] = [
     solution:
       "Web app using a Gemini LLM parses uploaded questions and generates position/velocity/energy graphs in real time for immediate visual feedback.",
     links: [
-      { label: "Project Report", href: "https://pdfhost.io/v/BTZe5pjbs6_physics-teknofest-2025" },
+      { label: "Project Report", href: "https://drive.google.com/file/d/1idDOTsm1FqFJu-7V0Wt9Jq7MzCP5KF8R" },
     ],
     theme: "education",
-  },
-  {
-    title: "Dynamic Truck Underride Guard",
-    focus: "Smart Transportation",
-    roles: ["Co-Lead Developer"],
-    competition: "Smart Transportation",
-    yearTag: "TEKNOFEST 2023",
-    problem:
-      "Rear-end underride crashes are fatal when trucks lack effective guards; fixed bars hinder reversing to docks so they're often unusable or absent.",
-    solution:
-      "Hydraulic rear guard controlled by Arduino: stays low during driving for underride protection, auto-raises only in reverse for dock access.",
-    links: [
-      { label: "Project Report", href: "https://pdfhost.io/v/qJdG3th3XJ_truck-project-teknofest-2023" },
-    ],
-    theme: "safety",
   },
   {
     title: "DURAY — School Nutrition Planner",
@@ -101,7 +102,7 @@ export const competitionProjects: CompetitionProject[] = [
     solution:
       "Python tool classifies students by BMI, applies Schofield-based needs, and adjusts weekly menus with substitution suggestions to balance nutrition and reduce waste.",
     links: [
-      { label: "Project Report", href: "https://pdfhost.io/v/Y93fYtywb5_DURAYPROJERAPORU" },
+      { label: "Project Report", href: "https://drive.google.com/file/d/1bOFDyKKzwiRGc1ytwlMyKwnX4kvlL9nY" },
     ],
     theme: "health",
   },
@@ -116,8 +117,8 @@ export const competitionProjects: CompetitionProject[] = [
     solution:
       "Seat cushion with piezo disks powers LEDs through a DeneyapKart Mini and regulator, creating a self-sustaining visibility system.",
     links: [
-      { label: "Project Report", href: "https://pdfhost.io/v/f6qhNszGzB_pizeo-project-teknofest-2024" },
-      { label: "Presentation", href: "https://pdfhost.io/v/z9LSjDMZKp_pioze-presentation-teknofest-2024" },
+      { label: "Project Report", href: "https://drive.google.com/file/d/1EpgvQpbl66nP3n4RL1_QsBrg8vhzd2tL" },
+      { label: "Presentation", href: "https://drive.google.com/file/d/1XxhyoJABorg-mJBl8pzfJ72pcaHaVtGP" },
     ],
     theme: "accessibility",
   },
