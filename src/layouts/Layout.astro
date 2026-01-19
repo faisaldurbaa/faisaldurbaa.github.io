@@ -59,5 +59,161 @@ const seo = seoProp || {
     <slot />
   </main>
   <Footer />
+  <script>
+    const dataChartKey = '__dataChartInit';
+    const existingInit = window[dataChartKey];
+
+    if (existingInit && typeof existingInit.refresh === 'function') {
+      existingInit.refresh();
+    } else {
+      let observer = null;
+      let chartModulePromise = null;
+      let annotationModulePromise = null;
+
+      const loadChartModules = async () => {
+        if (!chartModulePromise) {
+          chartModulePromise = import('chart.js/auto');
+        }
+        if (!annotationModulePromise) {
+          annotationModulePromise = import('chartjs-plugin-annotation');
+        }
+
+        const [chartModule, annotationModule] = await Promise.all([
+          chartModulePromise,
+          annotationModulePromise,
+        ]);
+        const Chart = chartModule.default || chartModule.Chart || chartModule;
+        const annotationPlugin = annotationModule.default || annotationModule;
+
+        if (annotationPlugin && !Chart.__annotationRegistered) {
+          Chart.register(annotationPlugin);
+          Chart.__annotationRegistered = true;
+        }
+
+        return Chart;
+      };
+
+      const initChart = async (canvas) => {
+        if (canvas.dataset.chartReady === 'true') return;
+
+        try {
+          const Chart = await loadChartModules();
+          const type = canvas.dataset.chartType;
+          const data = JSON.parse(canvas.dataset.chartData || '{}');
+          const datasets = Array.isArray(data.datasets) ? data.datasets : [];
+
+          if (!type || datasets.length === 0) return;
+
+          const existingChart = Chart.getChart(canvas);
+          if (existingChart) {
+            existingChart.destroy();
+          }
+
+          const options = {
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: {
+              mode: 'index',
+              intersect: false,
+            },
+            plugins: {
+              legend: {
+                display: datasets.length > 1,
+                position: 'top',
+                labels: { font: { family: 'Inter, sans-serif' }, color: '#1f2937' },
+              },
+              tooltip: {
+                backgroundColor: '#ffffff',
+                titleColor: '#1f2937',
+                bodyColor: '#4b5563',
+                borderColor: '#e5e7eb',
+                borderWidth: 1,
+                padding: 10,
+                cornerRadius: 8,
+                displayColors: true,
+              },
+              annotation: data.annotation ? data.annotation : {},
+            },
+            scales: {
+              x: {
+                grid: { display: false },
+                ticks: {
+                  font: { family: 'Inter, sans-serif', size: 10 },
+                  color: '#4b5563',
+                  maxRotation: 45,
+                  minRotation: 45,
+                },
+              },
+              y: {
+                grid: { color: '#e5e7eb', borderDash: [5, 5] },
+                ticks: {
+                  font: { family: 'Inter, sans-serif', size: 10 },
+                  color: '#4b5563',
+                },
+              },
+            },
+            animation: { duration: 1000, easing: 'easeInOutCubic' },
+          };
+
+          new Chart(canvas, {
+            type: type,
+            data: data,
+            options: options,
+          });
+
+          canvas.dataset.chartReady = 'true';
+          const loadingDiv = document.getElementById(`${canvas.id}-loading`);
+          if (loadingDiv) loadingDiv.style.display = 'none';
+          canvas.style.opacity = '1';
+        } catch (err) {
+          console.error('Failed to load chart modules', err);
+          const loadingDiv = document.getElementById(`${canvas.id}-loading`);
+          if (loadingDiv) loadingDiv.textContent = 'Chart failed to load';
+        }
+      };
+
+      const setupObserver = () => {
+        if (!('IntersectionObserver' in window)) {
+          document.querySelectorAll('canvas[data-chart-type]').forEach((canvas) => {
+            if (canvas instanceof HTMLCanvasElement) {
+              initChart(canvas);
+            }
+          });
+          return;
+        }
+
+        if (!observer) {
+          observer = new IntersectionObserver((entries, observerInstance) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                setTimeout(() => {
+                  initChart(entry.target);
+                  observerInstance.unobserve(entry.target);
+                }, 100);
+              }
+            });
+          }, { threshold: 0.1 });
+        }
+
+        document.querySelectorAll('canvas[data-chart-type]').forEach((canvas) => {
+          if (!(canvas instanceof HTMLCanvasElement)) return;
+          if (canvas.dataset.chartReady === 'true') return;
+          if (canvas.dataset.chartObserved === 'true') return;
+          canvas.dataset.chartObserved = 'true';
+          observer.observe(canvas);
+        });
+      };
+
+      const runSetup = () => {
+        setupObserver();
+      };
+
+      window[dataChartKey] = { refresh: runSetup };
+
+      document.addEventListener('astro:page-load', runSetup);
+      document.addEventListener('astro:after-swap', runSetup);
+      if (document.readyState !== 'loading') runSetup();
+    }
+  </script>
 </body>
 </html>
