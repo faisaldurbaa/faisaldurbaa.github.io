@@ -8,13 +8,14 @@ repoUrl: "https://github.com/faisaldurbaa/aircraft_detector"
 heroImage: "/images/projects/2/thumbnail.webp"
 img1: "/images/projects/2/thumbnail.webp"
 intro: "This project aims to develop a computer vision system to detect and identify various aircraft types. The project is developed on top of open-source copmuter vision model Ultralytics YOLOv8 and publicly accesible aircraft detection datasets from Kaggle."
+liveUrl: "https://aircraftdetector.streamlit.app"
 datasetUrl: "https://www.kaggle.com/datasets/rookieengg/military-aircraft-detection-dataset-yolo-format"
 ---
 import DataChart from '../../components/DataChart.astro';
 import Accordion from '../../components/Accordion.astro';
 
 <Accordion summary="Introduction">
-[Click to Access Project Website](https://aircraftdetector.streamlit.app/)
+<a href="https://aircraftdetector.streamlit.app/" target="_blank" rel="noopener noreferrer">Click to Access Project Website</a>
 
 Since the dawn of civilization, warfare has been the primary driver of technological advancement, a reality that remains clear today.
 There is nothing shocking about this phenomenon, as the very wish for peace and prosperity has led us down this path. 
@@ -318,7 +319,7 @@ After countless trials, continuous learning, 37 hours of total training time, an
 
 <Accordion summary="Web App Development">
 
-The [web application](https://aircraftdetector.streamlit.app/) is built using **Streamlit**, providing an intuitive interface for real-time aircraft detection in both images and videos. The app architecture prioritizes security, performance, and user experience through several key design decisions.
+The <a href="https://aircraftdetector.streamlit.app/" target="_blank" rel="noopener noreferrer">web application</a> is built using **Streamlit**, providing an intuitive interface for real-time aircraft detection in both images and videos. The app architecture prioritizes security, performance, and user experience through several key design decisions.
 
 <img src="/images/projects/2/4.webp" alt="Aircraft Detection Web App Main Interface" loading="lazy" />
 
@@ -433,7 +434,7 @@ The interface provides contextual examples in the sidebar, with sample images an
 
 <Accordion summary="Final Product">
 
-The final result is a complete system that combines the trained YOLOv8 model with an intuitive web interface. It's a production-ready application that can identify 43 different aircraft types with solid accuracy. You can use it directly from:  https://aircraftdetector.streamlit.app/
+The final result is a complete system that combines the trained YOLOv8 model with an intuitive web interface. It's a production-ready application that can identify 43 different aircraft types with solid accuracy. You can use it directly from: <a href="https://aircraftdetector.streamlit.app/" target="_blank" rel="noopener noreferrer">https://aircraftdetector.streamlit.app/</a>
 
 ### Performance Achievements
 
@@ -531,7 +532,7 @@ I also made a couple of mistakes along the way, but each one was an opportunity 
 3.  While training, I set the `workers` parameter to a number higher than the available CPU cores. This likely increased the training time.
 4.  After running the first training session with 35 epochs, I ran an additional session with the `best_hyperparameters.yaml` from the tuner. However, since those hyperparameters were tuned for a fresh model, they actually reduced the model's accuracy. Fortunately, I had set an early stopping mechanism, which halted the process after only 6 epochs.
 
-In short, this project was a great learning opportunity for me. I had the chance to sharpen my technical skills in a new field of technology. The project is completely open-source, and all code, including the scripts for training, is in the [Github repo](https://github.com/faisaldurbaa/aircraft_detector). You can use the app directly from: https://aircraftdetector.streamlit.app/
+In short, this project was a great learning opportunity for me. I had the chance to sharpen my technical skills in a new field of technology. The project is completely open-source, and all code, including the scripts for training, is in the [Github repo](https://github.com/faisaldurbaa/aircraft_detector). You can use the app directly from: <a href="https://aircraftdetector.streamlit.app/" target="_blank" rel="noopener noreferrer">https://aircraftdetector.streamlit.app/</a>
 </Accordion>
 
 <Accordion summary='Future Work & Recommendations'>
