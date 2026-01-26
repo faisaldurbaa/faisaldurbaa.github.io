@@ -1,6 +1,6 @@
 ---
 title: "AI, Privacy & Public Security"
-description: "How AI assistants are erasing our individual identity and what we can do about it."
+description: "How AI assistants are erasing our individual identity, and what we can do about it."
 publishDate: 2026-01-26
 tags: ["AI Chatbots", "Misuse", "Privacy"]
 heroImage: "/images/blogs/3-thumbnail.webp"
