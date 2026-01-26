@@ -4,6 +4,7 @@ description: "How AI assistants are erasing our individual identity and what we 
 publishDate: 2026-01-26
 tags: ["AI Chatbots", "Misuse", "Privacy"]
 heroImage: "/images/blogs/3-thumbnail.webp"
+featured: true
 ---
 
 ![When Thought Becomes Legible](/images/blogs/3-1.webp)
