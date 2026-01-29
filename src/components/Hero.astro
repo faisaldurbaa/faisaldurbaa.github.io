@@ -17,25 +17,25 @@ const stats = {
 };
 
 const backgroundIcons = [
-  { name: 'mdi:language-python', style: 'top: 15%; left: 5%; transform: rotate(-15deg);' },
-  { name: 'mdi:database', style: 'top: 10%; right: 10%; transform: rotate(10deg);' },
-  { name: 'mdi:cloud', style: 'top: 35%; left: 7%; transform: rotate(5deg);' },
-  { name: 'mdi:api', style: 'bottom: 55%; right: 5%; transform: rotate(-10deg);' },
-  { name: 'mdi:docker', style: 'bottom: 65%; right: 75%; transform: rotate(-20deg);' },
-  { name: 'mdi:git', style: 'top: 5%; left: 26%; transform: rotate(10deg);' },
-  { name: 'mdi:linux', style: 'bottom: 45%; right: 23%; transform: rotate(-5deg);' },
-  { name: 'mdi:aws', style: 'top: 25%; right: 20%; transform: rotate(25deg);' },
-  { name: 'mdi:code-braces', style: 'bottom: 45%; left: 20%; transform: rotate(-15deg);' },
-  { name: 'mdi:terminal', style: 'top: 50%; left: 85%; transform: rotate(10deg);' },
-  { name: 'mdi:chip', style: 'top: 55%; right: 85%; transform: rotate(-10deg);' },
-  { name: 'mdi:web', style: 'top: 7%; right: 25%; transform: rotate(5deg);' },
+  { name: 'mdi:language-python', style: 'top: 15%; left: 5%;', rotate: '-15deg', depth: 12 },
+  { name: 'mdi:database', style: 'top: 10%; right: 10%;', rotate: '10deg', depth: 8 },
+  { name: 'mdi:cloud', style: 'top: 35%; left: 7%;', rotate: '5deg', depth: 10 },
+  { name: 'mdi:api', style: 'bottom: 55%; right: 5%;', rotate: '-10deg', depth: 12 },
+  { name: 'mdi:docker', style: 'bottom: 65%; right: 75%;', rotate: '-20deg', depth: 14 },
+  { name: 'mdi:git', style: 'top: 5%; left: 26%;', rotate: '10deg', depth: 9 },
+  { name: 'mdi:linux', style: 'bottom: 35%; right: 20%;', rotate: '-5deg', depth: 11 },
+  { name: 'mdi:aws', style: 'top: 25%; right: 20%;', rotate: '25deg', depth: 13 },
+  { name: 'mdi:code-braces', style: 'bottom: 45%; left: 20%;', rotate: '-15deg', depth: 10 },
+  { name: 'mdi:terminal', style: 'top: 50%; left: 85%;', rotate: '10deg', depth: 12 },
+  { name: 'mdi:chip', style: 'top: 55%; right: 85%;', rotate: '-10deg', depth: 8 },
+  { name: 'mdi:web', style: 'top: 7%; right: 25%;', rotate: '5deg', depth: 9 },
 ];
 ---
-<section class="relative overflow-hidden py-20">
-  <div class="mx-auto w-full max-w-[1800px] px-[clamp(3.25rem,8vw,7.25rem)]">
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-10 items-stretch">
-      <div class="flex flex-col justify-center space-y-6 h-full">
-        <div class="space-y-3">
+<section class="relative overflow-hidden py-16">
+  <div class="mx-auto w-full max-w-[1800px] px-[clamp(2.75rem,7vw,6.5rem)]">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-stretch">
+      <div class="flex flex-col justify-center space-y-5 h-full">
+        <div class="space-y-2">
           <h1 class="text-4xl md:text-5xl font-bold text-gray-900 leading-tight">
             I build AI-first tools and launch-ready prototypes.
           </h1>
@@ -43,7 +43,7 @@ const backgroundIcons = [
             Student developer shipping across AI, data science, web, and software - focused on functionality, performance, and reliability.
           </p>
         </div>
-        <div class="flex flex-col sm:flex-row gap-3 w-full">
+        <div class="flex flex-col sm:flex-row gap-2 w-full">
           <a href="/projects/" class="flex-1 inline-flex items-center justify-center gap-3 px-5 py-3 rounded-xl bg-gradient-to-r from-accent to-slate-900 text-white font-semibold shadow-lg shadow-accent/25 hover:shadow-accent/35 transition-all duration-200 hover:-translate-y-[1px] w-full sm:w-auto">
             <Icon name="mdi:rocket-launch" class="w-5 h-5" />
             <span>View Projects</span>
@@ -53,7 +53,7 @@ const backgroundIcons = [
             <span>Contact Me</span>
           </a>
         </div>
-        <div class="grid grid-cols-2 gap-3 sm:gap-4 text-center">
+        <div class="grid grid-cols-2 gap-2 sm:gap-3 text-center">
           <div class="stat-card">
             <p class="text-xs sm:text-sm text-gray-500 whitespace-nowrap">Projects</p>
             <p class="text-xl sm:text-3xl font-bold text-gray-900 counter leading-none whitespace-nowrap" data-target={stats.totalProjects}>0</p>
@@ -67,11 +67,16 @@ const backgroundIcons = [
 
       <div class="relative h-full">
         <div class="absolute -inset-1 bg-gradient-to-br from-accent/10 via-white to-white rounded-3xl blur-2xl"></div>
-        <div class="relative rounded-3xl bg-white/80 backdrop-blur-xl border border-white/70 shadow-xl p-6 flex flex-col items-center gap-4 overflow-hidden h-full min-h-[400px] justify-center">
+        <div class="relative rounded-3xl bg-white/80 backdrop-blur-xl border border-white/70 shadow-xl p-4 flex flex-col items-center gap-2 overflow-hidden h-full min-h-[360px] justify-center hero-tilt" data-hero-card data-hero-tilt>
            {/* Background Icons */}
            <div class="absolute inset-0 pointer-events-none overflow-hidden">
             {backgroundIcons.map((icon) => (
-              <div class="absolute text-slate-900/10" style={icon.style}>
+              <div
+                class="absolute text-slate-900/10 hero-parallax-icon"
+                style={`${icon.style} --icon-rotate: ${icon.rotate};`}
+                data-parallax
+                data-depth={icon.depth}
+              >
                 <Icon name={icon.name} class="w-12 h-12" />
               </div>
             ))}
@@ -87,16 +92,26 @@ const backgroundIcons = [
               quality={90}
               loading="eager"
               fetchpriority="high"
-              class="relative w-48 h-48 md:w-56 md:h-56 rounded-full border-4 border-white shadow-lg object-cover"
+              class="relative w-60 h-60 md:w-72 md:h-72 rounded-full border-4 border-white shadow-lg object-cover"
             />
           </div>
-          <div class="text-center space-y-1 z-10">
-            <h2 class="text-2xl font-bold text-gray-900">Faisal Durbaa</h2>
-            <p class="text-gray-600">Student developer — AI, Data, Web</p>
-          </div>
-          <div class="w-full rounded-2xl bg-accent/5 border border-accent/10 p-4 text-sm text-gray-800 flex items-center justify-center gap-2 z-10">
-            <span class="h-2.5 w-2.5 rounded-full bg-emerald-500 animate-pulse shrink-0"></span>
-            <span class="font-semibold text-center">Currently building an AI based TOEFL prep app.</span>
+          <div class="z-10 -mt-1">
+            <div class="text-center space-y-1 rounded-2xl border border-slate-200/70 bg-slate-100/70 px-4 py-2 shadow-lg shadow-slate-900/5 backdrop-blur-xl">
+              <h2 class="text-2xl font-bold text-gray-900">Faisal Durbaa</h2>
+              <p class="text-gray-600">
+                <span class="hero-type-wrap">
+                  <span class="hero-type-measure" aria-hidden="true">Student developer — AI, Data, Web</span>
+                  <span
+                    class="hero-type-live"
+                    data-hero-type
+                    data-text="Student developer — AI, Data, Web"
+                    data-speed="28"
+                  >
+                    Student developer — AI, Data, Web
+                  </span>
+                </span>
+              </p>
+            </div>
           </div>
         </div>
       </div>
@@ -112,9 +127,106 @@ const backgroundIcons = [
     padding: 1rem;
     box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
   }
+
+  .hero-tilt {
+    transform: perspective(900px) rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg));
+    transform-style: preserve-3d;
+    transition: transform 200ms ease;
+    will-change: transform;
+  }
+
+  .hero-type-wrap {
+    display: inline-grid;
+  }
+
+  .hero-type-wrap > * {
+    grid-area: 1 / 1;
+  }
+
+  .hero-type-measure {
+    visibility: hidden;
+  }
+
+  .hero-type-measure::after {
+    content: '';
+    display: inline-block;
+    width: 0.6ch;
+    margin-left: 2px;
+  }
+
+  .hero-type-live {
+    position: relative;
+    display: inline-block;
+    justify-self: start;
+    align-self: start;
+    opacity: 1;
+  }
+
+  .js .hero-type-live {
+    opacity: 0;
+  }
+
+  .js .hero-type-live.is-typing,
+  .js .hero-type-live.is-done {
+    opacity: 1;
+  }
+
+  .hero-type-live::after {
+    content: '';
+    display: inline-block;
+    width: 0.6ch;
+    height: 1em;
+    margin-left: 2px;
+    border-right: 2px solid rgba(30, 41, 59, 0.7);
+    transform: translateY(2px);
+    animation: heroCaretBlink 1s steps(2, end) infinite;
+  }
+
+  .hero-type-live.is-done::after {
+    animation: none;
+    opacity: 0;
+    border-right-color: transparent;
+  }
+
+  .hero-parallax-icon {
+    transform: translate3d(var(--parallax-x, 0px), var(--parallax-y, 0px), 0)
+      rotate(var(--icon-rotate, 0deg));
+    transition: transform 180ms ease;
+    will-change: transform;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hero-type-live::after {
+      animation: none;
+      opacity: 0;
+      border-right-color: transparent;
+    }
+
+    .hero-tilt {
+      transition: none;
+    }
+
+    .hero-parallax-icon {
+      transition: none;
+    }
+
+  }
+
+  @keyframes heroCaretBlink {
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0;
+    }
+  }
+
 </style>
 
 <script is:inline>
+  document.documentElement.classList.add('js');
+
   function setupCounters() {
     const counters = document.querySelectorAll('.counter:not([data-animated])');
     if (!counters.length) return;
@@ -150,4 +262,193 @@ const backgroundIcons = [
 
   setupCounters();
   document.addEventListener('astro:after-swap', setupCounters);
+
+  function setupHeroParallax() {
+    if (window.__heroParallaxCleanup) {
+      window.__heroParallaxCleanup();
+      window.__heroParallaxCleanup = null;
+    }
+
+    const heroCard = document.querySelector('[data-hero-card]');
+    if (!heroCard) return;
+
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    if (prefersReducedMotion.matches) return;
+
+    const prefersDesktop = window.matchMedia('(min-width: 768px)');
+    if (!prefersDesktop.matches) return;
+
+    const icons = heroCard.querySelectorAll('[data-parallax]');
+    if (!icons.length) return;
+
+    const controller = new AbortController();
+    const { signal } = controller;
+    let rect = heroCard.getBoundingClientRect();
+
+    const updateRect = () => {
+      rect = heroCard.getBoundingClientRect();
+    };
+
+    const onMove = (event) => {
+      if (event.pointerType && event.pointerType !== 'mouse') return;
+      const x = (event.clientX - rect.left) / rect.width - 0.5;
+      const y = (event.clientY - rect.top) / rect.height - 0.5;
+
+      icons.forEach((icon) => {
+        const depth = Number(icon.dataset.depth || 8);
+        icon.style.setProperty('--parallax-x', `${x * depth}px`);
+        icon.style.setProperty('--parallax-y', `${y * depth}px`);
+      });
+    };
+
+    const reset = () => {
+      icons.forEach((icon) => {
+        icon.style.setProperty('--parallax-x', '0px');
+        icon.style.setProperty('--parallax-y', '0px');
+      });
+    };
+
+    heroCard.addEventListener('pointerenter', updateRect, { signal });
+    heroCard.addEventListener('pointermove', onMove, { signal });
+    heroCard.addEventListener('pointerleave', reset, { signal });
+    window.addEventListener('resize', updateRect, { signal });
+
+    window.__heroParallaxCleanup = () => controller.abort();
+  }
+
+  setupHeroParallax();
+  document.addEventListener('astro:after-swap', setupHeroParallax);
+
+  function setupHeroTilt() {
+    if (window.__heroTiltCleanup) {
+      window.__heroTiltCleanup();
+      window.__heroTiltCleanup = null;
+    }
+
+    const heroCard = document.querySelector('[data-hero-tilt]');
+    if (!heroCard) return;
+
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    if (prefersReducedMotion.matches) return;
+
+    const prefersDesktop = window.matchMedia('(min-width: 768px)');
+    if (!prefersDesktop.matches) return;
+
+    const controller = new AbortController();
+    const { signal } = controller;
+    let rect = heroCard.getBoundingClientRect();
+
+    const updateRect = () => {
+      rect = heroCard.getBoundingClientRect();
+    };
+
+    const onMove = (event) => {
+      if (event.pointerType && event.pointerType !== 'mouse') return;
+      const x = (event.clientX - rect.left) / rect.width - 0.5;
+      const y = (event.clientY - rect.top) / rect.height - 0.5;
+      const maxTilt = 7;
+
+      heroCard.style.setProperty('--tilt-x', `${-y * maxTilt}deg`);
+      heroCard.style.setProperty('--tilt-y', `${x * maxTilt}deg`);
+    };
+
+    const reset = () => {
+      heroCard.style.setProperty('--tilt-x', '0deg');
+      heroCard.style.setProperty('--tilt-y', '0deg');
+    };
+
+    heroCard.addEventListener('pointerenter', updateRect, { signal });
+    heroCard.addEventListener('pointermove', onMove, { signal });
+    heroCard.addEventListener('pointerleave', reset, { signal });
+    window.addEventListener('resize', updateRect, { signal });
+
+    window.__heroTiltCleanup = () => controller.abort();
+  }
+
+  setupHeroTilt();
+  document.addEventListener('astro:after-swap', setupHeroTilt);
+
+  function setupHeroType() {
+    if (window.__heroTypeCleanup) {
+      window.__heroTypeCleanup();
+      window.__heroTypeCleanup = null;
+    }
+
+    const targets = document.querySelectorAll('[data-hero-type]');
+    if (!targets.length) return;
+
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+    let cancelled = false;
+    const cancelTyping = () => {
+      cancelled = true;
+    };
+
+    const hideCaret = (target) => {
+      target.classList.add('is-done');
+      target.classList.remove('is-typing');
+    };
+
+    const startTyping = (target) => {
+      if (target.dataset.typed === 'true') return;
+      target.dataset.typed = 'true';
+
+      const fullText = target.dataset.text || target.textContent?.trim() || '';
+      if (!fullText) return;
+
+      if (prefersReducedMotion.matches) {
+        target.textContent = fullText;
+        hideCaret(target);
+        return;
+      }
+
+      target.classList.add('is-typing');
+      target.textContent = '';
+      let index = 0;
+      const speed = Number(target.dataset.speed || 28);
+
+      const typeNext = () => {
+        if (cancelled) return;
+        index += 1;
+        target.textContent = fullText.slice(0, index);
+        if (index < fullText.length) {
+          window.setTimeout(typeNext, speed);
+        } else {
+          hideCaret(target);
+        }
+      };
+
+      window.setTimeout(typeNext, 120);
+    };
+
+    if (prefersReducedMotion.matches) {
+      targets.forEach((target) => {
+        const fullText = target.dataset.text || target.textContent?.trim() || '';
+        target.textContent = fullText;
+        target.dataset.typed = 'true';
+        hideCaret(target);
+      });
+      return;
+    }
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          startTyping(entry.target);
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.4 });
+
+    targets.forEach((target) => observer.observe(target));
+
+    window.__heroTypeCleanup = () => {
+      cancelTyping();
+      observer.disconnect();
+    };
+  }
+
+  setupHeroType();
+  document.addEventListener('astro:after-swap', setupHeroType);
+
 </script>
