@@ -4,16 +4,16 @@ export interface Props {
 }
 const { summary } = Astro.props;
 ---
-<details class="accordion-details group border-b border-gray-200 last:border-b-0 py-4">
+<details class="accordion-details group border-b border-gray-200 dark:border-slate-700 last:border-b-0 py-4">
   <summary class="flex justify-between items-center cursor-pointer list-none">
-    <h3 class="text-xl font-semibold text-gray-800 m-0">{summary}</h3>
-    <span class="transition-transform duration-300 group-open:rotate-180">
+    <h3 class="text-xl font-semibold text-gray-800 dark:text-slate-100 m-0">{summary}</h3>
+    <span class="transition-transform duration-300 group-open:rotate-180 text-gray-600 dark:text-slate-400">
       <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5"><path d="m6 9 6 6 6-6"/></svg>
     </span>
   </summary>
   
-  <div class="content-wrapper overflow-hidden transition-all duration-500 ease-in-out" style="max-height: 0;">
-    <div class="prose max-w-none pt-4 text-gray-600">
+  <div class="content-wrapper overflow-hidden transition-[max-height] duration-500 ease-in-out" style="max-height: 0;">
+    <div class="prose prose-slate dark:prose-invert max-w-none pt-4 text-gray-600 dark:text-slate-300">
       <slot />
     </div>
   </div>
@@ -31,44 +31,67 @@ const { summary } = Astro.props;
       }
 
       summary.dataset.bound = 'true';
+      let animating = false;
+
+      const handleTransitionEnd = (
+        event: TransitionEvent,
+        onComplete: () => void,
+      ) => {
+        if (event.target !== contentWrapper || event.propertyName !== 'max-height') {
+          return;
+        }
+        onComplete();
+      };
 
       summary.addEventListener('click', (event) => {
         event.preventDefault();
-        if (details.open) {
-          const height = contentWrapper.scrollHeight;
-          requestAnimationFrame(() => {
-            contentWrapper.style.maxHeight = `${height}px`;
-            requestAnimationFrame(() => {
-              contentWrapper.style.maxHeight = '0px';
-            });
-          });
+        if (animating) return;
 
-          contentWrapper.addEventListener(
-            'transitionend',
-            () => {
-              details.open = false;
-            },
-            { once: true }
-          );
-        } else {
-          details.open = true;
+        if (details.open) {
+          animating = true;
           const height = contentWrapper.scrollHeight;
           contentWrapper.style.maxHeight = `${height}px`;
 
-          contentWrapper.addEventListener(
-            'transitionend',
-            () => {
-              contentWrapper.style.maxHeight = 'none';
-            },
-            { once: true }
-          );
+          requestAnimationFrame(() => {
+            contentWrapper.style.maxHeight = '0px';
+          });
+
+          const onClose = (transitionEvent: TransitionEvent) => {
+            handleTransitionEnd(transitionEvent, () => {
+              details.open = false;
+              animating = false;
+              contentWrapper.removeEventListener('transitionend', onClose);
+            });
+          };
+
+          contentWrapper.addEventListener('transitionend', onClose);
+          return;
         }
+
+        animating = true;
+        details.open = true;
+        contentWrapper.style.maxHeight = '0px';
+
+        requestAnimationFrame(() => {
+          contentWrapper.style.maxHeight = `${contentWrapper.scrollHeight}px`;
+        });
+
+        const onOpen = (transitionEvent: TransitionEvent) => {
+          handleTransitionEnd(transitionEvent, () => {
+            contentWrapper.style.maxHeight = 'none';
+            animating = false;
+            contentWrapper.removeEventListener('transitionend', onOpen);
+          });
+        };
+
+        contentWrapper.addEventListener('transitionend', onOpen);
       });
     });
   }
 
   if (typeof window !== 'undefined') {
     bindAccordions();
+    document.addEventListener('astro:page-load', bindAccordions);
     document.addEventListener('astro:after-swap', bindAccordions);
   }
 </script>

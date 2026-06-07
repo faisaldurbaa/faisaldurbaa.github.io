@@ -32,24 +32,24 @@ const seo = {
 <Layout seo={seo}>
   <div class="mx-auto w-full px-[clamp(3.25rem,8vw,7.25rem)] py-14 max-w-[1800px] space-y-12">
     <FadeIn>
-      <div class="rounded-3xl bg-gradient-to-br from-white via-[#eef3fb] to-[#dfe9f5] border border-white/60 shadow-xl px-6 py-8 md:px-10 md:py-10">
+      <div class="rounded-3xl bg-gradient-to-br from-white via-[#eef3fb] to-[#dfe9f5] dark:from-slate-800 dark:via-slate-800/90 dark:to-slate-900 border border-white/60 dark:border-slate-700/60 shadow-xl px-6 py-8 md:px-10 md:py-10">
         <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <div class="space-y-2">
-            <h1 class="text-4xl font-bold text-gray-900">PROJECTS</h1>
-            <p class="text-gray-600 max-w-2xl">A single hub for my open-source projects, courses, and competition builds.</p>
+            <h1 class="text-4xl font-bold text-gray-900 dark:text-slate-100">PROJECTS</h1>
+            <p class="text-gray-600 dark:text-slate-400 max-w-2xl">A single hub for my open-source projects, courses, and competition builds.</p>
           </div>
           <div class="grid grid-cols-3 gap-1.5 sm:gap-3 w-full md:w-auto justify-center md:justify-end">
             <div class="stat-pill">
-              <span class="text-[10px] sm:text-xs uppercase text-gray-600 text-center w-full leading-[1.05] truncate">Projects</span>
-              <span class="text-lg sm:text-xl font-bold text-gray-900 text-center w-full counter leading-tight" data-target={softwareCount}>0</span>
+              <span class="text-[10px] sm:text-xs uppercase text-gray-600 dark:text-slate-400 text-center w-full leading-[1.05] truncate">Projects</span>
+              <span class="text-lg sm:text-xl font-bold text-gray-900 dark:text-slate-100 text-center w-full counter leading-tight" data-target={softwareCount}>0</span>
             </div>
             <div class="stat-pill">
-              <span class="text-[10px] sm:text-xs uppercase text-gray-600 text-center w-full leading-[1.05] truncate">Courses</span>
-              <span class="text-lg sm:text-xl font-bold text-gray-900 text-center w-full counter leading-tight" data-target={courseCount}>0</span>
+              <span class="text-[10px] sm:text-xs uppercase text-gray-600 dark:text-slate-400 text-center w-full leading-[1.05] truncate">Courses</span>
+              <span class="text-lg sm:text-xl font-bold text-gray-900 dark:text-slate-100 text-center w-full counter leading-tight" data-target={courseCount}>0</span>
             </div>
             <div class="stat-pill">
-              <span class="text-[10px] sm:text-xs uppercase text-gray-600 text-center w-full leading-[1.05] truncate">Competition</span>
-              <span class="text-lg sm:text-xl font-bold text-gray-900 text-center w-full counter leading-tight" data-target={competitionCount}>0</span>
+              <span class="text-[10px] sm:text-xs uppercase text-gray-600 dark:text-slate-400 text-center w-full leading-[1.05] truncate">Competition</span>
+              <span class="text-lg sm:text-xl font-bold text-gray-900 dark:text-slate-100 text-center w-full counter leading-tight" data-target={competitionCount}>0</span>
             </div>
           </div>
         </div>
@@ -64,8 +64,8 @@ const seo = {
           </svg>
         </div>
         <div>
-          <h2 class="text-2xl font-semibold text-gray-900">Projects & Courses</h2>
-          <p class="text-gray-600 text-sm">Open-source projects and Courses</p>
+          <h2 class="text-2xl font-semibold text-gray-900 dark:text-slate-100">Projects & Courses</h2>
+          <p class="text-gray-600 dark:text-slate-400 text-sm">Open-source projects and Courses</p>
         </div>
       </div>
       <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-8 items-stretch">
@@ -97,14 +97,14 @@ const seo = {
           </svg>
         </div>
         <div>
-          <h2 class="text-2xl font-semibold text-gray-900">Competition Builds</h2>
-          <p class="text-gray-600 text-sm">Teknofest & TUBITAK projects with reports</p>
+          <h2 class="text-2xl font-semibold text-gray-900 dark:text-slate-100">Competition Builds</h2>
+          <p class="text-gray-600 dark:text-slate-400 text-sm">Teknofest & TUBITAK projects with reports</p>
         </div>
       </div>
       <FadeIn>
-        <div class="rounded-2xl border border-accent/10 bg-white/70 backdrop-blur-md shadow-lg p-5">
-          <h3 class="text-lg font-semibold text-gray-900 mb-1">What are TEKNOFEST & TUBITAK?</h3>
-          <p class="text-sm text-gray-700 leading-relaxed">
+        <div class="rounded-2xl border border-accent/10 dark:border-slate-600/40 bg-white/70 dark:bg-slate-800/70 backdrop-blur-md shadow-lg p-5">
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-slate-100 mb-1">What are TEKNOFEST & TUBITAK?</h3>
+          <p class="text-sm text-gray-700 dark:text-slate-300 leading-relaxed">
             TEKNOFEST is Turkey's national aviation, space, and technology festival featuring student-led hardware/software competitions.
             TUBITAK is the Scientific and Technological Research Council of Turkey, running nationwide research contests for students.
           </p>
@@ -177,5 +177,11 @@ const seo = {
     min-width: 0;
     align-items: center;
     text-align: center;
+  }
+
+  :global(.dark) .stat-pill {
+    background: rgba(30, 41, 59, 0.8);
+    border-color: rgba(71, 85, 105, 0.6);
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.2);
   }
 </style>

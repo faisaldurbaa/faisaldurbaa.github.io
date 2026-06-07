@@ -5,6 +5,7 @@ import FadeIn from '../components/FadeIn.astro';
 import { getCollection, type CollectionEntry } from 'astro:content';
 import Card from '../components/Card.astro';
 import { Icon } from 'astro-icon/components';
+import { buttonPrimary, buttonSecondary } from '../lib/buttonStyles';
 
 const blogEntries = await getCollection('blog');
 const projectEntries = await getCollection('projects');
@@ -67,7 +68,7 @@ const seo = {
 
   <!-- Floating Scroll Indicator -->
   <div id="scroll-indicator" class="fixed bottom-8 left-1/2 -translate-x-1/2 z-40 transition-all duration-500 ease-out cursor-pointer hover:scale-105 hidden md:flex flex-col items-center">
-    <div class="w-12 h-12 flex items-center justify-center rounded-full bg-white shadow-lg shadow-accent/20 border border-accent/30 text-accent hover:text-accent/90 transition-colors">
+    <div class="w-12 h-12 flex items-center justify-center rounded-full bg-white dark:bg-slate-800 shadow-lg shadow-accent/20 dark:shadow-black/30 border border-accent/30 dark:border-slate-600 text-accent dark:text-slate-300 hover:text-accent/90 dark:hover:text-slate-100 transition-colors cursor-pointer">
       <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
       </svg>
@@ -78,7 +79,7 @@ const seo = {
     <div class="mx-auto w-full max-w-[1800px] px-[clamp(3.25rem,8vw,7.25rem)] space-y-10">
       <FadeIn>
         <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-          <h2 class="text-3xl font-bold text-gray-900">Featured</h2>
+          <h2 class="text-3xl font-bold text-gray-900 dark:text-slate-100">Featured</h2>
         </div>
       </FadeIn>
 
@@ -99,17 +100,17 @@ const seo = {
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-6">
-        <a href="/projects/" class="inline-flex items-center justify-center gap-3 rounded-xl bg-accent text-white px-5 py-4 text-base font-semibold shadow-lg shadow-accent/20 transition-transform duration-200 hover:-translate-y-[1px] hover:shadow-xl">
+        <a href="/projects/" class:list={[buttonPrimary, 'py-4']}>
           <Icon name="mdi:rocket-launch" class="w-5 h-5" />
           <span>View Projects</span>
         </a>
-        <a href="/blog/" class="inline-flex items-center justify-center gap-3 rounded-xl bg-accent text-white px-5 py-4 text-base font-semibold shadow-lg shadow-accent/20 transition-transform duration-200 hover:-translate-y-[1px] hover:shadow-xl">
+        <a href="/blog/" class:list={[buttonSecondary, 'py-4']}>
           <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h10" />
           </svg>
           <span>Read Blog Posts</span>
         </a>
-        <a href="/contact/" class="inline-flex items-center justify-center gap-3 rounded-xl bg-accent text-white px-5 py-4 text-base font-semibold shadow-lg shadow-accent/20 transition-transform duration-200 hover:-translate-y-[1px] hover:shadow-xl">
+        <a href="/contact/" class:list={[buttonSecondary, 'py-4']}>
           <Icon name="mdi:email-fast-outline" class="w-5 h-5" />
           <span>Get In Touch</span>
         </a>

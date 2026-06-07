@@ -20,15 +20,15 @@ const seo = {
 <Layout seo={seo}>
   <div class="mx-auto w-full max-w-[1800px] px-[clamp(3.25rem,8vw,7.25rem)] py-16 space-y-10">
     <FadeIn>
-      <div class="rounded-3xl bg-gradient-to-br from-white via-[#eef3fb] to-[#dfe9f5] border border-white/60 shadow-xl px-6 py-8 md:px-10 md:py-10 flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+      <div class="rounded-3xl bg-gradient-to-br from-white via-[#eef3fb] to-[#dfe9f5] dark:from-slate-800 dark:via-slate-800/90 dark:to-slate-900 border border-white/60 dark:border-slate-700/60 shadow-xl px-6 py-8 md:px-10 md:py-10 flex flex-col md:flex-row md:items-center md:justify-between gap-6">
         <div class="space-y-1">
-          <h1 class="text-4xl font-bold text-gray-900">BLOG POSTS</h1>
-          <p class="text-gray-600 max-w-2xl">Domesitcating technical advancements in technology and business.</p>
+          <h1 class="text-4xl font-bold text-gray-900 dark:text-slate-100">BLOG POSTS</h1>
+          <p class="text-gray-600 dark:text-slate-400 max-w-2xl">Domesitcating technical advancements in technology and business.</p>
         </div>
         <div class="flex gap-3">
           <div class="stat-pill">
-            <span class="text-xs uppercase text-gray-600 text-center w-full">Articles</span>
-            <span class="text-2xl font-bold text-gray-900 text-center w-full counter" data-target={sortedContent.length}>0</span>
+            <span class="text-xs uppercase text-gray-600 dark:text-slate-400 text-center w-full">Articles</span>
+            <span class="text-2xl font-bold text-gray-900 dark:text-slate-100 text-center w-full counter" data-target={sortedContent.length}>0</span>
           </div>
         </div>
       </div>
@@ -66,6 +66,12 @@ const seo = {
     align-items: center;
     justify-content: center;
     text-align: center;
+  }
+
+  :global(.dark) .stat-pill {
+    background: rgba(30, 41, 59, 0.8);
+    border-color: rgba(71, 85, 105, 0.6);
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.2);
   }
 </style>
 
