@@ -4,6 +4,7 @@ import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import Analytics from '../components/Analytics.astro';
 import { ClientRouter } from 'astro:transitions';
+import '../styles/global.css';
 
 interface Frontmatter {
   title: string;
@@ -34,24 +35,37 @@ const seo = seoProp || {
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'" />
   <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" /></noscript>
+  <script is:inline>
+    (function () {
+      const stored = localStorage.getItem('theme');
+      const theme =
+        stored === 'dark' || stored === 'light'
+          ? stored
+          : window.matchMedia('(prefers-color-scheme: dark)').matches
+            ? 'dark'
+            : 'light';
+      document.documentElement.classList.toggle('dark', theme === 'dark');
+      document.documentElement.dataset.theme = theme;
+    })();
+  </script>
   <Seo {...seo} />
   <Analytics />
 </head>
-<body class="relative bg-gradient-to-br from-[#d6e7f0] via-[#eaf2f7] to-[#d6e7f0] text-gray-900 font-sans flex flex-col min-h-screen overflow-x-hidden">
+<body class="relative bg-gradient-to-br from-[#d6e7f0] via-[#eaf2f7] to-[#d6e7f0] dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 text-gray-900 dark:text-slate-100 font-sans flex flex-col min-h-screen overflow-x-hidden">
   <ClientRouter fallback="animate" />
   <!-- Glassmorphism Background Orbs -->
-  <div class="fixed inset-0 -z-10 overflow-hidden">
+  <div class="fixed inset-0 -z-10 overflow-hidden" aria-hidden="true">
     <!-- Large central focal point -->
-    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[900px] h-[700px] bg-gradient-radial from-[#c8dde8]/50 via-[#d6e7f0]/30 to-transparent blur-3xl"></div>
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[900px] h-[700px] bg-gradient-radial from-[#c8dde8]/50 via-[#d6e7f0]/30 to-transparent dark:from-slate-700/20 dark:via-slate-800/10 dark:to-transparent blur-3xl"></div>
     
     <!-- Top-right orb -->
-    <div class="absolute -top-20 -right-20 w-80 h-80 bg-gradient-radial from-[#bfdbf7]/40 to-transparent blur-2xl"></div>
+    <div class="absolute -top-20 -right-20 w-80 h-80 bg-gradient-radial from-[#bfdbf7]/40 to-transparent dark:from-slate-600/15 dark:to-transparent blur-2xl"></div>
     
     <!-- Bottom-left orb -->
-    <div class="absolute -bottom-20 -left-20 w-96 h-96 bg-gradient-radial from-[#c8dde8]/35 to-transparent blur-3xl"></div>
+    <div class="absolute -bottom-20 -left-20 w-96 h-96 bg-gradient-radial from-[#c8dde8]/35 to-transparent dark:from-slate-700/15 dark:to-transparent blur-3xl"></div>
     
     <!-- Top-left accent -->
-    <div class="absolute top-20 left-20 w-64 h-64 bg-gradient-radial from-[#d1e7f0]/45 to-transparent blur-xl"></div>
+    <div class="absolute top-20 left-20 w-64 h-64 bg-gradient-radial from-[#d1e7f0]/45 to-transparent dark:from-slate-600/20 dark:to-transparent blur-xl"></div>
   </div>
   
   <Header />
@@ -60,30 +74,46 @@ const seo = seoProp || {
   </main>
   <Footer />
   <script>
-    const dataChartKey = '__dataChartInit';
-    const existingInit = window[dataChartKey];
+    import { applyDatasetTheme, buildChartOptions, refreshChartsOnThemeChange } from '../lib/chartTheme';
+    import { registerThemePersistence } from '../lib/theme';
 
-    if (existingInit && typeof existingInit.refresh === 'function') {
-      existingInit.refresh();
-    } else {
-      let observer = null;
-      let chartModulePromise = null;
-      let annotationModulePromise = null;
+    registerThemePersistence();
 
-      const loadChartModules = async () => {
+    type ChartConstructor = {
+      getChart: (el: HTMLCanvasElement) => { destroy: () => void } | undefined;
+      register: (plugin: unknown) => void;
+      __annotationRegistered?: boolean;
+      new (ctx: HTMLCanvasElement, config: unknown): unknown;
+    };
+
+    let observer: IntersectionObserver | null = null;
+    let chartModulePromise: Promise<ChartConstructor> | null = null;
+    let annotationModulePromise: Promise<unknown> | null = null;
+
+    const resetChartModuleCache = () => {
+      chartModulePromise = null;
+      annotationModulePromise = null;
+    };
+
+    const loadChartModules = async (): Promise<ChartConstructor> => {
+      try {
         if (!chartModulePromise) {
-          chartModulePromise = import('chart.js/auto');
+          chartModulePromise = import('chart.js/auto').then((chartModule) => {
+            const Chart = (chartModule as { default?: ChartConstructor; Chart?: ChartConstructor }).default
+              || (chartModule as { Chart?: ChartConstructor }).Chart
+              || (chartModule as unknown as ChartConstructor);
+            return Chart;
+          });
         }
         if (!annotationModulePromise) {
           annotationModulePromise = import('chartjs-plugin-annotation');
         }
 
-        const [chartModule, annotationModule] = await Promise.all([
+        const [Chart, annotationModule] = await Promise.all([
           chartModulePromise,
           annotationModulePromise,
         ]);
-        const Chart = chartModule.default || chartModule.Chart || chartModule;
-        const annotationPlugin = annotationModule.default || annotationModule;
+        const annotationPlugin = (annotationModule as { default?: unknown }).default || annotationModule;
 
         if (annotationPlugin && !Chart.__annotationRegistered) {
           Chart.register(annotationPlugin);
@@ -91,129 +121,115 @@ const seo = seoProp || {
         }
 
         return Chart;
-      };
+      } catch (error) {
+        resetChartModuleCache();
+        throw error;
+      }
+    };
 
-      const initChart = async (canvas) => {
+    const initChart = async (canvas: HTMLCanvasElement) => {
+      if (canvas.dataset.chartReady === 'true') return;
+
+      const loadingDiv = document.getElementById(`${canvas.id}-loading`);
+
+      try {
+        const Chart = await loadChartModules();
+        const type = canvas.dataset.chartType;
+        const rawData = JSON.parse(canvas.dataset.chartData || '{}');
+        const datasets = Array.isArray(rawData.datasets) ? rawData.datasets : [];
+
+        if (!type || datasets.length === 0) return;
+
+        const data = applyDatasetTheme(rawData);
+
+        const existingChart = Chart.getChart(canvas);
+        if (existingChart) {
+          existingChart.destroy();
+        }
+
+        new Chart(canvas, {
+          type,
+          data,
+          options: buildChartOptions(rawData),
+        });
+
+        canvas.dataset.chartReady = 'true';
+        if (loadingDiv) loadingDiv.style.display = 'none';
+        canvas.style.opacity = '1';
+      } catch (err) {
+        console.error('Failed to load chart modules', err);
+        canvas.dataset.chartReady = 'false';
+        canvas.dataset.chartObserved = 'false';
+        if (loadingDiv) loadingDiv.textContent = 'Chart failed to load';
+      }
+    };
+
+    const setupObserver = () => {
+      if (observer) {
+        observer.disconnect();
+        observer = null;
+      }
+
+      if (!('IntersectionObserver' in window)) {
+        document.querySelectorAll('canvas[data-chart-type]').forEach((canvas) => {
+          if (canvas instanceof HTMLCanvasElement) {
+            initChart(canvas);
+          }
+        });
+        return;
+      }
+
+      observer = new IntersectionObserver((entries, observerInstance) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setTimeout(() => {
+              initChart(entry.target as HTMLCanvasElement);
+              observerInstance.unobserve(entry.target);
+            }, 100);
+          }
+        });
+      }, { threshold: 0.1 });
+
+      document.querySelectorAll('canvas[data-chart-type]').forEach((canvas) => {
+        if (!(canvas instanceof HTMLCanvasElement)) return;
         if (canvas.dataset.chartReady === 'true') return;
+        canvas.dataset.chartObserved = 'true';
+        observer!.observe(canvas);
+      });
+    };
 
+    const resetAndSetup = () => {
+      if (observer) {
+        observer.disconnect();
+        observer = null;
+      }
+
+      document.querySelectorAll('canvas[data-chart-type]').forEach((canvas) => {
+        if (!(canvas instanceof HTMLCanvasElement)) return;
+        delete canvas.dataset.chartObserved;
+        delete canvas.dataset.chartReady;
+      });
+
+      setupObserver();
+    };
+
+    if (!window.__themeChartListenerRegistered) {
+      window.__themeChartListenerRegistered = true;
+      document.addEventListener('themechange', async () => {
         try {
           const Chart = await loadChartModules();
-          const type = canvas.dataset.chartType;
-          const data = JSON.parse(canvas.dataset.chartData || '{}');
-          const datasets = Array.isArray(data.datasets) ? data.datasets : [];
-
-          if (!type || datasets.length === 0) return;
-
-          const existingChart = Chart.getChart(canvas);
-          if (existingChart) {
-            existingChart.destroy();
-          }
-
-          const options = {
-            responsive: true,
-            maintainAspectRatio: false,
-            interaction: {
-              mode: 'index',
-              intersect: false,
-            },
-            plugins: {
-              legend: {
-                display: datasets.length > 1,
-                position: 'top',
-                labels: { font: { family: 'Inter, sans-serif' }, color: '#1f2937' },
-              },
-              tooltip: {
-                backgroundColor: '#ffffff',
-                titleColor: '#1f2937',
-                bodyColor: '#4b5563',
-                borderColor: '#e5e7eb',
-                borderWidth: 1,
-                padding: 10,
-                cornerRadius: 8,
-                displayColors: true,
-              },
-              annotation: data.annotation ? data.annotation : {},
-            },
-            scales: {
-              x: {
-                grid: { display: false },
-                ticks: {
-                  font: { family: 'Inter, sans-serif', size: 10 },
-                  color: '#4b5563',
-                  maxRotation: 45,
-                  minRotation: 45,
-                },
-              },
-              y: {
-                grid: { color: '#e5e7eb', borderDash: [5, 5] },
-                ticks: {
-                  font: { family: 'Inter, sans-serif', size: 10 },
-                  color: '#4b5563',
-                },
-              },
-            },
-            animation: { duration: 1000, easing: 'easeInOutCubic' },
-          };
-
-          new Chart(canvas, {
-            type: type,
-            data: data,
-            options: options,
-          });
-
-          canvas.dataset.chartReady = 'true';
-          const loadingDiv = document.getElementById(`${canvas.id}-loading`);
-          if (loadingDiv) loadingDiv.style.display = 'none';
-          canvas.style.opacity = '1';
-        } catch (err) {
-          console.error('Failed to load chart modules', err);
-          const loadingDiv = document.getElementById(`${canvas.id}-loading`);
-          if (loadingDiv) loadingDiv.textContent = 'Chart failed to load';
+          await refreshChartsOnThemeChange(Chart as Parameters<typeof refreshChartsOnThemeChange>[0]);
+        } catch {
+          /* charts not loaded yet */
         }
-      };
-
-      const setupObserver = () => {
-        if (!('IntersectionObserver' in window)) {
-          document.querySelectorAll('canvas[data-chart-type]').forEach((canvas) => {
-            if (canvas instanceof HTMLCanvasElement) {
-              initChart(canvas);
-            }
-          });
-          return;
-        }
-
-        if (!observer) {
-          observer = new IntersectionObserver((entries, observerInstance) => {
-            entries.forEach((entry) => {
-              if (entry.isIntersecting) {
-                setTimeout(() => {
-                  initChart(entry.target);
-                  observerInstance.unobserve(entry.target);
-                }, 100);
-              }
-            });
-          }, { threshold: 0.1 });
-        }
-
-        document.querySelectorAll('canvas[data-chart-type]').forEach((canvas) => {
-          if (!(canvas instanceof HTMLCanvasElement)) return;
-          if (canvas.dataset.chartReady === 'true') return;
-          if (canvas.dataset.chartObserved === 'true') return;
-          canvas.dataset.chartObserved = 'true';
-          observer.observe(canvas);
-        });
-      };
-
-      const runSetup = () => {
-        setupObserver();
-      };
-
-      window[dataChartKey] = { refresh: runSetup };
-
-      document.addEventListener('astro:page-load', runSetup);
-      document.addEventListener('astro:after-swap', runSetup);
-      if (document.readyState !== 'loading') runSetup();
+      });
     }
+
+    window.__dataChartInit = { refresh: resetAndSetup };
+
+    document.addEventListener('astro:page-load', resetAndSetup);
+    document.addEventListener('astro:after-swap', resetAndSetup);
+    if (document.readyState !== 'loading') resetAndSetup();
   </script>
 </body>
 </html>

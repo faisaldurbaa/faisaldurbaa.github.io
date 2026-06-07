@@ -32,39 +32,72 @@ const isActiveLink = (linkHref: string) => {
   <div
     id="nav-shell"
     class="pointer-events-auto relative z-50 flex items-center justify-between transition-all duration-700 ease-[cubic-bezier(0.4,0,0.2,1)]
-           w-full max-w-full rounded-none border-b border-gray-200/50 bg-white/70 backdrop-blur-2xl shadow-sm py-3 px-4 md:px-8 mt-0
-    data-[scrolled=true]:w-[90%] data-[scrolled=true]:md:w-[75%] data-[scrolled=true]:max-w-7xl data-[scrolled=true]:rounded-3xl data-[scrolled=true]:border data-[scrolled=true]:border-white/40 data-[scrolled=true]:shadow-xl data-[scrolled=true]:mt-6 data-[scrolled=true]:py-2.5"
+           w-full max-w-full rounded-none border-b border-gray-200/50 dark:border-slate-700/50 bg-white/70 dark:bg-slate-900/70 backdrop-blur-2xl shadow-sm py-3 px-4 md:px-8 mt-0
+    data-[scrolled=true]:w-[90%] data-[scrolled=true]:md:w-[75%] data-[scrolled=true]:max-w-7xl data-[scrolled=true]:rounded-3xl data-[scrolled=true]:border data-[scrolled=true]:border-white/40 dark:data-[scrolled=true]:border-slate-600/40 data-[scrolled=true]:shadow-xl data-[scrolled=true]:mt-6 data-[scrolled=true]:py-2.5"
     data-scrolled="false"
   >
-    <a href="/" class="text-lg md:text-xl font-bold text-gray-900 hover:text-accent transition-colors flex items-center gap-2">
+    <a href="/" class="text-lg md:text-xl font-bold text-gray-900 dark:text-slate-100 hover:text-accent dark:hover:text-slate-300 transition-colors flex items-center gap-2">
        Faisal Durbaa
     </a>
     
-    <nav class="hidden md:flex items-center gap-1 relative p-1"> 
-      <!-- Sliding Pill -->
-      <div 
-        id="nav-pill" 
-        class="absolute top-1/2 left-0 h-[85%] -translate-y-1/2 bg-accent rounded-full transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] -z-0 shadow-md opacity-0 pointer-events-none"
-      ></div>
+    <div class="hidden md:flex items-center gap-2">
+      <nav id="desktop-nav" class="flex items-center gap-1 relative p-1"> 
+        <!-- Sliding Pill -->
+        <div 
+          id="nav-pill" 
+          class="absolute top-1/2 left-0 h-[85%] -translate-y-1/2 bg-accent dark:bg-slate-600 rounded-full transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] -z-0 shadow-md opacity-0 pointer-events-none"
+        ></div>
 
-      {navLinks.map(link => (
-        <a
-          href={link.href}
-          data-active={isActiveLink(link.href)}
-          class:list={[
-            "relative z-10 py-2 px-4 rounded-full text-sm font-medium transition-colors duration-300",
-            isActiveLink(link.href)
-              ? 'text-accent bg-gray-900/5'
-              : 'text-gray-600 hover:text-accent'
-          ]}
-        >
-          {link.name}
-        </a>
-      ))}
-    </nav>
+        {navLinks.map(link => (
+          <a
+            href={link.href}
+            data-active={isActiveLink(link.href)}
+            class:list={[
+              "relative z-10 py-2 px-4 rounded-full text-sm font-medium transition-colors duration-300",
+              isActiveLink(link.href)
+                ? 'text-accent dark:text-slate-200 bg-gray-900/5 dark:bg-slate-700/50'
+                : 'text-gray-600 dark:text-slate-400 hover:text-accent dark:hover:text-slate-200'
+            ]}
+          >
+            {link.name}
+          </a>
+        ))}
+      </nav>
 
-    <div class="md:hidden">
-      <button id="mobile-menu-button" aria-controls="mobile-menu" aria-expanded="false" class="p-2 rounded-full text-gray-700 hover:bg-gray-100/50 hover:text-accent focus:outline-none focus:ring-2 focus:ring-inset focus:ring-accent transition-colors">
+      <button
+        id="theme-toggle"
+        type="button"
+        class="relative z-10 p-2 rounded-full text-gray-700 dark:text-slate-300 hover:bg-gray-100/50 dark:hover:bg-slate-700/50 hover:text-accent dark:hover:text-slate-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-accent dark:focus:ring-slate-500 transition-colors cursor-pointer"
+        aria-label="Switch to dark mode"
+        aria-pressed="false"
+        title="Toggle dark mode"
+      >
+        <svg id="theme-icon-sun" class="h-5 w-5 hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+        </svg>
+        <svg id="theme-icon-moon" class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+        </svg>
+      </button>
+    </div>
+
+    <div class="md:hidden flex items-center gap-1">
+      <button
+        id="theme-toggle-mobile"
+        type="button"
+        class="p-2 rounded-full text-gray-700 dark:text-slate-300 hover:bg-gray-100/50 dark:hover:bg-slate-700/50 hover:text-accent dark:hover:text-slate-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-accent dark:focus:ring-slate-500 transition-colors cursor-pointer"
+        aria-label="Switch to dark mode"
+        aria-pressed="false"
+        title="Toggle dark mode"
+      >
+        <svg data-theme-icon="sun" class="h-5 w-5 hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+        </svg>
+        <svg data-theme-icon="moon" class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+        </svg>
+      </button>
+      <button id="mobile-menu-button" aria-controls="mobile-menu" aria-expanded="false" class="p-2 rounded-full text-gray-700 dark:text-slate-300 hover:bg-gray-100/50 dark:hover:bg-slate-700/50 hover:text-accent dark:hover:text-slate-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-accent dark:focus:ring-slate-500 transition-colors cursor-pointer">
         <span class="sr-only">Open main menu</span>
         <svg id="hamburger-icon" class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
@@ -77,7 +110,7 @@ const isActiveLink = (linkHref: string) => {
   </div>
 
   <div id="mobile-menu" class="pointer-events-auto hidden md:hidden w-[92%] mt-2 z-40">
-    <div class="bg-white/70 backdrop-blur-2xl border border-white/40 shadow-xl rounded-2xl p-2 transform origin-top animate-in fade-in slide-in-from-top-2 duration-300">
+    <div class="bg-white/70 dark:bg-slate-900/80 backdrop-blur-2xl border border-white/40 dark:border-slate-600/40 shadow-xl rounded-2xl p-2 transform origin-top animate-in fade-in slide-in-from-top-2 duration-300">
       <nav class="flex flex-col gap-1">
         {navLinks.map(link => (
           <a
@@ -85,8 +118,8 @@ const isActiveLink = (linkHref: string) => {
             class:list={[
               "block py-3 px-4 rounded-xl text-base font-medium transition-all duration-200",
               isActiveLink(link.href)
-                ? 'bg-accent text-white font-semibold pl-6 shadow-md'
-                : 'text-gray-600 hover:bg-gray-100/50 hover:text-accent hover:pl-5'
+                ? 'bg-accent dark:bg-slate-600 text-white font-semibold pl-6 shadow-md'
+                : 'text-gray-600 dark:text-slate-400 hover:bg-gray-100/50 dark:hover:bg-slate-700/50 hover:text-accent dark:hover:text-slate-200 hover:pl-5'
             ]}
             aria-current={isActiveLink(link.href) ? 'page' : undefined}
           >
@@ -99,6 +132,10 @@ const isActiveLink = (linkHref: string) => {
 </header>
 
 <script>
+  import { applyStoredTheme, registerThemePersistence } from '../lib/theme';
+
+  registerThemePersistence();
+
   // Set initial state immediately to avoid first-paint flicker
   {
     const navShell = document.getElementById('nav-shell');
@@ -112,6 +149,69 @@ const isActiveLink = (linkHref: string) => {
     }
   }
 
+  function syncThemeToggleUI() {
+    const isDark = document.documentElement.classList.contains('dark');
+    const label = isDark ? 'Switch to light mode' : 'Switch to dark mode';
+
+    const desktopToggle = document.getElementById('theme-toggle');
+    const mobileToggle = document.getElementById('theme-toggle-mobile');
+    const sunIcon = document.getElementById('theme-icon-sun');
+    const moonIcon = document.getElementById('theme-icon-moon');
+
+    [desktopToggle, mobileToggle].forEach((btn) => {
+      if (!btn) return;
+      btn.setAttribute('aria-pressed', isDark ? 'true' : 'false');
+      btn.setAttribute('aria-label', label);
+      btn.title = label;
+    });
+
+    if (sunIcon && moonIcon) {
+      sunIcon.classList.toggle('hidden', !isDark);
+      moonIcon.classList.toggle('hidden', isDark);
+    }
+
+    mobileToggle?.querySelectorAll('[data-theme-icon]').forEach((icon) => {
+      const kind = (icon as HTMLElement).dataset.themeIcon;
+      icon.classList.toggle('hidden', kind === 'sun' ? !isDark : isDark);
+    });
+  }
+
+  function setTheme(theme: 'light' | 'dark') {
+    const isDark = theme === 'dark';
+    document.documentElement.classList.add('theme-transition');
+    document.documentElement.classList.toggle('dark', isDark);
+    document.documentElement.dataset.theme = theme;
+    localStorage.setItem('theme', theme);
+    syncThemeToggleUI();
+    document.dispatchEvent(new CustomEvent('themechange', { detail: { theme } }));
+    window.setTimeout(() => {
+      document.documentElement.classList.remove('theme-transition');
+    }, 250);
+  }
+
+  function toggleTheme() {
+    const isDark = document.documentElement.classList.contains('dark');
+    setTheme(isDark ? 'light' : 'dark');
+  }
+
+  function initThemeToggle() {
+    applyStoredTheme();
+    syncThemeToggleUI();
+
+    const desktopToggle = document.getElementById('theme-toggle');
+    const mobileToggle = document.getElementById('theme-toggle-mobile');
+
+    if (desktopToggle && desktopToggle.dataset.bound !== 'true') {
+      desktopToggle.dataset.bound = 'true';
+      desktopToggle.addEventListener('click', toggleTheme);
+    }
+
+    if (mobileToggle && mobileToggle.dataset.bound !== 'true') {
+      mobileToggle.dataset.bound = 'true';
+      mobileToggle.addEventListener('click', toggleTheme);
+    }
+  }
+
   function init() {
     const mobileMenuButton = document.getElementById('mobile-menu-button');
     const mobileMenu = document.getElementById('mobile-menu');
@@ -122,8 +222,10 @@ const isActiveLink = (linkHref: string) => {
     const isBound = navShell.dataset.bound === 'true';
     if (!isBound) navShell.dataset.bound = 'true';
     
+    initThemeToggle();
+
     // Sliding Pill Logic
-    const desktopNav = document.querySelector('nav.hidden.md\\:flex');
+    const desktopNav = document.getElementById('desktop-nav');
     const pill = document.getElementById('nav-pill');
     const desktopLinks = desktopNav?.querySelectorAll<HTMLAnchorElement>('a') ?? [];
     const mobileLinks = mobileMenu?.querySelectorAll<HTMLAnchorElement>('a') ?? [];
@@ -145,10 +247,10 @@ const isActiveLink = (linkHref: string) => {
     };
 
     const updateActiveLinks = () => {
-      const desktopActiveClasses = ['text-accent', 'bg-gray-900/5'];
-      const desktopInactiveClasses = ['text-gray-600', 'hover:text-accent'];
-      const mobileActiveClasses = ['bg-accent', 'text-white', 'font-semibold', 'pl-6', 'shadow-md'];
-      const mobileInactiveClasses = ['text-gray-600', 'hover:bg-gray-100/50', 'hover:text-accent', 'hover:pl-5'];
+      const desktopActiveClasses = ['text-accent', 'dark:text-slate-200', 'bg-gray-900/5', 'dark:bg-slate-700/50'];
+      const desktopInactiveClasses = ['text-gray-600', 'dark:text-slate-400', 'hover:text-accent', 'dark:hover:text-slate-200'];
+      const mobileActiveClasses = ['bg-accent', 'dark:bg-slate-600', 'text-white', 'font-semibold', 'pl-6', 'shadow-md'];
+      const mobileInactiveClasses = ['text-gray-600', 'dark:text-slate-400', 'hover:bg-gray-100/50', 'dark:hover:bg-slate-700/50', 'hover:text-accent', 'dark:hover:text-slate-200', 'hover:pl-5'];
 
       desktopLinks.forEach((link) => {
         const href = link.getAttribute('href') || '';
@@ -193,22 +295,19 @@ const isActiveLink = (linkHref: string) => {
       const targetRect = target.getBoundingClientRect();
       
       const width = targetRect.width;
-      // Calculate center-to-center difference or just left offset
-      // Since pill is top-1/2 left-0, we just need translateX
       const left = targetRect.left - navRect.left;
 
       pill.style.width = `${width}px`;
-      pill.style.transform = `translateX(${left}px) translateY(-50%)`; // translateY to maintain vertical center
+      pill.style.transform = `translateX(${left}px) translateY(-50%)`;
       pill.style.opacity = '1';
 
-      // Update text colors for contrast
       desktopLinks.forEach(link => {
         if (link === target) {
-          link.classList.remove('text-gray-600', 'hover:text-accent', 'text-accent');
+          link.classList.remove('text-gray-600', 'dark:text-slate-400', 'hover:text-accent', 'dark:hover:text-slate-200', 'text-accent', 'dark:text-slate-200');
           link.classList.add('text-white');
         } else {
-          link.classList.add('text-gray-600', 'hover:text-accent');
-          link.classList.remove('text-white', 'text-accent');
+          link.classList.add('text-gray-600', 'dark:text-slate-400', 'hover:text-accent', 'dark:hover:text-slate-200');
+          link.classList.remove('text-white', 'text-accent', 'dark:text-slate-200');
         }
       });
     }
@@ -300,7 +399,6 @@ const isActiveLink = (linkHref: string) => {
       });
     }
 
-    // Event Listeners
     if (!isBound) {
       if (mobileMenuButton) {
         mobileMenuButton.addEventListener('click', toggleMenu);
@@ -317,7 +415,6 @@ const isActiveLink = (linkHref: string) => {
       }
     }
 
-    // Scroll handling with cleanup
     let ticking = false;
     const onScroll = () => {
         if (!ticking) {
@@ -346,20 +443,22 @@ const isActiveLink = (linkHref: string) => {
       }
     }
 
-    // Initial run / refresh
     updateActiveLinks();
     positionPill(true);
     setMenuState(false);
     handleStickBack();
   }
 
-  // Run on initial load and after every navigation
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init, { once: true });
   } else {
     init();
   }
   document.addEventListener('astro:after-swap', () => {
+    applyStoredTheme();
     init();
+  });
+  document.addEventListener('theme-applied', () => {
+    syncThemeToggleUI();
   });
 </script>

@@ -13,6 +13,16 @@ interface ImportMeta {
 }
 
 declare module 'chartjs-plugin-annotation';
+
+declare global {
+  interface Window {
+    __dataChartInit?: { refresh: () => void };
+    __themeChartListenerRegistered?: boolean;
+    __themePersistenceRegistered?: boolean;
+    __systemThemeListenerRegistered?: boolean;
+  }
+}
+
 declare module '*.webp' {
   const value: ImageMetadata;
   export default value;

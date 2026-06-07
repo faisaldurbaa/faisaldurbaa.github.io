@@ -7,6 +7,11 @@ import rehypeExternalLinks from "rehype-external-links";
 
 export default defineConfig({
   site: 'https://faisaldurbaa.com',
+  vite: {
+    optimizeDeps: {
+      include: ['chart.js/auto', 'chartjs-plugin-annotation'],
+    },
+  },
   markdown: {
     rehypePlugins: [[rehypeExternalLinks, { target: "_blank", rel: ["noopener", "noreferrer"] }]],
   },

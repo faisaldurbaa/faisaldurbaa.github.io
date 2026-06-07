@@ -26,48 +26,48 @@ const showRelatedContent = entry.collection === 'blog';
 }}>
   <article class="container mx-auto max-w-4xl p-4 sm:p-8">
     <FadeIn>
-      <div class="bg-white p-6 sm:p-8 border border-gray-200 rounded-lg shadow-sm mb-8">
+      <div class="bg-white dark:bg-slate-800/80 p-6 sm:p-8 border border-gray-200 dark:border-slate-700 rounded-lg shadow-sm mb-8">
         <div class="flex justify-between items-center mb-4">
-          <p class="text-accent font-semibold">
+          <p class="text-accent dark:text-slate-300 font-semibold">
             <a href={backLink} class="inline-flex items-center gap-2 hover:underline">
               <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>{backText}
             </a>
           </p>
           <ShareButton title={entry.data.title} />
         </div>
-        <h1 class="text-3xl md:text-4xl font-bold mb-2">{entry.data.title}</h1>
-        <p class="text-lg text-gray-600">{entry.data.description}</p>
+        <h1 class="text-3xl md:text-4xl font-bold mb-2 dark:text-slate-100">{entry.data.title}</h1>
+        <p class="text-lg text-gray-600 dark:text-slate-400">{entry.data.description}</p>
       </div>
 
-      <div class="bg-white p-6 sm:p-8 border border-gray-200 rounded-lg shadow-sm">
-        <div class="prose prose-lg max-w-none">
+      <div class="bg-white dark:bg-slate-800/80 p-6 sm:p-8 border border-gray-200 dark:border-slate-700 rounded-lg shadow-sm">
+        <div class="prose prose-lg prose-slate dark:prose-invert max-w-none">
           <Content />
         </div>
       </div>
       {(previousLesson || nextLesson) && courseSlug && (
-        <div class="bg-white p-6 sm:p-8 border border-gray-200 rounded-lg shadow-sm mt-8">
+        <div class="bg-white dark:bg-slate-800/80 p-6 sm:p-8 border border-gray-200 dark:border-slate-700 rounded-lg shadow-sm mt-8">
           <div class="flex flex-col sm:flex-row justify-between gap-4">
             <div class="flex-1">
               {previousLesson ? (
                 <a 
                   href={`/courses/${courseSlug}/${previousLesson.slug.split('/')[1]}/`}
-                  class="group flex items-center gap-3 p-4 rounded-lg border border-gray-200 hover:border-accent hover:bg-accent/5 transition-all duration-200"
+                  class="group flex items-center gap-3 p-4 rounded-lg border border-gray-200 dark:border-slate-600 hover:border-accent dark:hover:border-slate-400 hover:bg-accent/5 dark:hover:bg-slate-700/50 transition-all duration-200"
                 >
-                  <div class="flex-shrink-0 w-8 h-8 rounded-full bg-gray-100 group-hover:bg-accent/10 flex items-center justify-center transition-colors">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-600 group-hover:text-accent">
+                  <div class="flex-shrink-0 w-8 h-8 rounded-full bg-gray-100 dark:bg-slate-700 group-hover:bg-accent/10 dark:group-hover:bg-slate-600 flex items-center justify-center transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-600 dark:text-slate-400 group-hover:text-accent dark:group-hover:text-slate-200">
                       <path d="m15 18-6-6 6-6"/>
                     </svg>
                   </div>
                   <div class="min-w-0 flex-1">
-                    <p class="text-sm text-gray-500 mb-1">Previous Lesson</p>
-                    <p class="font-semibold text-gray-900 group-hover:text-accent transition-colors truncate">
+                    <p class="text-sm text-gray-500 dark:text-slate-400 mb-1">Previous Lesson</p>
+                    <p class="font-semibold text-gray-900 dark:text-slate-100 group-hover:text-accent dark:group-hover:text-slate-200 transition-colors truncate">
                       {previousLesson.data.title}
                     </p>
                   </div>
                 </a>
               ) : (
-                <div class="p-4 rounded-lg border border-gray-100 bg-gray-50">
-                  <p class="text-sm text-gray-400">No previous lesson</p>
+                <div class="p-4 rounded-lg border border-gray-100 dark:border-slate-700 bg-gray-50 dark:bg-slate-800/50">
+                  <p class="text-sm text-gray-400 dark:text-slate-500">No previous lesson</p>
                 </div>
               )}
             </div>
@@ -76,23 +76,23 @@ const showRelatedContent = entry.collection === 'blog';
               {nextLesson ? (
                 <a 
                   href={`/courses/${courseSlug}/${nextLesson.slug.split('/')[1]}/`}
-                  class="group flex items-center gap-3 p-4 rounded-lg border border-gray-200 hover:border-accent hover:bg-accent/5 transition-all duration-200 text-right"
+                  class="group flex items-center gap-3 p-4 rounded-lg border border-gray-200 dark:border-slate-600 hover:border-accent dark:hover:border-slate-400 hover:bg-accent/5 dark:hover:bg-slate-700/50 transition-all duration-200 text-right"
                 >
                   <div class="min-w-0 flex-1">
-                    <p class="text-sm text-gray-500 mb-1">Next Lesson</p>
-                    <p class="font-semibold text-gray-900 group-hover:text-accent transition-colors truncate">
+                    <p class="text-sm text-gray-500 dark:text-slate-400 mb-1">Next Lesson</p>
+                    <p class="font-semibold text-gray-900 dark:text-slate-100 group-hover:text-accent dark:group-hover:text-slate-200 transition-colors truncate">
                       {nextLesson.data.title}
                     </p>
                   </div>
-                  <div class="flex-shrink-0 w-8 h-8 rounded-full bg-gray-100 group-hover:bg-accent/10 flex items-center justify-center transition-colors">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-600 group-hover:text-accent">
+                  <div class="flex-shrink-0 w-8 h-8 rounded-full bg-gray-100 dark:bg-slate-700 group-hover:bg-accent/10 dark:group-hover:bg-slate-600 flex items-center justify-center transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-600 dark:text-slate-400 group-hover:text-accent dark:group-hover:text-slate-200">
                       <path d="m9 18 6-6-6-6"/>
                     </svg>
                   </div>
                 </a>
               ) : (
-                <div class="p-4 rounded-lg border border-gray-100 bg-gray-50 text-right">
-                  <p class="text-sm text-gray-400">No next lesson</p>
+                <div class="p-4 rounded-lg border border-gray-100 dark:border-slate-700 bg-gray-50 dark:bg-slate-800/50 text-right">
+                  <p class="text-sm text-gray-400 dark:text-slate-500">No next lesson</p>
                 </div>
               )}
             </div>

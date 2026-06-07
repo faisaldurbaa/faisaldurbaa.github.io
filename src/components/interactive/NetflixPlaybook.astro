@@ -19,7 +19,7 @@ import RelatedContent from '../RelatedContent.astro';
     </style>
 
     <section class="mb-12 section-fade-in">
-        <div class="bg-white p-6 sm:p-8 border border-gray-200 rounded-lg shadow-sm">
+        <div class="bg-white dark:bg-slate-800 p-6 sm:p-8 border border-gray-200 dark:border-slate-700 rounded-lg shadow-sm">
             <div class="flex justify-between items-center mb-4">
                 <p class="text-accent font-semibold">
                     <a href="/blog/" class="inline-flex items-center gap-2 hover:underline">
@@ -30,11 +30,11 @@ import RelatedContent from '../RelatedContent.astro';
                 <ShareButton title="The Netflix Playbook: An Interactive Guide" />
             </div>
             <div class="text-center">
-                <h1 class="text-4xl md:text-6xl font-extrabold tracking-tight text-slate-900">
+                <h1 class="text-4xl md:text-6xl font-extrabold tracking-tight text-slate-900 dark:text-slate-100">
                     The Ted Sarandos Playbook
                 </h1>
-                <hr class="border-t border-gray-200 my-4 max-w-sm mx-auto" />
-                <p class="mt-4 max-w-3xl mx-auto text-lg text-slate-600">
+                <hr class="border-t border-gray-200 dark:border-slate-700 my-4 max-w-sm mx-auto" />
+                <p class="mt-4 max-w-3xl mx-auto text-lg text-slate-600 dark:text-slate-400">
                     An interactive guide to the strategies, philosophies, and actionable advice from Netflix's co-CEO, designed for the next generation of entrepreneurs. This guide is based on his interview at the HUVTSP 2025.
                 </p>
             </div>
@@ -44,13 +44,13 @@ import RelatedContent from '../RelatedContent.astro';
     <main class="max-w-6xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
         <section id="career" class="mb-24 section-fade-in">
             <div class="text-center mb-12">
-                <h2 class="text-3xl font-bold tracking-tight text-slate-900">From Video Store to C-Suite</h2>
-                <p class="mt-2 max-w-2xl mx-auto text-md text-slate-500">
+                <h2 class="text-3xl font-bold tracking-tight text-slate-900 dark:text-slate-100">From Video Store to C-Suite</h2>
+                <p class="mt-2 max-w-2xl mx-auto text-md text-slate-500 dark:text-slate-400">
                    Sarandos's non-traditional journey offers powerful lessons on gaining expertise, leveraging an outsider's perspective, and seizing pivotal opportunities.
                 </p>
             </div>
             <div class="relative">
-                <div class="absolute left-1/2 h-full w-0.5 bg-slate-300 hidden md:block"></div>
+                <div class="absolute left-1/2 h-full w-0.5 bg-slate-300 dark:bg-slate-600 hidden md:block"></div>
                 <div class="space-y-12">
                     <div class="md:grid md:grid-cols-2 md:gap-8 items-center">
                         <div class="flex justify-center md:justify-end md:pr-8">
@@ -60,7 +60,7 @@ import RelatedContent from '../RelatedContent.astro';
                             </div>
                         </div>
                         <div class="mt-4 md:mt-0 md:pl-8 md:border-l-4 border-slate-300">
-                            <p class="text-slate-700">Sarandos credits his deep understanding of audience taste to his time managing a video store chain. By observing and talking to customers, he learned that choosing a movie was a deeply personal act that "was almost defining them as a person."</p>
+                            <p class="text-slate-700 dark:text-slate-300">Sarandos credits his deep understanding of audience taste to his time managing a video store chain. By observing and talking to customers, he learned that choosing a movie was a deeply personal act that "was almost defining them as a person."</p>
                             <p class="mt-3 font-semibold text-red-600">Actionable Advice: Deep, practical immersion in your field can be more valuable than a traditional education. Understand your customer by observing their behavior and asking "why."</p>
                         </div>
                     </div>
@@ -72,7 +72,7 @@ import RelatedContent from '../RelatedContent.astro';
                             </div>
                         </div>
                         <div class="md:text-right md:pr-8">
-                             <p class="text-slate-700">Not coming from a traditional background means you "didn't know what you didn't know." This can be a superpower, allowing you to break industry rules because you aren't beholden to them. His confidence to greenlight <strong>House of Cards</strong> without a pilot came partly from this perspective.</p>
+                             <p class="text-slate-700 dark:text-slate-300">Not coming from a traditional background means you "didn't know what you didn't know." This can be a superpower, allowing you to break industry rules because you aren't beholden to them. His confidence to greenlight <strong>House of Cards</strong> without a pilot came partly from this perspective.</p>
                              <p class="mt-3 font-semibold text-red-600">Actionable Advice: Embrace your unique path. Your outsider status can provide a fresh perspective that allows for disruptive innovation.</p>
                         </div>
                     </div>
@@ -82,29 +82,29 @@ import RelatedContent from '../RelatedContent.astro';
 
         <section id="strategy" class="mb-24 section-fade-in">
             <div class="text-center mb-12">
-                <h2 class="text-3xl font-bold tracking-tight text-slate-900">The Netflix Content Strategy</h2>
-                <p class="mt-2 max-w-2xl mx-auto text-md text-slate-500">
+                <h2 class="text-3xl font-bold tracking-tight text-slate-900 dark:text-slate-100">The Netflix Content Strategy</h2>
+                <p class="mt-2 max-w-2xl mx-auto text-md text-slate-500 dark:text-slate-400">
                    Netflix's approach to content is a unique blend of data-informed decision-making and creative intuition, built on a few core principles.
                 </p>
             </div>
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
-                <div class="bg-white p-6 rounded-lg shadow-lg">
+                <div class="bg-white dark:bg-slate-800 p-6 rounded-lg shadow-lg">
                     <h3 class="font-bold text-center text-xl mb-4">The 70/30 Rule</h3>
                     <div class="chart-container relative h-64 w-full max-w-xs mx-auto">
                         <canvas id="gutDataChart"></canvas>
                     </div>
-                    <p class="text-sm text-slate-600 mt-4">Sarandos states major greenlight decisions are 70% judgment and 30% data. Data is useful for recurring events, but for something new, you have to trust your gut. The data on <strong>House of Cards</strong> suggested removing its two most defining elements.</p>
+                    <p class="text-sm text-slate-600 dark:text-slate-400 mt-4">Sarandos states major greenlight decisions are 70% judgment and 30% data. Data is useful for recurring events, but for something new, you have to trust your gut. The data on <strong>House of Cards</strong> suggested removing its two most defining elements.</p>
                 </div>
-                <div class="bg-white p-6 rounded-lg shadow-lg lg:col-span-2">
+                <div class="bg-white dark:bg-slate-800 p-6 rounded-lg shadow-lg lg:col-span-2">
                     <h3 class="font-bold text-xl mb-4">Key Strategic Pillars</h3>
                     <div class="space-y-4">
                         <div>
                             <h4 class="font-semibold text-lg">The Binge Model: Consumer Satisfaction</h4>
-                            <p class="text-slate-700 text-sm">The all-at-once release is a direct response to the core insight: "What people really want when they watch a show that they love is to watch the next episode." It leads to higher total viewership and a greater "cumulative buzz" than weekly releases.</p>
+                            <p class="text-slate-700 dark:text-slate-300 text-sm">The all-at-once release is a direct response to the core insight: "What people really want when they watch a show that they love is to watch the next episode." It leads to higher total viewership and a greater "cumulative buzz" than weekly releases.</p>
                         </div>
-                        <div class="border-t border-slate-200 pt-4">
+                        <div class="border-t border-slate-200 dark:border-slate-700 pt-4">
                             <h4 class="font-semibold text-lg">Global Hits: Authenticity Travels</h4>
-                            <p class="text-slate-700 text-sm">The success of <strong>Squid Game</strong> was not predicted by data. The lesson: You can't engineer a global hit. Focus on creating a high-quality, authentic story for a specific local audience first. Universal themes, executed brilliantly, will travel organically.</p>
+                            <p class="text-slate-700 dark:text-slate-300 text-sm">The success of <strong>Squid Game</strong> was not predicted by data. The lesson: You can't engineer a global hit. Focus on creating a high-quality, authentic story for a specific local audience first. Universal themes, executed brilliantly, will travel organically.</p>
                         </div>
                     </div>
                 </div>
@@ -113,15 +113,15 @@ import RelatedContent from '../RelatedContent.astro';
 
         <section id="culture" class="mb-24 section-fade-in">
             <div class="text-center mb-12">
-                <h2 class="text-3xl font-bold tracking-tight text-slate-900">Leadership & Culture</h2>
-                <p class="mt-2 max-w-2xl mx-auto text-md text-slate-500">
+                <h2 class="text-3xl font-bold tracking-tight text-slate-900 dark:text-slate-100">Leadership & Culture</h2>
+                <p class="mt-2 max-w-2xl mx-auto text-md text-slate-500 dark:text-slate-400">
                    A look inside the unique operating system of Netflix, emphasizing talent, context, and a pragmatic approach to teamwork. Click the cards to learn more.
                 </p>
             </div>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 <div class="card-flip-container h-64">
                     <div class="card-flip cursor-pointer">
-                        <div class="card-front bg-white shadow-lg rounded-lg p-6 flex flex-col justify-center items-center text-center">
+                        <div class="card-front bg-white dark:bg-slate-800 shadow-lg rounded-lg p-6 flex flex-col justify-center items-center text-center">
                             <div class="text-5xl mb-3">🏆</div>
                             <h3 class="text-xl font-bold">High-Performing Sports Team</h3>
                             <p class="text-sm netflix-red font-semibold mt-4">Click to learn more</p>
@@ -134,7 +134,7 @@ import RelatedContent from '../RelatedContent.astro';
                 </div>
                 <div class="card-flip-container h-64">
                     <div class="card-flip cursor-pointer">
-                        <div class="card-front bg-white shadow-lg rounded-lg p-6 flex flex-col justify-center items-center text-center">
+                        <div class="card-front bg-white dark:bg-slate-800 shadow-lg rounded-lg p-6 flex flex-col justify-center items-center text-center">
                             <div class="text-5xl mb-3">🤝</div>
                             <h3 class="text-xl font-bold">The Co-CEO Model</h3>
                              <p class="text-sm netflix-red font-semibold mt-4">Click to learn more</p>
@@ -147,7 +147,7 @@ import RelatedContent from '../RelatedContent.astro';
                 </div>
                 <div class="card-flip-container h-64">
                     <div class="card-flip cursor-pointer">
-                        <div class="card-front bg-white shadow-lg rounded-lg p-6 flex flex-col justify-center items-center text-center">
+                        <div class="card-front bg-white dark:bg-slate-800 shadow-lg rounded-lg p-6 flex flex-col justify-center items-center text-center">
                             <div class="text-5xl mb-3">🤔</div>
                             <h3 class="text-xl font-bold">Farm for Dissent</h3>
                              <p class="text-sm netflix-red font-semibold mt-4">Click to learn more</p>
@@ -164,6 +164,43 @@ import RelatedContent from '../RelatedContent.astro';
 
     <script>
     import type { TooltipItem } from 'chart.js';
+    import { getChartTheme } from '../../lib/chartTheme';
+
+    const buildNetflixChartOptions = () => {
+        const theme = getChartTheme();
+        return {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { position: 'bottom' as const, labels: { color: theme.tick } },
+                tooltip: {
+                    backgroundColor: theme.tooltipBg,
+                    titleColor: theme.tooltipTitle,
+                    bodyColor: theme.tooltipBody,
+                    borderColor: theme.tooltipBorder,
+                    borderWidth: 1,
+                    callbacks: {
+                        label: (context: TooltipItem<'doughnut'>) => `${context.label}: ${context.raw}%`
+                    }
+                }
+            },
+            cutout: '60%'
+        };
+    };
+
+    const updateNetflixChartTheme = async () => {
+        const canvas = document.getElementById('gutDataChart') as HTMLCanvasElement | null;
+        if (!canvas) return;
+        const { Chart } = await import('chart.js/auto');
+        const chart = Chart.getChart(canvas);
+        if (!chart) return;
+        const isDark = document.documentElement.classList.contains('dark');
+        if (chart.data.datasets[0]) {
+            chart.data.datasets[0].borderColor = isDark ? '#334155' : '#f1f5f9';
+        }
+        Object.assign(chart.options, buildNetflixChartOptions());
+        chart.update('none');
+    };
 
     const initNetflixPlaybook = async () => {
         const sections = Array.from(document.querySelectorAll<HTMLElement>('.section-fade-in'));
@@ -199,23 +236,11 @@ import RelatedContent from '../RelatedContent.astro';
                             datasets: [{
                                 data: [70, 30],
                                 backgroundColor: ['#E50914', '#5A5A5A'],
-                                borderColor: ['#f1f5f9'],
+                                borderColor: [document.documentElement.classList.contains('dark') ? '#334155' : '#f1f5f9'],
                                 borderWidth: 4,
                             }]
                         },
-                        options: {
-                            responsive: true,
-                            maintainAspectRatio: false,
-                            plugins: {
-                                legend: { position: 'bottom', labels: { color: '#475569' } },
-                                tooltip: {
-                                    callbacks: {
-                                        label: (context: TooltipItem<'doughnut'>) => `${context.label}: ${context.raw}%`
-                                    }
-                                }
-                            },
-                            cutout: '60%'
-                        }
+                        options: buildNetflixChartOptions()
                     });
                     canvas.dataset.chartReady = 'true';
                 }
@@ -240,6 +265,7 @@ import RelatedContent from '../RelatedContent.astro';
 
     document.addEventListener('astro:page-load', runInit);
     document.addEventListener('astro:after-swap', runInit);
+    document.addEventListener('themechange', updateNetflixChartTheme);
     if (document.readyState !== 'loading') runInit();
     </script>
 
