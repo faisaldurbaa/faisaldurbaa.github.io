@@ -8,7 +8,7 @@ import competitionProjects from '../../data/competitionProjects';
 
 const projectEntries = await getCollection('projects');
 const courseEntries = (await getCollection('courses')).filter(
-  (course: CollectionEntry<'courses'>) => course.id.endsWith('index.mdx') || course.id.endsWith('index.md')
+  (course: CollectionEntry<'courses'>) => course.data.lessonNumber === undefined
 );
 const fallbackDate = new Date('1970-01-01');
 
@@ -76,8 +76,8 @@ const seo = {
               description={item.data.description}
               href={
                 item.type === 'project'
-                  ? `/projects/${item.slug}/`
-                  : `/courses/${item.slug.replace(/\/index$/, '')}/`
+                  ? `/projects/${item.id}/`
+                  : `/courses/${item.id.replace(/\/index$/, '')}/`
               }
               tags={item.data.tags ?? []}
               type={item.type}

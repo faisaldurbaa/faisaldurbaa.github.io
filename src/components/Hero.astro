@@ -9,7 +9,7 @@ import { buttonPrimary, buttonSecondary } from '../lib/buttonStyles';
 const blogEntries = await getCollection('blog');
 const projectEntries = await getCollection('projects');
 const courseEntries = (await getCollection('courses')).filter(
-  (course: CollectionEntry<'courses'>) => course.id.endsWith('index.mdx') || course.id.endsWith('index.md')
+  (course: CollectionEntry<'courses'>) => course.data.lessonNumber === undefined
 );
 
 const stats = {
