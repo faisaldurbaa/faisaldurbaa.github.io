@@ -6,19 +6,17 @@ import ShareButton from '../../components/ShareButton.astro';
 import RelatedContent from '../../components/RelatedContent.astro';
 
 export async function getStaticPaths() {
-  const courseEntries = (await getCollection('courses')).filter((entry: CollectionEntry<'courses'>) =>
-    entry.id.endsWith('index.mdx') || entry.id.endsWith('index.md')
+  const courseEntries = (await getCollection('courses')).filter(
+    (entry: CollectionEntry<'courses'>) => entry.data.lessonNumber === undefined
   );
 
-  return courseEntries
-    .filter((entry: CollectionEntry<'courses'>) => Boolean(entry.slug))
-    .map((entry: CollectionEntry<'courses'>) => {
-      const courseSlug = entry.slug!.split('/')[0];
-      return {
-        params: { slug: courseSlug },
-        props: { entry, courseSlug },
-      };
-    });
+  return courseEntries.map((entry: CollectionEntry<'courses'>) => {
+    const courseSlug = entry.id.replace(/\/index$/, '');
+    return {
+      params: { slug: courseSlug },
+      props: { entry, courseSlug },
+    };
+  });
 }
 
 const { entry, courseSlug } = Astro.props as { 
@@ -28,7 +26,8 @@ const { entry, courseSlug } = Astro.props as {
 
 const allLessons = await getCollection(
   'courses',
-  ({ id }: CollectionEntry<'courses'>) => id.startsWith(courseSlug) && !(id.endsWith('index.mdx') || id.endsWith('index.md'))
+  ({ id, data }: CollectionEntry<'courses'>) =>
+    id.startsWith(`${courseSlug}/`) && data.lessonNumber !== undefined
 );
 
 const sortedLessons = allLessons.sort(
@@ -69,7 +68,7 @@ const sortedLessons = allLessons.sort(
         <ol class="list-none space-y-6">
           {sortedLessons.map((lesson: CollectionEntry<'courses'>, index: number) => (
             <li class="border-b border-gray-200 dark:border-slate-700 pb-4 last:border-b-0">
-              <a href={`/courses/${courseSlug}/${lesson.slug.split('/')[1]}`} class="group">
+              <a href={`/courses/${courseSlug}/${lesson.id.split('/')[1]}`} class="group">
                 <div class="flex items-start gap-4">
                   <span class="text-2xl font-bold text-gray-300 dark:text-slate-600 group-hover:text-accent dark:group-hover:text-slate-300 transition-colors">
                     {index + 1}

@@ -4,12 +4,12 @@ import ArticleLayout from '../../../layouts/ArticleLayout.astro';
 
 export async function getStaticPaths() {
   const lessonEntries = (await getCollection('courses')).filter(
-    (entry: CollectionEntry<'courses'>) => !(entry.id.endsWith('index.mdx') || entry.id.endsWith('index.md'))
+    (entry: CollectionEntry<'courses'>) => entry.data.lessonNumber !== undefined
   );
 
   return lessonEntries.flatMap((entry: CollectionEntry<'courses'>) => {
-    if (entry.slug && entry.slug.includes('/')) {
-      const [courseSlug, lessonSlug] = entry.slug.split('/');
+    if (entry.id.includes('/')) {
+      const [courseSlug, lessonSlug] = entry.id.split('/');
       return [{ params: { courseSlug, lessonSlug }, props: { entry } }];
     }
     return [];
@@ -17,13 +17,13 @@ export async function getStaticPaths() {
 }
 
 const { entry } = Astro.props as { entry: CollectionEntry<'courses'> };
-const courseSlug = entry.slug.split('/')[0];
+const courseSlug = entry.id.split('/')[0];
 
 // Get all lessons for this course to determine navigation
 const allCourseLessons = (await getCollection('courses'))
   .filter(
     (lesson: CollectionEntry<'courses'>) =>
-      lesson.slug?.startsWith(courseSlug + '/') && !(lesson.id.endsWith('index.mdx') || lesson.id.endsWith('index.md'))
+      lesson.id.startsWith(`${courseSlug}/`) && lesson.data.lessonNumber !== undefined
   )
   .sort(
     (a: CollectionEntry<'courses'>, b: CollectionEntry<'courses'>) =>

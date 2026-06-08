@@ -5,7 +5,7 @@ import Card from './Card.astro';
 // Fetch all content
 const blog = await getCollection('blog');
 const projects = await getCollection('projects');
-const courses = await getCollection('courses', (course: CollectionEntry<'courses'>) => course.id.endsWith('index.mdx') || course.id.endsWith('index.md'));
+const courses = await getCollection('courses', (course: CollectionEntry<'courses'>) => course.data.lessonNumber === undefined);
 
 // Combine and filter for featured items
 const allContent = [...blog, ...projects, ...courses];
@@ -25,9 +25,9 @@ const featuredContent = allContent
       {featuredContent.map((item) => {
         const collection = item.collection;
         let href = '';
-        if (collection === 'blog') href = `/blog/${item.slug}/`;
-        if (collection === 'projects') href = `/projects/${item.slug}/`;
-        if (collection === 'courses') href = `/courses/${item.slug.replace('/index', '')}/`;
+        if (collection === 'blog') href = `/blog/${item.id}/`;
+        if (collection === 'projects') href = `/projects/${item.id}/`;
+        if (collection === 'courses') href = `/courses/${item.id.replace(/\/index$/, '')}/`;
         
         return (
           <Card

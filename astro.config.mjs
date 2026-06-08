@@ -9,7 +9,11 @@ export default defineConfig({
   site: 'https://faisaldurbaa.com',
   vite: {
     optimizeDeps: {
-      include: ['chart.js/auto', 'chartjs-plugin-annotation'],
+      include: [
+        'astro/runtime/client/dev-toolbar/entrypoint.js',
+        'chart.js/auto',
+        'chartjs-plugin-annotation',
+      ],
     },
   },
   markdown: {

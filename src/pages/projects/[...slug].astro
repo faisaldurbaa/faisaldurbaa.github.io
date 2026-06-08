@@ -1,5 +1,5 @@
 ---
-import { getCollection, type CollectionEntry } from 'astro:content';
+import { getCollection, render, type CollectionEntry } from 'astro:content';
 import Layout from '../../layouts/Layout.astro';
 import FadeIn from '../../components/FadeIn.astro';
 import Accordion from '../../components/Accordion.astro';
@@ -11,14 +11,14 @@ import { buttonPrimary, buttonSecondary } from '../../lib/buttonStyles';
 export async function getStaticPaths() {
   const projectEntries = await getCollection('projects');
   return projectEntries.map((entry: CollectionEntry<'projects'>) => ({
-    params: { slug: entry.slug },
+    params: { slug: entry.id },
     props: { entry },
   }));
 }
 
 
 const { entry } = Astro.props as { entry: CollectionEntry<'projects'> };
-const { Content } = await entry.render();
+const { Content } = await render(entry);
 
 const sections = entry.body.split(/(?=^##\s)/m).filter(Boolean);
 
@@ -105,6 +105,6 @@ const accordionItems = sections.reduce((acc: { title: string; content: string }[
   </article>
   
   <FadeIn>
-    <RelatedContent currentSlug={entry.slug} />
+    <RelatedContent currentSlug={entry.id} />
   </FadeIn>
 </Layout>

@@ -1,5 +1,5 @@
 ---
-import type { CollectionEntry } from 'astro:content';
+import { render, type CollectionEntry } from 'astro:content';
 import Layout from './Layout.astro';
 import FadeIn from '../components/FadeIn.astro';
 import ShareButton from '../components/ShareButton.astro';
@@ -15,7 +15,7 @@ interface Props {
 }
 
 const { entry, backLink, backText, previousLesson, nextLesson, courseSlug } = Astro.props;
-const { Content } = await entry.render();
+const { Content } = await render(entry);
 
 const showRelatedContent = entry.collection === 'blog';
 ---
@@ -50,7 +50,7 @@ const showRelatedContent = entry.collection === 'blog';
             <div class="flex-1">
               {previousLesson ? (
                 <a 
-                  href={`/courses/${courseSlug}/${previousLesson.slug.split('/')[1]}/`}
+                  href={`/courses/${courseSlug}/${previousLesson.id.split('/')[1]}/`}
                   class="group flex items-center gap-3 p-4 rounded-lg border border-gray-200 dark:border-slate-600 hover:border-accent dark:hover:border-slate-400 hover:bg-accent/5 dark:hover:bg-slate-700/50 transition-all duration-200"
                 >
                   <div class="flex-shrink-0 w-8 h-8 rounded-full bg-gray-100 dark:bg-slate-700 group-hover:bg-accent/10 dark:group-hover:bg-slate-600 flex items-center justify-center transition-colors">
@@ -75,7 +75,7 @@ const showRelatedContent = entry.collection === 'blog';
             <div class="flex-1">
               {nextLesson ? (
                 <a 
-                  href={`/courses/${courseSlug}/${nextLesson.slug.split('/')[1]}/`}
+                  href={`/courses/${courseSlug}/${nextLesson.id.split('/')[1]}/`}
                   class="group flex items-center gap-3 p-4 rounded-lg border border-gray-200 dark:border-slate-600 hover:border-accent dark:hover:border-slate-400 hover:bg-accent/5 dark:hover:bg-slate-700/50 transition-all duration-200 text-right"
                 >
                   <div class="min-w-0 flex-1">
@@ -105,7 +105,7 @@ const showRelatedContent = entry.collection === 'blog';
   
   {showRelatedContent && (
     <FadeIn>
-      <RelatedContent currentSlug={entry.slug} />
+      <RelatedContent currentSlug={entry.id} />
     </FadeIn>
   )}
 </Layout>
