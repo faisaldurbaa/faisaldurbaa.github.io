@@ -55,7 +55,7 @@ const isActiveLink = (linkHref: string) => {
             class:list={[
               "relative z-10 py-2 px-4 rounded-full text-sm font-medium transition-colors duration-300",
               isActiveLink(link.href)
-                ? 'text-accent dark:text-slate-200 bg-gray-900/5 dark:bg-slate-700/50'
+                ? 'text-accent dark:text-slate-200'
                 : 'text-gray-600 dark:text-slate-400 hover:text-accent dark:hover:text-slate-200'
             ]}
           >
@@ -136,6 +136,8 @@ const isActiveLink = (linkHref: string) => {
 
   registerThemePersistence();
 
+  let remeasureNavPill: ((immediate?: boolean) => void) | null = null;
+
   // Set initial state immediately to avoid first-paint flicker
   {
     const navShell = document.getElementById('nav-shell');
@@ -184,8 +186,10 @@ const isActiveLink = (linkHref: string) => {
     localStorage.setItem('theme', theme);
     syncThemeToggleUI();
     document.dispatchEvent(new CustomEvent('themechange', { detail: { theme } }));
+    remeasureNavPill?.(true);
     window.setTimeout(() => {
       document.documentElement.classList.remove('theme-transition');
+      remeasureNavPill?.(true);
     }, 250);
   }
 
@@ -247,7 +251,7 @@ const isActiveLink = (linkHref: string) => {
     };
 
     const updateActiveLinks = () => {
-      const desktopActiveClasses = ['text-accent', 'dark:text-slate-200', 'bg-gray-900/5', 'dark:bg-slate-700/50'];
+      const desktopActiveClasses = ['text-accent', 'dark:text-slate-200'];
       const desktopInactiveClasses = ['text-gray-600', 'dark:text-slate-400', 'hover:text-accent', 'dark:hover:text-slate-200'];
       const mobileActiveClasses = ['bg-accent', 'dark:bg-slate-600', 'text-white', 'font-semibold', 'pl-6', 'shadow-md'];
       const mobileInactiveClasses = ['text-gray-600', 'dark:text-slate-400', 'hover:bg-gray-100/50', 'dark:hover:bg-slate-700/50', 'hover:text-accent', 'dark:hover:text-slate-200', 'hover:pl-5'];
@@ -328,6 +332,26 @@ const isActiveLink = (linkHref: string) => {
       });
     };
 
+    let pillPositionPending = false;
+    let pillPositionImmediate = false;
+
+    const schedulePillPosition = (immediate = false) => {
+      if (!desktopNav || !pill || desktopLinks.length === 0) return;
+      if (immediate) pillPositionImmediate = true;
+      if (pillPositionPending) return;
+      pillPositionPending = true;
+
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          positionPill(pillPositionImmediate);
+          pillPositionImmediate = false;
+          pillPositionPending = false;
+        });
+      });
+    };
+
+    remeasureNavPill = schedulePillPosition;
+
     function setMenuState(open: boolean) {
       if (!mobileMenuButton || !mobileMenu || !hamburgerIcon || !closeIcon) return;
       mobileMenuButton.setAttribute('aria-expanded', open ? 'true' : 'false');
@@ -346,20 +370,27 @@ const isActiveLink = (linkHref: string) => {
       if (!navShell) return;
       const scrollY = window.scrollY;
       const floating = scrollY > 20;
+      let scrolledChanged = false;
 
       const previous = navShell.style.transition;
       if (immediate) navShell.style.transition = 'none';
 
       if (floating && navShell.dataset.scrolled !== 'true') {
         navShell.dataset.scrolled = 'true';
+        scrolledChanged = true;
       } else if (!floating && navShell.dataset.scrolled !== 'false') {
         navShell.dataset.scrolled = 'false';
+        scrolledChanged = true;
       }
 
       if (immediate) {
         requestAnimationFrame(() => {
           navShell.style.transition = previous;
         });
+      }
+
+      if (scrolledChanged) {
+        schedulePillPosition(immediate);
       }
     }
 
@@ -378,10 +409,12 @@ const isActiveLink = (linkHref: string) => {
           requestAnimationFrame(() => {
             navShell.dataset.scrolled = 'false';
             sessionStorage.removeItem('nav-was-floating');
+            schedulePillPosition(true);
           });
         });
       } else {
         updateNavState(true);
+        schedulePillPosition(true);
       }
     }
 
@@ -430,6 +463,15 @@ const isActiveLink = (linkHref: string) => {
       window.addEventListener('scroll', onScroll, { passive: true });
       setupNavClickListeners();
 
+      window.addEventListener('resize', () => schedulePillPosition(true));
+
+      navShell.addEventListener('transitionend', (event) => {
+        if (event.target !== navShell) return;
+        schedulePillPosition(true);
+      });
+
+      document.fonts?.ready.then(() => schedulePillPosition(true));
+
       if (desktopNav && pill && desktopLinks.length > 0) {
         desktopLinks.forEach(link => {
           link.addEventListener('mouseenter', () => updatePill(link));
@@ -444,7 +486,6 @@ const isActiveLink = (linkHref: string) => {
     }
 
     updateActiveLinks();
-    positionPill(true);
     setMenuState(false);
     handleStickBack();
   }
