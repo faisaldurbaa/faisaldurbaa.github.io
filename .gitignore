@@ -7,6 +7,7 @@
 /.astro
 /.pnpm-store
 .DS_Store
+.obsidian/
 
 npm-debug.log*
 yarn-debug.log*
