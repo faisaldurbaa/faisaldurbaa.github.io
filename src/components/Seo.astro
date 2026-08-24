@@ -4,6 +4,7 @@ export interface Props {
   description: string;
   image?: string | null | undefined;
   noindex?: boolean;
+  alternateLanguages?: { lang: string; href: string }[];
 }
 
 const {
@@ -11,6 +12,7 @@ const {
   description,
   image: heroImage,
   noindex = false,
+  alternateLanguages = [],
 } = Astro.props;
 
 const defaultImage = '/placeholder.png'; 
@@ -43,4 +45,7 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 
 <!-- General -->
 <link rel="canonical" href={canonicalURL} />
+{alternateLanguages.map(({ lang, href }) => (
+  <link rel="alternate" hreflang={lang} href={new URL(href, Astro.site)} />
+))}
 <meta name="robots" content={noindex ? "noindex, nofollow" : "index, follow"} />

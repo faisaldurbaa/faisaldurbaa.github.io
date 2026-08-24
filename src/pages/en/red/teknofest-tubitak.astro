@@ -1,0 +1,42 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+import CompetitionShowcase from '../../../components/CompetitionShowcase.astro';
+import competitionProjects from '../../../data/competitionProjects';
+
+const seo = {
+  title: 'TEKNOFEST & TÜBİTAK Project Showcase',
+  description: 'Flagship TEKNOFEST and TÜBİTAK competition projects I represented my school with, including concise summaries and report links.',
+};
+---
+<Layout
+  seo={seo}
+  lang="en"
+  languageSwitch={{ current: 'en', alternateHref: '/red/teknofest-tubitak/', alternateLabel: 'Türkçe', accessibleLabel: 'Switch to Turkish' }}
+  alternateLanguages={[
+    { lang: 'tr', href: '/red/teknofest-tubitak/' },
+    { lang: 'en', href: '/en/red/teknofest-tubitak/' },
+    { lang: 'x-default', href: '/red/teknofest-tubitak/' },
+  ]}
+>
+  <CompetitionShowcase
+    projects={competitionProjects}
+    copy={{
+      title: 'TEKNOFEST & TÜBİTAK PROJECT SHOWCASE',
+      intro: 'Main competition projects I represented my school with across TEKNOFEST and TÜBİTAK, with concise summaries and direct report links.',
+      teknofest: "Aviation, Space, and Technology Festival; Türkiye's national competition for student-led hardware and software innovation.",
+      tubitak: 'The Scientific and Technological Research Council of Türkiye; runs nationwide research project contests for students.',
+      projectCount: 'projects',
+      disciplines: 'Hardware + Software',
+      reports: 'Reports linked',
+      problem: 'Problem',
+      solution: 'Solution',
+      themes: {
+        safety: 'Public Safety',
+        health: 'Health',
+        accessibility: 'Accessibility',
+        environment: 'Environment',
+        education: 'Education',
+      },
+    }}
+  />
+</Layout>
