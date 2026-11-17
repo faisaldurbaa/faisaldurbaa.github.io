@@ -6,6 +6,8 @@ import { slugify } from "../lib/sheets";
 export interface Props {
   project: CompetitionProject;
   labels?: { problem: string; solution: string; theme: string };
+  /** Drawing name; defaults to the title slug. Translated pages pass the English slug. */
+  figure?: string | undefined;
 }
 
 const themeLabels: Record<CompetitionProject["theme"], string> = {
@@ -16,7 +18,7 @@ const themeLabels: Record<CompetitionProject["theme"], string> = {
   education: "Education",
 };
 
-const { project, labels } = Astro.props;
+const { project, labels, figure = slugify(project.title) } = Astro.props;
 const l = labels ?? { problem: "Problem", solution: "Solution", theme: themeLabels[project.theme] };
 ---
 <article id={slugify(project.title)} class="scroll-mt-6 border-b border-rule py-8 grid gap-x-10 gap-y-4 md:grid-cols-[minmax(0,2fr)_minmax(0,3fr)] lg:has-[figure]:grid-cols-[minmax(0,2fr)_minmax(0,3fr)_auto]">
@@ -37,5 +39,5 @@ const l = labels ?? { problem: "Problem", solution: "Solution", theme: themeLabe
       </p>
     )}
   </div>
-  <Figure name={slugify(project.title)} title={project.title} class="w-[220px] max-w-full md:col-span-2 lg:col-span-1 lg:row-start-1 lg:col-start-3" />
+  <Figure name={figure} title={project.title} class="w-[220px] max-w-full md:col-span-2 lg:col-span-1 lg:row-start-1 lg:col-start-3" />
 </article>

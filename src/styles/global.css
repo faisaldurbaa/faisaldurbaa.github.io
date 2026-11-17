@@ -10,7 +10,7 @@
 html.dark {
   color-scheme: dark;
   --ground: #103C9E; --panel: #0D3389; --ink: #EEF4FF; --ink-rgb: 238 244 255;
-  --text: #EEF4FF; --muted: #C3D2F2; --rule: rgb(238 244 255 / .4); --stamp: #FF9466; --mark: #FFD84D;
+  --text: #EEF4FF; --muted: #C3D2F2; --rule: rgb(238 244 255 / .4); --stamp: #FFA27A; --mark: #FFD84D;
 }
 
 html { background: var(--ground); scrollbar-color: var(--ink) var(--ground); }
@@ -44,7 +44,7 @@ a:hover { text-decoration-color: var(--mark); }
 .stamp { display: inline-block; border: 2px solid var(--stamp); color: var(--stamp); padding: .4rem .8rem; font-family: "Barlow Semi Condensed", sans-serif; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; transform: rotate(-3deg); }
 .win { color: var(--stamp); font-weight: 600; }
 
-.index { border-top: 2px solid var(--ink); list-style: none; margin: 0; padding: 0; }
+.index { border-top: 2px solid var(--ink); list-style: none; padding: 0; }
 .index-row { display: grid; grid-template-columns: 3.25rem 1fr; gap: .25rem 1rem; align-items: center; padding: .85rem .75rem; border-bottom: 1px solid var(--rule); text-decoration: none; color: inherit; }
 @media (min-width: 640px) { .index-row { grid-template-columns: 4.5rem 1fr auto; } }
 .index-row .no { color: var(--mark); font-family: "Barlow Condensed", sans-serif; font-weight: 600; font-size: clamp(2rem, 4vw, 3rem); line-height: 1; }

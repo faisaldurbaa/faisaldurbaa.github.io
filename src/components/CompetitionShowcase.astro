@@ -1,5 +1,7 @@
 ---
 import CompetitionCard from './CompetitionCard.astro';
+import englishProjects from '../data/competitionProjects';
+import { slugify } from '../lib/sheets';
 import type { CompetitionProject } from '../data/competitionProjects';
 
 interface Copy {
@@ -32,8 +34,9 @@ const { projects, copy } = Astro.props;
   <p class="lab mt-5 text-muted">{projects.length} {copy.projectCount} · {copy.disciplines} · {copy.reports}</p>
 
   <div class="mt-8 border-t-2 border-ink">
-    {projects.map((project) => (
-      <CompetitionCard project={project} labels={{ problem: copy.problem, solution: copy.solution, theme: copy.themes[project.theme] }} />
+    {/* Both language files list the same projects in the same order, so drawings follow the English titles. */}
+    {projects.map((project, i) => (
+      <CompetitionCard project={project} figure={englishProjects[i] && slugify(englishProjects[i].title)} labels={{ problem: copy.problem, solution: copy.solution, theme: copy.themes[project.theme] }} />
     ))}
   </div>
 </div>
