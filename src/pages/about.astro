@@ -1,9 +1,7 @@
 ---
-import { Image } from 'astro:assets';
 import { Icon } from 'astro-icon/components';
 import Layout from '../layouts/Layout.astro';
 import FadeIn from '../components/FadeIn.astro';
-import profilePic from '../assets/profile.webp';
 import { buttonPrimary } from '../lib/buttonStyles';
 
 const seo = {
@@ -93,14 +91,6 @@ const mobileIcons = [
       <FadeIn>
         <!-- Hero Section -->
         <div class="text-center mb-10">
-          <Image 
-            src={profilePic} 
-            alt="A photo of Faisal Durbaa"
-            width={600}
-            height={600}
-            quality={90}
-            class="w-72 h-72 rounded-full border-4 border-accent shadow-xl mx-auto mb-4 object-cover"
-          />
           <h1 class="text-4xl sm:text-5xl font-bold text-gray-900 dark:text-slate-100 mb-3">Faisal Durbaa</h1>
           <p class="text-xl text-gray-600 dark:text-slate-400 mb-6">A Curious Young Man</p>
         </div>

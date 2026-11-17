@@ -1,161 +1,111 @@
 ---
-import Layout from '../layouts/Layout.astro';
-import Hero from '../components/Hero.astro';
-import FadeIn from '../components/FadeIn.astro'; 
 import { getCollection, type CollectionEntry } from 'astro:content';
-import Card from '../components/Card.astro';
-import { Icon } from 'astro-icon/components';
-import { buttonPrimary, buttonSecondary } from '../lib/buttonStyles';
+import Layout from '../layouts/Layout.astro';
+import Figure from '../components/Figure.astro';
+import { getSheets } from '../lib/sheets';
 
-const blogEntries = await getCollection('blog');
-const projectEntries = await getCollection('projects');
-const courseEntries = (await getCollection('courses')).filter(
-  (course: CollectionEntry<'courses'>) => course.data.lessonNumber === undefined
-);
-
-const allContent = [
-  ...blogEntries.map((entry: CollectionEntry<'blog'>) => ({
-    type: 'blog' as const,
-    title: entry.data.title,
-    description: entry.data.description,
-    href: `/blog/${entry.id}/`,
-    tags: entry.data.tags,
-    publishDate: entry.data.publishDate,
-    heroImage: entry.data.heroImage,
-    featured: entry.data.featured,
-  })),
-  ...projectEntries.map((entry: CollectionEntry<'projects'>) => ({
-    type: 'project' as const,
-    title: entry.data.title,
-    description: entry.data.description,
-    href: `/projects/${entry.id}/`,
-    tags: entry.data.tags,
-    publishDate: entry.data.publishDate,
-    heroImage: entry.data.heroImage,
-    featured: entry.data.featured,
-  })),
-  ...courseEntries.map((entry: CollectionEntry<'courses'>) => ({
-    type: 'course' as const,
-    title: entry.data.title,
-    description: entry.data.description,
-    href: `/courses/${entry.id.replace(/\/index$/, '')}/`,
-    tags: entry.data.tags || [],
-    publishDate: entry.data.publishDate,
-    heroImage: entry.data.heroImage,
-    featured: entry.data.featured,
-  })),
-];
-
-const fallbackDate = new Date('1970-01-01');
-
-const featuredContent = allContent
-  .filter(item => item.featured === true)
-  .sort((a, b) => (
-    (b.publishDate ? new Date(b.publishDate) : fallbackDate).valueOf() -
-    (a.publishDate ? new Date(a.publishDate) : fallbackDate).valueOf()
-  ))
+const sheets = await getSheets();
+const posts = (await getCollection('blog'))
+  .sort((a: CollectionEntry<'blog'>, b: CollectionEntry<'blog'>) => (b.data.publishDate?.valueOf() ?? 0) - (a.data.publishDate?.valueOf() ?? 0))
   .slice(0, 4);
+const formatDate = (date?: Date) =>
+  date ? date.toLocaleDateString('en-GB', { year: 'numeric', month: 'short' }) : '';
 
 const seo = {
-  title: "Home",
-  description: "Welcome to the professional portfolio of Faisal Durbaa. Discover projects, writings, and more."
+  title: 'Home',
+  description: 'Hardware and software by Faisal Durbaa: competition builds, machine-learning projects and writing, each with its report or repository.',
 };
 ---
 <Layout seo={seo}>
-  <FadeIn>
-    <Hero />
-  </FadeIn>
-
-  <!-- Floating Scroll Indicator -->
-  <div id="scroll-indicator" class="fixed bottom-8 left-1/2 -translate-x-1/2 z-40 transition-all duration-500 ease-out cursor-pointer hover:scale-105 hidden md:flex flex-col items-center">
-    <div class="w-12 h-12 flex items-center justify-center rounded-full bg-white dark:bg-slate-800 shadow-lg shadow-accent/20 dark:shadow-black/30 border border-accent/30 dark:border-slate-600 text-accent dark:text-slate-300 hover:text-accent/90 dark:hover:text-slate-100 transition-colors cursor-pointer">
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
-      </svg>
+  <div class="pad grid gap-x-12 gap-y-8 pt-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,44%)]">
+    <div>
+      <h1 class="disp text-ink text-[clamp(2.75rem,6vw,4.75rem)]">Built, tested, judged.</h1>
+      <p class="mt-4 max-w-xl text-lg">
+        Hardware and software by Faisal Durbaa. One sheet per project: what it does, how it was judged, and the report behind it.
+      </p>
     </div>
-  </div>
+    <div class="lg:col-start-1">
+      <ol class="index" id="sheet-index">
+        {sheets.map((sheet, i) => (
+          <li>
+            <a class="index-row" href={sheet.href} data-sheet={i} data-on={i === 0 ? 'true' : undefined}>
+              <span class="no">{sheet.no}</span>
+              <span>
+                <span class="ttl">{sheet.title}</span>
+                <span class="lab">{sheet.context}</span>
+              </span>
+              <span class:list={['out', { win: sheet.win }]}>{sheet.outcome}</span>
+            </a>
+          </li>
+        ))}
+      </ol>
+    </div>
 
-  <section id="featured-section" class="py-16">
-    <div class="mx-auto w-full max-w-[1800px] px-[clamp(3.25rem,8vw,7.25rem)] space-y-10">
-      <FadeIn>
-        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-          <h2 class="text-3xl font-bold text-gray-900 dark:text-slate-100">Featured</h2>
-        </div>
-      </FadeIn>
-
-      <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6 lg:gap-8 items-stretch">
-        {featuredContent.map(item => (
-          <FadeIn>
-            <Card
-              title={item.title}
-              description={item.description}
-              href={item.href}
-              tags={item.tags ?? []}
-              type={item.type}
-              publishDate={item.publishDate}
-              heroImage={item.heroImage}
-            />
-          </FadeIn>
+    <aside class="lg:col-start-2 lg:row-start-1 lg:row-span-2" aria-label="Selected sheet">
+      <div class="frame lg:sticky lg:top-6">
+        {sheets.map((sheet, i) => (
+          <div class="p-5 sm:p-6" data-panel={i} hidden={i !== 0}>
+            {sheet.figure ? (
+              <Figure name={sheet.figure} title={sheet.title} class="mx-auto max-h-[52vh] max-w-md text-ink" />
+            ) : sheet.image ? (
+              <img src={sheet.image} alt="" class="plate w-full max-h-[44vh] object-cover" loading="lazy" />
+            ) : null}
+            <p class="lab mt-5 border-t border-rule pt-4 text-ink">
+              Fig. {sheet.no} — {sheet.title}{sheet.figure && ' (illustrative, not to scale)'}
+            </p>
+            <p class="mt-2">{sheet.summary}</p>
+            {sheet.win && <p class="stamp mt-5">{sheet.outcome}</p>}
+          </div>
         ))}
       </div>
+    </aside>
+  </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-6">
-        <a href="/projects/" class:list={[buttonPrimary, 'py-4']}>
-          <Icon name="mdi:rocket-launch" class="w-5 h-5" />
-          <span>View Projects</span>
-        </a>
-        <a href="/blog/" class:list={[buttonSecondary, 'py-4']}>
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h10" />
-          </svg>
-          <span>Read Blog Posts</span>
-        </a>
-        <a href="/contact/" class:list={[buttonSecondary, 'py-4']}>
-          <Icon name="mdi:email-fast-outline" class="w-5 h-5" />
-          <span>Get In Touch</span>
-        </a>
-      </div>
+  <section class="pad mt-20 grid gap-x-12 gap-y-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,44%)]">
+    <div>
+      <h2 class="disp text-ink text-4xl">Writing</h2>
+      <ol class="index mt-5">
+        {posts.map((post: CollectionEntry<'blog'>) => (
+          <li>
+            <a class="index-row" href={`/blog/${post.id}/`}>
+              <span class="lab">{formatDate(post.data.publishDate)}</span>
+              <span class="ttl">{post.data.title}</span>
+            </a>
+          </li>
+        ))}
+      </ol>
+      <p class="mt-6 flex flex-wrap gap-3">
+        <a class="btn" href="/blog/">All writing</a>
+        <a class="btn" href="/courses/ms-excel-documentation/">Excel course</a>
+      </p>
+    </div>
+    <div class="lg:pt-14">
+      <p class="max-w-md text-lg">Working on something where this would help, or want the details behind a sheet?</p>
+      <p class="mt-5"><a class="btn-solid" href="/contact/">Get in touch</a></p>
     </div>
   </section>
 </Layout>
 
+<style>
+  /* Photos sit in the sheet as single-ink plates. */
+  .plate { filter: grayscale(1) contrast(1.1); mix-blend-mode: luminosity; border: 1px solid var(--rule); }
+</style>
+
 <script>
-  function setupScrollIndicator() {
-    const scrollIndicator = document.getElementById('scroll-indicator');
-    const featuredSection = document.getElementById('featured-section');
-    if (!scrollIndicator || !featuredSection || scrollIndicator.dataset.bound === 'true') return;
-
-    scrollIndicator.dataset.bound = 'true';
-
-    scrollIndicator.addEventListener('click', () => {
-      const top = featuredSection.getBoundingClientRect().top + window.scrollY;
-      window.scrollTo({ top: top - 40, behavior: 'smooth' });
-    });
-
-    const onScroll = () => {
-      const scrollY = window.scrollY;
-      if (scrollY > 100) {
-        scrollIndicator.style.opacity = '0';
-        scrollIndicator.style.pointerEvents = 'none';
-        scrollIndicator.style.transform = 'translate(-50%, 20px)';
-      } else {
-        scrollIndicator.style.opacity = '1';
-        scrollIndicator.style.pointerEvents = 'auto';
-        scrollIndicator.style.transform = 'translate(-50%, 0)';
-      }
+  // Moving through the index swaps the framed figure. Without JS the first sheet stays shown.
+  function bindIndex() {
+    const rows = document.querySelectorAll<HTMLElement>('#sheet-index [data-sheet]');
+    const panels = document.querySelectorAll<HTMLElement>('[data-panel]');
+    const show = (id: string) => {
+      rows.forEach((row) => (row.dataset.sheet === id ? (row.dataset.on = 'true') : delete row.dataset.on));
+      panels.forEach((panel) => (panel.hidden = panel.dataset.panel !== id));
     };
-
-    window.addEventListener('scroll', onScroll, { passive: true });
-    onScroll();
-  }
-
-  if (typeof window !== 'undefined') {
-    setupScrollIndicator();
-    document.addEventListener('astro:after-swap', () => {
-      // allow rebind after swap
-      const indicator = document.getElementById('scroll-indicator');
-      if (indicator) indicator.dataset.bound = 'false';
-      setupScrollIndicator();
+    rows.forEach((row) => {
+      const id = row.dataset.sheet!;
+      row.addEventListener('mouseenter', () => show(id));
+      row.addEventListener('focus', () => show(id));
     });
   }
+  bindIndex();
+  document.addEventListener('astro:after-swap', bindIndex);
 </script>
