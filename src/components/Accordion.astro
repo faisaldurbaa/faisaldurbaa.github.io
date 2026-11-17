@@ -4,16 +4,16 @@ export interface Props {
 }
 const { summary } = Astro.props;
 ---
-<details class="accordion-details group border-b border-gray-200 dark:border-slate-700 last:border-b-0 py-4">
-  <summary class="flex justify-between items-center cursor-pointer list-none">
-    <h3 class="text-xl font-semibold text-gray-800 dark:text-slate-100 m-0">{summary}</h3>
-    <span class="transition-transform duration-300 group-open:rotate-180 text-gray-600 dark:text-slate-400">
-      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5"><path d="m6 9 6 6 6-6"/></svg>
+<details class="accordion-details group border-b border-rule first:border-t-2 first:border-ink">
+  <summary class="flex items-center justify-between gap-4 cursor-pointer list-none px-3 py-4 hover:bg-ink hover:text-ground group-open:bg-panel group-open:hover:bg-ink">
+    <h3 class="disp text-[clamp(1.35rem,2.2vw,1.75rem)] m-0 !text-inherit">{summary}</h3>
+    <span class="lab shrink-0 border-2 border-current px-2 py-0.5" aria-hidden="true">
+      <span class="group-open:hidden">Open</span><span class="hidden group-open:inline">Close</span>
     </span>
   </summary>
-  
+
   <div class="content-wrapper overflow-hidden transition-[max-height] duration-500 ease-in-out" style="max-height: 0;">
-    <div class="prose prose-slate dark:prose-invert max-w-none pt-4 text-gray-600 dark:text-slate-300">
+    <div class="prose max-w-none px-3 py-5 text-body [--tw-prose-body:var(--text)] [--tw-prose-headings:var(--ink)] [--tw-prose-links:var(--ink)] [--tw-prose-bold:var(--ink)] [--tw-prose-counters:var(--muted)] [--tw-prose-bullets:var(--muted)] [--tw-prose-hr:var(--rule)] [--tw-prose-quotes:var(--text)] [--tw-prose-quote-borders:var(--rule)] [--tw-prose-captions:var(--muted)] [--tw-prose-code:var(--ink)] [--tw-prose-pre-code:var(--text)] [--tw-prose-pre-bg:var(--panel)] [--tw-prose-th-borders:var(--ink)] [--tw-prose-td-borders:var(--rule)]">
       <slot />
     </div>
   </div>

@@ -1,8 +1,7 @@
 ---
+import InkBlots from '../../components/InkBlots.astro';
 import { getCollection, type CollectionEntry } from 'astro:content';
 import Layout from '../../layouts/Layout.astro';
-import FadeIn from '../../components/FadeIn.astro';
-import Card from '../../components/Card.astro';
 
 const blogEntries = await getCollection('blog');
 const fallbackDate = new Date('1970-01-01');
@@ -12,109 +11,57 @@ const sortedContent = blogEntries.sort((a: CollectionEntry<'blog'>, b: Collectio
   (a.data.publishDate ? new Date(a.data.publishDate) : fallbackDate).valueOf()
 );
 
+
 const seo = {
   title: "Blog",
   description: "Explore my latest blog posts on AI, software, and technical strategy.",
 };
 ---
 <Layout seo={seo}>
-  <div class="mx-auto w-full max-w-[1800px] px-[clamp(3.25rem,8vw,7.25rem)] py-16 space-y-10">
-    <FadeIn>
-      <div class="rounded-3xl bg-gradient-to-br from-white via-[#eef3fb] to-[#dfe9f5] dark:from-slate-800 dark:via-slate-800/90 dark:to-slate-900 border border-white/60 dark:border-slate-700/60 shadow-xl px-6 py-8 md:px-10 md:py-10 flex flex-col md:flex-row md:items-center md:justify-between gap-6">
-        <div class="space-y-1">
-          <h1 class="text-4xl font-bold text-gray-900 dark:text-slate-100">BLOG POSTS</h1>
-          <p class="text-gray-600 dark:text-slate-400 max-w-2xl">Domesitcating technical advancements in technology and business.</p>
-        </div>
-        <div class="flex gap-3">
-          <div class="stat-pill">
-            <span class="text-xs uppercase text-gray-600 dark:text-slate-400 text-center w-full">Articles</span>
-            <span class="text-2xl font-bold text-gray-900 dark:text-slate-100 text-center w-full counter" data-target={sortedContent.length}>0</span>
-          </div>
-        </div>
-      </div>
-    </FadeIn>
+  <div class="relative overflow-hidden">
+    <InkBlots />
 
-    <div id="blog-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-8 lg:gap-10 items-stretch">
-      {sortedContent.map((item: CollectionEntry<'blog'>) => (
-        <FadeIn>
-          <Card
-            title={item.data.title}
-            description={item.data.description}
-            href={`/blog/${item.id}/`}
-            tags={item.data.tags ?? []}
-            type="blog"
-            publishDate={item.data.publishDate}
-            heroImage={item.data.heroImage}
-          />
-        </FadeIn>
-      ))}
+    <div class="pad relative pt-10 pb-16 max-w-[1100px]">
+      <h1 class="disp text-ink text-[clamp(2.5rem,5vw,4.5rem)]">Writing</h1>
+      <p class="mt-4 mb-10 max-w-[70ch] text-lg text-muted">Domesitcating technical advancements in technology and business.</p>
+
+      <ul id="blog-grid" class="entries">
+        {sortedContent.map((item: CollectionEntry<'blog'>) => (
+          <li>
+            <a href={`/blog/${item.id}/`} class="entry">
+              <span class="thumb" aria-hidden="true">
+                {item.data.heroImage && <img src={item.data.heroImage} alt="" class="plate" loading="lazy" />}
+              </span>
+              <span class="min-w-0">
+                {item.data.publishDate && (
+                  <span class="lab block text-muted">
+                    {new Date(item.data.publishDate).toLocaleDateString('en-us', { year: 'numeric', month: 'short', day: 'numeric' })}
+                  </span>
+                )}
+                <span class="disp ttl text-ink">{item.data.title}</span>
+                <span class="mt-2 block max-w-[70ch]">{item.data.description}</span>
+                {item.data.tags && item.data.tags.length > 0 && (
+                  <span class="lab mt-3 block text-muted">{item.data.tags.join(' / ')}</span>
+                )}
+              </span>
+            </a>
+          </li>
+        ))}
+      </ul>
     </div>
   </div>
 </Layout>
 
 <style>
-  .stat-pill {
-    display: inline-flex;
-    flex-direction: column;
-    gap: 0.1rem;
-    padding: 0.65rem 0.9rem;
-    border-radius: 0.9rem;
-    background: rgba(255, 255, 255, 0.9);
-    border: 1px solid rgba(226, 232, 240, 0.9);
-    box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
-    min-width: 90px;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-  }
 
-  :global(.dark) .stat-pill {
-    background: rgba(30, 41, 59, 0.8);
-    border-color: rgba(71, 85, 105, 0.6);
-    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.2);
-  }
+  .entries { list-style: none; padding: 0; border-top: 2px solid var(--ink); }
+  .entry { display: grid; gap: 1rem; padding: 1.25rem .75rem; border-bottom: 1px solid var(--rule); border-left: 3px solid transparent; text-decoration: none; color: inherit; background: var(--ground); }
+  @media (min-width: 640px) { .entry { grid-template-columns: 180px minmax(0, 1fr); gap: 1.5rem; align-items: start; } }
+  .thumb { display: block; height: 160px; border: 1px solid var(--rule); overflow: hidden; background: var(--panel); }
+  @media (min-width: 640px) { .thumb { height: auto; aspect-ratio: 3 / 2; } }
+  .thumb .plate { display: block; width: 100%; height: 100%; object-fit: cover; filter: grayscale(1) contrast(1.1); mix-blend-mode: luminosity; }
+  .ttl { display: block; margin-top: .25rem; font-size: clamp(1.4rem, 3vw, 1.75rem); }
+  .entry:hover, .entry:focus-visible { border-left-color: var(--mark); }
+  .entry:hover .thumb, .entry:focus-visible .thumb { border-color: var(--mark); }
+  .entry:hover .ttl, .entry:focus-visible .ttl { color: var(--mark); }
 </style>
-
-<script>
-  function setupBlogCounters() {
-    const counters = document.querySelectorAll('.counter:not([data-animated])');
-    if (!counters.length) return;
-
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          const el = entry.target as HTMLElement;
-          el.setAttribute('data-animated', 'true');
-          const target = Number(el.dataset?.target || 0);
-          const duration = 900;
-          const start = performance.now();
-
-          function tick(now: number) {
-            const progress = Math.min((now - start) / duration, 1);
-            const value = Math.floor(progress * target);
-            el.textContent = value.toString();
-            if (progress < 1) requestAnimationFrame(tick);
-            else el.textContent = target.toString();
-          }
-
-          requestAnimationFrame(tick);
-          observer.unobserve(el);
-        }
-      });
-    }, { threshold: 0.5 });
-
-    counters.forEach((counter) => {
-      counter.textContent = '0';
-      observer.observe(counter);
-    });
-  }
-
-  if (typeof window !== 'undefined') {
-    setupBlogCounters();
-    document.addEventListener('astro:after-swap', () => {
-      const counters = document.querySelectorAll('.counter');
-      counters.forEach((c) => c.removeAttribute('data-animated'));
-      setupBlogCounters();
-    });
-  }
-</script>

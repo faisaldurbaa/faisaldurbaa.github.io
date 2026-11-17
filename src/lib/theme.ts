@@ -12,8 +12,9 @@ export function getSystemTheme(): Theme {
   return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
 }
 
-export function getResolvedTheme(): Theme {
-  return getUserThemePreference() ?? getSystemTheme();
+// Each page declares its default (blueprint, or whiteprint for long reading); a stored choice wins.
+export function getResolvedTheme(root: HTMLElement = document.documentElement): Theme {
+  return getUserThemePreference() ?? (root.dataset.defaultTheme === 'light' ? 'light' : 'dark');
 }
 
 export function getStoredTheme(): Theme {
@@ -27,7 +28,7 @@ export function applyTheme(theme: Theme, root: HTMLElement = document.documentEl
 }
 
 export function applyResolvedTheme(root: HTMLElement = document.documentElement): Theme {
-  return applyTheme(getResolvedTheme(), root);
+  return applyTheme(getResolvedTheme(root), root);
 }
 
 export function applyStoredTheme(root: HTMLElement = document.documentElement): Theme {
@@ -38,29 +39,9 @@ function dispatchThemeApplied(theme: Theme): void {
   document.dispatchEvent(new CustomEvent('theme-applied', { detail: { theme } }));
 }
 
-function dispatchThemeChange(theme: Theme): void {
-  document.dispatchEvent(new CustomEvent('themechange', { detail: { theme } }));
-}
-
-function registerSystemThemeListener(): void {
-  if (window.__systemThemeListenerRegistered) return;
-  window.__systemThemeListenerRegistered = true;
-
-  const media = window.matchMedia('(prefers-color-scheme: dark)');
-  media.addEventListener('change', (event) => {
-    if (getUserThemePreference()) return;
-    const theme: Theme = event.matches ? 'dark' : 'light';
-    applyTheme(theme);
-    dispatchThemeApplied(theme);
-    dispatchThemeChange(theme);
-  });
-}
-
 export function registerThemePersistence(): void {
   if (window.__themePersistenceRegistered) return;
   window.__themePersistenceRegistered = true;
-
-  registerSystemThemeListener();
 
   document.addEventListener('astro:before-swap', (event) => {
     const swapEvent = event as Event & {

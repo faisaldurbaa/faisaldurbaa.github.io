@@ -1,5 +1,4 @@
 ---
-
 export interface Props {
   title: string;
   description: string;
@@ -10,111 +9,20 @@ export interface Props {
   heroImage?: string | undefined;
 }
 
-const { title, description, href, tags, publishDate, heroImage, type } = Astro.props;
-const hasImage = Boolean(heroImage);
-
-const getTypeStyles = (type: 'blog' | 'project' | 'course' | 'projects' | 'courses') => {
-  switch (type) {
-    case 'blog':
-      return {
-        shadow: 'shadow-blue-100 hover:shadow-blue-200 dark:shadow-blue-900/20 dark:hover:shadow-blue-900/40 hover:shadow-lg',
-        badge: 'bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300',
-        label: 'Blog'
-      };
-    case 'project':
-    case 'projects':
-      return {
-        shadow: 'shadow-emerald-100 hover:shadow-emerald-200 dark:shadow-emerald-900/20 dark:hover:shadow-emerald-900/40 hover:shadow-lg',
-        badge: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300',
-        label: 'Project'
-      };
-    case 'course':
-    case 'courses':
-      return {
-        shadow: 'shadow-purple-200 hover:shadow-purple-300 dark:shadow-purple-900/20 dark:hover:shadow-purple-900/40 hover:shadow-lg',
-        badge: 'bg-purple-200 text-purple-800 dark:bg-purple-900/40 dark:text-purple-300',
-        label: 'Course'
-      };
-    default:
-      return {
-        shadow: 'shadow-gray-100 hover:shadow-gray-200 dark:shadow-slate-900/20 dark:hover:shadow-slate-900/40 hover:shadow-lg',
-        badge: 'bg-gray-100 text-gray-700 dark:bg-slate-700 dark:text-slate-300',
-        label: 'Content'
-      };
-  }
-};
-
-const typeStyles = getTypeStyles(type);
+const { title, description, href, tags, publishDate, type } = Astro.props;
+const labels = { blog: 'Blog', project: 'Project', projects: 'Project', course: 'Course', courses: 'Course' };
+const date = publishDate
+  ? new Date(publishDate).toLocaleDateString('en-us', { year: 'numeric', month: 'short', day: 'numeric' })
+  : '';
 ---
 <a
   href={href}
-  class:list={[
-    "group relative bg-white/80 dark:bg-slate-800/80 border border-gray-200/70 dark:border-slate-700/60 rounded-2xl transition-all duration-300 flex flex-col overflow-hidden h-full shadow-sm hover:shadow-lg hover:-translate-y-1 hover:scale-[1.01] cursor-pointer",
-    typeStyles.shadow
-  ]}
+  class="group block h-full border-b border-rule px-3 py-4 no-underline text-body hover:bg-ink hover:text-ground"
   data-type={type}
   data-title={title.toLowerCase()}
 >
-  {hasImage && (
-    <div class="w-full h-44 overflow-hidden">
-      <img
-        src={heroImage}
-        alt={`Thumbnail for ${title}`}
-        class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-        loading="lazy"
-        decoding="async"
-        sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
-      />
-    </div>
-  )}
-
-  <div class:list={["p-6 flex flex-col flex-grow gap-3", hasImage ? "" : "pt-6"]}>
-    <div class="flex justify-between items-center">
-      <div class="text-sm text-gray-500 dark:text-slate-400">
-        {publishDate && (
-          <p>
-            {new Date(publishDate).toLocaleDateString('en-us', {
-              year: 'numeric',
-              month: 'long',
-              day: 'numeric',
-            })}
-          </p>
-        )}
-      </div>
-      <span class:list={[
-        "text-xs font-semibold px-2.5 py-1 rounded-full",
-        typeStyles.badge
-      ]}>
-        {typeStyles.label}
-      </span>
-    </div>
-
-    <div class="space-y-2 flex-grow">
-      <h3 class="text-xl font-bold text-gray-900 dark:text-slate-100 group-hover:text-accent dark:group-hover:text-slate-300 transition-colors duration-300 leading-tight">
-        {title}
-      </h3>
-      <p class:list={[
-        "text-gray-700 dark:text-slate-300 leading-relaxed",
-        hasImage ? "line-clamp-2" : "line-clamp-3"
-      ]}>
-        {description}
-      </p>
-    </div>
-
-    <div class="mt-auto flex flex-col gap-3">
-      <div class="flex flex-wrap gap-2">
-        {tags?.map(tag => (
-          <span class="bg-gray-100 dark:bg-slate-700 text-gray-700 dark:text-slate-300 text-xs font-semibold px-2.5 py-1 rounded-full">
-            {tag}
-          </span>
-        ))}
-      </div>
-      <div class="flex items-center gap-2 text-accent dark:text-slate-300 font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-        <span>Read More</span>
-        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
-        </svg>
-      </div>
-    </div>
-  </div>
+  <p class="lab text-muted group-hover:text-ground">{labels[type]}{date && ` / ${date}`}</p>
+  <h3 class="font-display font-medium uppercase text-ink text-[clamp(1.35rem,2.2vw,1.75rem)] leading-[1.08] mt-2 group-hover:text-ground">{title}</h3>
+  <p class="mt-2 max-w-[70ch] group-hover:text-ground">{description}</p>
+  {tags && tags.length > 0 && <p class="lab mt-3 text-muted group-hover:text-ground">{tags.join(' / ')}</p>}
 </a>

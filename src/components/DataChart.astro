@@ -10,8 +10,8 @@ export interface Props {
 
 const { type, data, title, id } = Astro.props;
 ---
-<div class="w-full bg-white/50 dark:bg-slate-800/60 border border-gray-200/50 dark:border-slate-700/50 rounded-lg shadow-sm p-4 my-8">
-  <h3 class="text-lg md:text-xl font-semibold mb-4 text-gray-800 dark:text-slate-100 text-center">{title}</h3>
+<figure class="not-prose w-full border-2 border-ink p-3 sm:p-5 my-8">
+  <figcaption class="lab text-ink mb-4">{title}</figcaption>
   <div class="relative h-72 md:h-96">
     <canvas 
       id={id}
@@ -19,8 +19,8 @@ const { type, data, title, id } = Astro.props;
       data-chart-data={JSON.stringify(data)}
       class="opacity-0 transition-opacity duration-500"
     ></canvas>
-    <div id={`${id}-loading`} class="absolute inset-0 flex items-center justify-center bg-gray-100 dark:bg-slate-800 rounded">
-      <div class="text-gray-500 dark:text-slate-400">Loading chart...</div>
+    <div id={`${id}-loading`} class="absolute inset-0 flex items-center justify-center bg-panel grid-paper">
+      <div class="lab text-muted">Loading chart…</div>
     </div>
   </div>
-</div>
+</figure>

@@ -1,161 +1,143 @@
 ---
-import Layout from '../layouts/Layout.astro';
-import Hero from '../components/Hero.astro';
-import FadeIn from '../components/FadeIn.astro'; 
 import { getCollection, type CollectionEntry } from 'astro:content';
-import Card from '../components/Card.astro';
-import { Icon } from 'astro-icon/components';
-import { buttonPrimary, buttonSecondary } from '../lib/buttonStyles';
+import Layout from '../layouts/Layout.astro';
+import Figure from '../components/Figure.astro';
+import InkBlots from '../components/InkBlots.astro';
+import { getSheets } from '../lib/sheets';
 
-const blogEntries = await getCollection('blog');
-const projectEntries = await getCollection('projects');
-const courseEntries = (await getCollection('courses')).filter(
-  (course: CollectionEntry<'courses'>) => course.data.lessonNumber === undefined
-);
-
-const allContent = [
-  ...blogEntries.map((entry: CollectionEntry<'blog'>) => ({
-    type: 'blog' as const,
-    title: entry.data.title,
-    description: entry.data.description,
-    href: `/blog/${entry.id}/`,
-    tags: entry.data.tags,
-    publishDate: entry.data.publishDate,
-    heroImage: entry.data.heroImage,
-    featured: entry.data.featured,
-  })),
-  ...projectEntries.map((entry: CollectionEntry<'projects'>) => ({
-    type: 'project' as const,
-    title: entry.data.title,
-    description: entry.data.description,
-    href: `/projects/${entry.id}/`,
-    tags: entry.data.tags,
-    publishDate: entry.data.publishDate,
-    heroImage: entry.data.heroImage,
-    featured: entry.data.featured,
-  })),
-  ...courseEntries.map((entry: CollectionEntry<'courses'>) => ({
-    type: 'course' as const,
-    title: entry.data.title,
-    description: entry.data.description,
-    href: `/courses/${entry.id.replace(/\/index$/, '')}/`,
-    tags: entry.data.tags || [],
-    publishDate: entry.data.publishDate,
-    heroImage: entry.data.heroImage,
-    featured: entry.data.featured,
-  })),
-];
-
-const fallbackDate = new Date('1970-01-01');
-
-const featuredContent = allContent
-  .filter(item => item.featured === true)
-  .sort((a, b) => (
-    (b.publishDate ? new Date(b.publishDate) : fallbackDate).valueOf() -
-    (a.publishDate ? new Date(a.publishDate) : fallbackDate).valueOf()
-  ))
+const sheets = await getSheets();
+const posts = (await getCollection('blog'))
+  .sort((a: CollectionEntry<'blog'>, b: CollectionEntry<'blog'>) => (b.data.publishDate?.valueOf() ?? 0) - (a.data.publishDate?.valueOf() ?? 0))
   .slice(0, 4);
+const formatDate = (date?: Date) =>
+  date ? date.toLocaleDateString('en-GB', { year: 'numeric', month: 'short' }) : '';
 
 const seo = {
-  title: "Home",
-  description: "Welcome to the professional portfolio of Faisal Durbaa. Discover projects, writings, and more."
+  title: 'Home',
+  description: 'Machine learning, hardware and software by Faisal Durbaa: award-winning models, competition builds and writing, each with its report or code.',
 };
 ---
 <Layout seo={seo}>
-  <FadeIn>
-    <Hero />
-  </FadeIn>
+  {/* The headline and figure hold still while the index scrolls past; the row at the reading line drives the figure. */}
+  <div class="hero pad grid gap-x-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,44%)]">
+    <div class="hero-top">
+    <h1 class="hero-title disp text-ink text-[clamp(2.5rem,5.6vw,4.75rem)]">Models, machines, <span class="text-mark">software.</span></h1>
 
-  <!-- Floating Scroll Indicator -->
-  <div id="scroll-indicator" class="fixed bottom-8 left-1/2 -translate-x-1/2 z-40 transition-all duration-500 ease-out cursor-pointer hover:scale-105 hidden md:flex flex-col items-center">
-    <div class="w-12 h-12 flex items-center justify-center rounded-full bg-white dark:bg-slate-800 shadow-lg shadow-accent/20 dark:shadow-black/30 border border-accent/30 dark:border-slate-600 text-accent dark:text-slate-300 hover:text-accent/90 dark:hover:text-slate-100 transition-colors cursor-pointer">
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
-      </svg>
-    </div>
-  </div>
-
-  <section id="featured-section" class="py-16">
-    <div class="mx-auto w-full max-w-[1800px] px-[clamp(3.25rem,8vw,7.25rem)] space-y-10">
-      <FadeIn>
-        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-          <h2 class="text-3xl font-bold text-gray-900 dark:text-slate-100">Featured</h2>
-        </div>
-      </FadeIn>
-
-      <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6 lg:gap-8 items-stretch">
-        {featuredContent.map(item => (
-          <FadeIn>
-            <Card
-              title={item.title}
-              description={item.description}
-              href={item.href}
-              tags={item.tags ?? []}
-              type={item.type}
-              publishDate={item.publishDate}
-              heroImage={item.heroImage}
-            />
-          </FadeIn>
+    <aside class="hero-figure" aria-label="Selected sheet">
+      <div class="frame grid-paper h-full">
+        {sheets.map((sheet, i) => (
+          <div class="flex h-full flex-col p-4 sm:p-6" data-panel={i} hidden={i !== 0}>
+            <div class="flex min-h-0 flex-1 items-center justify-center">
+              {sheet.figure ? (
+                <Figure name={sheet.figure} title={sheet.title} class="hero-drawing text-ink" />
+              ) : sheet.image ? (
+                <img src={sheet.image} alt="" class="plate max-h-full w-full object-cover" loading="lazy" />
+              ) : null}
+            </div>
+            <p class="lab mt-3 border-t border-rule pt-3 text-ink lg:mt-5 lg:pt-4">Fig. {sheet.no} — {sheet.title}</p>
+            <p class="mt-2 hidden lg:block">{sheet.summary}</p>
+            {sheet.win && <p class="mt-4 hidden lg:block"><span class="stamp">{sheet.outcome}</span></p>}
+          </div>
         ))}
       </div>
+    </aside>
+    </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-6">
-        <a href="/projects/" class:list={[buttonPrimary, 'py-4']}>
-          <Icon name="mdi:rocket-launch" class="w-5 h-5" />
-          <span>View Projects</span>
-        </a>
-        <a href="/blog/" class:list={[buttonSecondary, 'py-4']}>
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h10" />
-          </svg>
-          <span>Read Blog Posts</span>
-        </a>
-        <a href="/contact/" class:list={[buttonSecondary, 'py-4']}>
-          <Icon name="mdi:email-fast-outline" class="w-5 h-5" />
-          <span>Get In Touch</span>
-        </a>
-      </div>
+    <ol class="index hero-index" id="sheet-index">
+      {sheets.map((sheet, i) => (
+        <li>
+          <a class="index-row" href={sheet.href} data-sheet={i} data-on={i === 0 ? 'true' : undefined}>
+            <span class="no">{sheet.no}</span>
+            <span>
+              <span class="ttl">{sheet.title}</span>
+              <span class="lab">{sheet.context}</span>
+            </span>
+            <span class:list={['out', { win: sheet.win }]}>{sheet.outcome}</span>
+          </a>
+        </li>
+      ))}
+    </ol>
+  </div>
+
+  <section class="pad relative mt-20 overflow-hidden pt-4 pb-16 grid gap-x-12 gap-y-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,44%)]">
+    <InkBlots set="section" />
+    <div class="relative">
+      <h2 class="disp text-ink text-4xl">Writing</h2>
+      <ol class="index mt-5">
+        {posts.map((post: CollectionEntry<'blog'>) => (
+          <li>
+            <a class="index-row" href={`/blog/${post.id}/`}>
+              <span class="lab">{formatDate(post.data.publishDate)}</span>
+              <span class="ttl">{post.data.title}</span>
+            </a>
+          </li>
+        ))}
+      </ol>
+      <p class="mt-6 flex flex-wrap gap-3">
+        <a class="btn" href="/blog/">All writing</a>
+        <a class="btn" href="/courses/ms-excel-documentation/">Excel course</a>
+      </p>
+    </div>
+    <div class="relative lg:pt-14">
+      <p class="max-w-md text-lg">Working on something where this would help, or want the details behind a sheet?</p>
+      <p class="mt-5"><a class="btn-solid" href="/contact/">Get in touch</a></p>
     </div>
   </section>
 </Layout>
 
+<style>
+  /* Photos sit in the sheet as single-ink plates. */
+  .plate { filter: grayscale(1) contrast(1.1); mix-blend-mode: luminosity; border: 1px solid var(--rule); }
+  [data-panel][hidden] { display: none; }
+
+  /* Phone: headline and figure pin together as one block while rows scroll beneath. */
+  .hero-top { position: sticky; top: var(--header-h); z-index: 20; background: var(--ground); padding-bottom: .75rem; }
+  .hero-title { padding-block: 1rem .75rem; }
+  .hero-figure { height: 34svh; min-height: 13rem; }
+  .hero-index { padding-bottom: 30svh; }
+  :global(.hero-drawing) { height: 100%; width: 100%; }
+  :global(.hero-drawing .figure) { height: 100%; }
+
+  @media (min-width: 1024px) {
+    .hero-top { display: contents; }
+    .hero-title { grid-column: 1; position: sticky; top: var(--header-h); z-index: 20; background: var(--ground); padding-block: 2rem 1.5rem; }
+    .hero-figure { grid-column: 2; grid-row: 1 / span 2; position: sticky; top: calc(var(--header-h) + 1.5rem); height: calc(100dvh - var(--header-h) - 3rem); margin-top: 1.5rem; }
+    .hero-index { grid-column: 1; padding-bottom: 42dvh; }
+  }
+</style>
+
 <script>
-  function setupScrollIndicator() {
-    const scrollIndicator = document.getElementById('scroll-indicator');
-    const featuredSection = document.getElementById('featured-section');
-    if (!scrollIndicator || !featuredSection || scrollIndicator.dataset.bound === 'true') return;
-
-    scrollIndicator.dataset.bound = 'true';
-
-    scrollIndicator.addEventListener('click', () => {
-      const top = featuredSection.getBoundingClientRect().top + window.scrollY;
-      window.scrollTo({ top: top - 40, behavior: 'smooth' });
-    });
-
-    const onScroll = () => {
-      const scrollY = window.scrollY;
-      if (scrollY > 100) {
-        scrollIndicator.style.opacity = '0';
-        scrollIndicator.style.pointerEvents = 'none';
-        scrollIndicator.style.transform = 'translate(-50%, 20px)';
-      } else {
-        scrollIndicator.style.opacity = '1';
-        scrollIndicator.style.pointerEvents = 'auto';
-        scrollIndicator.style.transform = 'translate(-50%, 0)';
-      }
+  // The first row clear of the pinned headline is the selected sheet.
+  function bindIndex() {
+    const rows = [...document.querySelectorAll<HTMLElement>('#sheet-index [data-sheet]')];
+    const panels = document.querySelectorAll<HTMLElement>('[data-panel]');
+    const figure = document.querySelector<HTMLElement>('.hero-figure');
+    const title = document.querySelector<HTMLElement>('.hero-title');
+    if (!rows.length || !figure || !title) return;
+    let current = '0';
+    const show = (id: string) => {
+      if (id === current) return;
+      current = id;
+      rows.forEach((row) => (row.dataset.sheet === id ? (row.dataset.on = 'true') : delete row.dataset.on));
+      panels.forEach((panel) => (panel.hidden = panel.dataset.panel !== id));
     };
-
+    const wide = window.matchMedia('(min-width: 1024px)');
+    let queued = false;
+    const onScroll = () => {
+      if (queued) return;
+      queued = true;
+      requestAnimationFrame(() => {
+        queued = false;
+        if (!document.body.contains(figure)) return window.removeEventListener('scroll', onScroll);
+        // The selected sheet is the first row still clear of the pinned block above it.
+        const pinned = (wide.matches ? title : figure)!.getBoundingClientRect().bottom;
+        const best = rows.find((row) => row.getBoundingClientRect().bottom > pinned + 56) ?? rows[rows.length - 1]!;
+        show(best.dataset.sheet!);
+      });
+    };
     window.addEventListener('scroll', onScroll, { passive: true });
-    onScroll();
+    rows.forEach((row) => row.addEventListener('focus', () => show(row.dataset.sheet!)));
   }
-
-  if (typeof window !== 'undefined') {
-    setupScrollIndicator();
-    document.addEventListener('astro:after-swap', () => {
-      // allow rebind after swap
-      const indicator = document.getElementById('scroll-indicator');
-      if (indicator) indicator.dataset.bound = 'false';
-      setupScrollIndicator();
-    });
-  }
+  bindIndex();
+  document.addEventListener('astro:after-swap', bindIndex);
 </script>

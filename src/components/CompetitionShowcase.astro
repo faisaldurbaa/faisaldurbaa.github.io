@@ -1,5 +1,7 @@
 ---
-import FadeIn from './FadeIn.astro';
+import CompetitionCard from './CompetitionCard.astro';
+import englishProjects from '../data/competitionProjects';
+import { slugify } from '../lib/sheets';
 import type { CompetitionProject } from '../data/competitionProjects';
 
 interface Copy {
@@ -21,69 +23,20 @@ interface Props {
 }
 
 const { projects, copy } = Astro.props;
-
-const themeColors: Record<CompetitionProject['theme'], string> = {
-  safety: 'bg-rose-100 text-rose-700',
-  health: 'bg-emerald-100 text-emerald-700',
-  accessibility: 'bg-indigo-100 text-indigo-700',
-  environment: 'bg-amber-100 text-amber-800',
-  education: 'bg-sky-100 text-sky-700',
-};
 ---
-<div class="container mx-auto max-w-6xl px-4 sm:px-8 py-8">
-  <FadeIn>
-    <section class="bg-white/70 dark:bg-slate-900/70 backdrop-blur-sm border border-gray-200/60 dark:border-slate-700/60 rounded-2xl shadow-lg p-5 sm:p-6">
-      <h1 class="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-slate-100 mb-2 text-balance">{copy.title}</h1>
-      <p class="text-base text-gray-700 dark:text-slate-300 leading-relaxed mb-2">{copy.intro}</p>
-      <div class="text-sm text-gray-700 dark:text-slate-300 space-y-1.5 mb-3">
-        <p><span class="font-semibold text-gray-900 dark:text-slate-100">TEKNOFEST</span> — {copy.teknofest}</p>
-        <p><span class="font-semibold text-gray-900 dark:text-slate-100">TÜBİTAK</span> — {copy.tubitak}</p>
-      </div>
-      <div class="flex flex-wrap gap-3">
-        <span class="inline-flex items-center px-3 py-1 rounded-full bg-gray-100 dark:bg-slate-800 text-gray-700 dark:text-slate-200 text-sm font-semibold">{projects.length} {copy.projectCount}</span>
-        <span class="inline-flex items-center px-3 py-1 rounded-full bg-accent/10 dark:bg-slate-700 text-accent dark:text-slate-100 text-sm font-semibold">{copy.disciplines}</span>
-        <span class="inline-flex items-center px-3 py-1 rounded-full bg-gray-900 dark:bg-slate-100 text-white dark:text-slate-900 text-sm font-semibold">{copy.reports}</span>
-      </div>
-    </section>
-  </FadeIn>
+<div class="pad pt-10 pb-16">
+  <h1 class="disp text-ink text-[clamp(2.5rem,5vw,4.5rem)]">{copy.title}</h1>
+  <div class="mt-4 max-w-[70ch] space-y-2 text-lg">
+    <p>{copy.intro}</p>
+    <p><strong class="text-ink">TEKNOFEST</strong> — {copy.teknofest}</p>
+    <p><strong class="text-ink">TÜBİTAK</strong> — {copy.tubitak}</p>
+  </div>
+  <p class="lab mt-5 text-muted">{projects.length} {copy.projectCount} · {copy.disciplines} · {copy.reports}</p>
 
-  <div class="mt-6 grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch">
-    {projects.map((project) => (
-      <FadeIn>
-        <article class="group bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-700 rounded-2xl shadow-sm overflow-hidden transition-transform duration-300 motion-reduce:transition-none hover:-translate-y-1 motion-reduce:hover:translate-y-0 hover:shadow-lg h-full">
-          <div class="p-6 sm:p-7 flex flex-col gap-3 h-full">
-            <div class="flex flex-wrap items-start gap-3">
-              <div class="min-w-[12rem] max-w-full flex-1 space-y-1">
-                <p class="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-slate-400">{project.focus}</p>
-                <h2 class="text-xl font-bold text-gray-900 dark:text-slate-100 leading-tight text-balance">{project.title}</h2>
-              </div>
-              <span class:list={["ml-auto inline-flex max-w-full shrink-0 items-center justify-center rounded-full px-3 py-1 text-center text-xs font-semibold leading-tight whitespace-normal break-words", themeColors[project.theme]]}>{copy.themes[project.theme]}</span>
-            </div>
-
-            <div class="flex flex-wrap gap-2 text-sm text-gray-700 dark:text-slate-300">
-              {project.roles.map((role) => <span class="inline-flex items-center px-2.5 py-1 rounded-full bg-gray-100 dark:bg-slate-800 font-medium">{role}</span>)}
-              <span class="inline-flex items-center px-2.5 py-1 rounded-full bg-gray-900 dark:bg-slate-100 text-white dark:text-slate-900 font-semibold">{project.yearTag}</span>
-              {project.achievement && <span class="inline-flex items-center px-2.5 py-1 rounded-full bg-amber-100 text-amber-800 font-semibold">{project.achievement}</span>}
-            </div>
-
-            <div class="space-y-2 text-gray-700 dark:text-slate-300">
-              <p class="text-sm"><span class="font-semibold text-gray-900 dark:text-slate-100">{copy.problem}:</span> {project.problem}</p>
-              <p class="text-sm"><span class="font-semibold text-gray-900 dark:text-slate-100">{copy.solution}:</span> {project.solution}</p>
-            </div>
-
-            {project.links && (
-              <div class="flex flex-wrap gap-3 pt-2 mt-auto">
-                {project.links.map((link) => (
-                  <a href={link.href} target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 px-3 py-2 rounded-lg border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-sm font-semibold text-accent dark:text-slate-200 hover:border-accent dark:hover:border-slate-400 hover:bg-accent/10 dark:hover:bg-slate-800 transition-colors duration-200">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
-                    {link.label}
-                  </a>
-                ))}
-              </div>
-            )}
-          </div>
-        </article>
-      </FadeIn>
+  <div class="mt-8 border-t-2 border-ink">
+    {/* Both language files list the same projects in the same order, so drawings follow the English titles. */}
+    {projects.map((project, i) => (
+      <CompetitionCard project={project} figure={englishProjects[i] && slugify(englishProjects[i].title)} labels={{ problem: copy.problem, solution: copy.solution, theme: copy.themes[project.theme] }} />
     ))}
   </div>
 </div>

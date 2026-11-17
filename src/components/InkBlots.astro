@@ -1,0 +1,37 @@
+---
+// Decorative ink drops kept to the edges of a relative, overflow-hidden parent.
+// `set` picks a placement: 'page' for a full listing, 'section' for a short block.
+interface Props { set?: 'page' | 'section' }
+const { set = 'page' } = Astro.props;
+// Organic blot shapes (each: main body plus satellite droplets) and where they sit.
+const blotBody = 'M118 22C150 6 196 20 214 52C226 74 252 82 250 112C248 146 214 150 200 176C184 206 140 226 104 210C72 196 70 166 46 150C18 132 20 96 40 74C58 54 84 40 118 22Z';
+const blotBodyAlt = 'M96 18C136 4 176 26 186 62C194 90 232 96 230 134C228 170 186 190 150 192C112 194 100 222 66 208C34 194 40 160 24 134C8 106 26 78 44 58C60 40 70 28 96 18Z';
+const page = [
+  { body: blotBody, drops: [[268, 40, 9], [284, 130, 5], [20, 200, 7]], style: 'top:2%;left:-90px;width:300px;', delay: 0, op: 0.07 },
+  { body: blotBodyAlt, drops: [[250, 30, 8], [8, 176, 6]], style: 'top:16%;right:-110px;width:360px;', delay: 150, op: 0.06 },
+  { body: blotBody, drops: [[262, 190, 6], [30, 14, 8], [276, 96, 4]], style: 'top:44%;left:-120px;width:240px;', delay: 300, op: 0.06 },
+  { body: blotBodyAlt, drops: [[240, 220, 9], [4, 60, 5]], style: 'top:62%;right:-80px;width:200px;', delay: 450, op: 0.08 },
+  { body: blotBody, drops: [[20, 20, 6], [270, 150, 7]], style: 'bottom:2%;left:-60px;width:150px;', delay: 600, op: 0.07 },
+  { body: blotBodyAlt, drops: [[250, 60, 6], [60, 230, 5], [12, 120, 4]], style: 'bottom:-30px;right:6%;width:120px;', delay: 750, op: 0.06 },
+];
+const section = [
+  { body: blotBody, drops: [[268, 40, 9], [20, 200, 7]], style: 'top:-40px;right:-70px;width:260px;', delay: 0, op: 0.08 },
+  { body: blotBodyAlt, drops: [[250, 30, 6], [8, 176, 5]], style: 'bottom:-50px;left:38%;width:170px;', delay: 200, op: 0.06 },
+  { body: blotBody, drops: [[262, 190, 5], [30, 14, 6]], style: 'top:40%;left:-80px;width:150px;', delay: 400, op: 0.06 },
+];
+const blots = set === 'page' ? page : section;
+---
+{blots.map((blot: { body: string; drops: number[][]; style: string; delay: number; op: number }) => (
+      <svg class="blot" viewBox="-10 -10 310 260" aria-hidden="true" focusable="false" style={`${blot.style}--d:${blot.delay}ms;--o:${blot.op};`}>
+        <path d={blot.body} />
+        {blot.drops.map((d: number[]) => <circle cx={d[0]} cy={d[1]} r={d[2]} />)}
+      </svg>
+    ))}
+
+<style>
+  .blot { position: absolute; z-index: 0; pointer-events: none; height: auto; fill: var(--ink); fill-opacity: var(--o); transform-origin: center; }
+  @media (prefers-reduced-motion: no-preference) {
+    .blot { animation: blot-in 900ms ease-out both; animation-delay: var(--d); }
+  }
+  @keyframes blot-in { from { opacity: 0; transform: scale(.6); } to { opacity: 1; transform: scale(1); } }
+</style>

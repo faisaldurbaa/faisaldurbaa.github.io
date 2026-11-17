@@ -1,0 +1,39 @@
+---
+// Renders a sheet's line drawing with a draw-in animation. Drawings live in src/lib/figures.ts.
+import { figures } from '../lib/figures';
+
+interface Props {
+  name: string;
+  title: string;
+  class?: string;
+  /** Crop for drawings that do not use the full 780x700 canvas. */
+  viewBox?: string;
+}
+const { name, title, class: className, viewBox = '0 0 780 700' } = Astro.props;
+
+let order = 0;
+// Solid shapes draw themselves in; dashed lines and numerals fade in after.
+const body = figures[name]?.().replace(
+  /<(path|ellipse|circle|rect|line|polyline|polygon)\b(?![^>]*stroke-dasharray)/g,
+  (_match: string, tag: string) => `<${tag} pathLength="1" style="--i:${order++}"`,
+);
+---
+{body && (
+  <figure class:list={['figure-wrap', className]}>
+    <svg class="figure" viewBox={viewBox} role="img" aria-label={`Illustrative line drawing: ${title}`} set:html={body} />
+  </figure>
+)}
+
+<style is:global>
+  .figure-wrap { position: relative; margin: 0; }
+  .figure { display: block; width: 100%; height: auto; fill: none; stroke: currentColor; stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
+  .figure text { fill: currentColor; stroke: none; font: 500 15px "Barlow Semi Condensed", sans-serif; }
+  .figure .hl { stroke: var(--mark); }
+  .figure text.hl { fill: var(--mark); stroke: none; }
+  @media (prefers-reduced-motion: no-preference) {
+    .figure [pathLength] { stroke-dasharray: 1; stroke-dashoffset: 1; animation: figure-draw .9s cubic-bezier(.16, 1, .3, 1) forwards; animation-delay: calc(var(--i) * 14ms); }
+    .figure [stroke-dasharray], .figure text { opacity: 0; animation: figure-fade .5s ease-out .7s forwards; }
+  }
+  @keyframes figure-draw { to { stroke-dashoffset: 0; } }
+  @keyframes figure-fade { to { opacity: 1; } }
+</style>
