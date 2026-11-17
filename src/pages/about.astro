@@ -1,5 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import Figure from '../components/Figure.astro';
 
 const seo = {
   title: "About Me",
@@ -7,29 +8,50 @@ const seo = {
 };
 
 const skills = ['Python', 'AI/ML', 'Prompt Engineering', 'Linux', 'HTML', 'TypeScript', 'MS Office', 'Data Analysis', 'Multilingualism'];
+const path = ['Robotics & mechatronics', 'Data analysis', 'Software development', 'AI & machine learning'];
 ---
 <Layout seo={seo}>
-  <div class="pad pt-10 pb-20">
-    <h1 class="disp text-ink text-[clamp(2.5rem,5vw,4.5rem)]">About</h1>
-    <div class="prose-sheet mt-6 space-y-5">
-      <p>Hey there! I'm on a gap year from Harvard University, and passionate about the intersection of artificial intelligence, and human-computer interaction. My journey began with Python programming and quickly evolved into exploring machine learning algorithms, prompt engineering techniques, and security analysis.</p>
-      <p>Currently, I'm diving deep into AI/ML research and exploring the fascinating world of prompt engineering. I believe that understanding how to effectively communicate with AI systems is becoming as crucial as traditional programming skills.</p>
-      <p>When I'm not coding or studying, you'll find me experimenting with Linux systems, exploring new technologies, or working on web development projects. I'm particularly interested in how technology can solve real-world problems and make data more accessible and secure.</p>
-      <p>As someone who believes that facts are powerful tools, I'm committed to using technology ethically and transparently. I'm always eager to collaborate on innovative projects and connect with fellow tech enthusiasts who share a passion for learning and building.</p>
+  <div class="pad pt-8 pb-12 about">
+    <h1 class="disp text-ink text-[clamp(2.5rem,5vw,4.5rem)] rise" style="--d:0">About</h1>
+
+    <div class="mt-5 max-w-[56rem] rise" style="--d:1">
+      <Figure name="journey" title="From robotics to AI" viewBox="0 150 780 450" class="text-ink" />
     </div>
 
-    <h2 class="disp text-ink text-4xl mt-16">Skills &amp; Interests</h2>
-    <ul class="index mt-5 max-w-[70ch]">
+    <div class="mt-6 max-w-[65ch] space-y-4 text-lg rise" style="--d:2">
+      <p>I build things that have to work in front of other people: models, machines and the software around them.</p>
+      <p>I started in robotics and mechatronics, building competition hardware for TEKNOFEST. Working with the data those projects produced led me to data analysis, and from there to software development and AI. That path is why I still care about the whole system, from the sensor to the screen.</p>
+      <p>I'm on a gap year from Harvard University. I'm always glad to hear from people working on something interesting.</p>
+    </div>
+
+    <ol class="mt-8 grid max-w-[56rem] border-y-2 border-ink sm:grid-cols-4 rise" style="--d:3">
+      {path.map((label: string, i: number) => (
+        <li class="flex items-baseline gap-3 border-b border-rule px-3 py-3 last:border-b-0 sm:border-b-0 sm:border-l sm:border-rule sm:first:border-l-0">
+          <span class="disp text-mark text-3xl">{i + 1}</span>
+          <span class="lab text-ink">{label}</span>
+        </li>
+      ))}
+    </ol>
+
+    <ul class="mt-6 flex max-w-[56rem] flex-wrap gap-2 rise" style="--d:4" aria-label="Skills">
       {skills.map((name: string) => (
-        <li class="border-b border-rule px-3 py-3 text-lg">{name}</li>
+        <li class="lab border border-rule text-ink" style="padding:6px 10px">{name}</li>
       ))}
     </ul>
 
-    <blockquote class="prose-sheet mt-16 border-t-2 border-ink pt-6 text-xl">
+    <blockquote class="mt-8 max-w-[65ch] border-t border-rule pt-4 text-base text-muted rise" style="--d:5">
       <p>"The best managers are the great individual contributors, who never ever want to be a manager, but decide they have to be a manager because no one else is going to be able to do as good a job as them."</p>
-      <cite class="lab mt-3 block not-italic text-muted">— Steve Jobs</cite>
+      <cite class="lab mt-2 block not-italic">— Steve Jobs</cite>
     </blockquote>
 
-    <p class="mt-12"><a href="/contact/" class="btn-solid">Get in Touch</a></p>
+    <p class="mt-8 rise" style="--d:6"><a href="/contact/" class="btn-solid">Get in Touch</a></p>
   </div>
 </Layout>
+
+<style is:global>
+  .about .figure { height: min(22rem, 42vh); }
+  @media (prefers-reduced-motion: no-preference) {
+    .rise { animation: about-rise 500ms ease-out both; animation-delay: calc(var(--d) * 80ms); }
+    @keyframes about-rise { from { opacity: 0; transform: translateY(12px); } }
+  }
+</style>

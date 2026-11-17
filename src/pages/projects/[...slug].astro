@@ -2,6 +2,7 @@
 import { getCollection, render, type CollectionEntry } from 'astro:content';
 import Layout from '../../layouts/Layout.astro';
 import Accordion from '../../components/Accordion.astro';
+import Figure from '../../components/Figure.astro';
 import ShareButton from '../../components/ShareButton.astro';
 import RelatedContent from '../../components/RelatedContent.astro';
 
@@ -45,11 +46,16 @@ const { title, tags = [], publishDate, repoUrl, liveUrl, datasetUrl } = entry.da
       <ShareButton title={title} />
     </div>
 
-    <h1 class="disp text-ink mt-8 text-[clamp(2.5rem,5vw,4.5rem)]">{title}</h1>
+    <div class="mt-8 flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
+    <div class="min-w-0 flex-1">
+    <h1 class="disp text-ink text-[clamp(2.5rem,5vw,4.5rem)]">{title}</h1>
     <p class="lab mt-4 text-muted">
       {[...tags, publishDate ? publishDate.toLocaleDateString('en-GB', { year: 'numeric', month: 'short' }) : ''].filter(Boolean).join(' · ')}
     </p>
     <p class="mt-5 max-w-[70ch] text-lg">{entry.data.intro || entry.data.description}</p>
+    </div>
+    <Figure name={entry.id} title={title} class="w-full max-w-[22rem] lg:shrink-0" />
+    </div>
 
     <div class="mt-6 flex flex-wrap gap-3">
       {repoUrl && <a href={repoUrl} target="_blank" rel="noopener noreferrer" class="btn">Source Code</a>}

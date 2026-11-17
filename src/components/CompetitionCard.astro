@@ -1,5 +1,6 @@
 ---
 import type { CompetitionProject } from "../data/competitionProjects";
+import Figure from "./Figure.astro";
 import { slugify } from "../lib/sheets";
 
 export interface Props {
@@ -18,7 +19,7 @@ const themeLabels: Record<CompetitionProject["theme"], string> = {
 const { project, labels } = Astro.props;
 const l = labels ?? { problem: "Problem", solution: "Solution", theme: themeLabels[project.theme] };
 ---
-<article id={slugify(project.title)} class="scroll-mt-6 border-b border-rule py-8 grid gap-x-10 gap-y-4 md:grid-cols-[minmax(0,2fr)_minmax(0,3fr)]">
+<article id={slugify(project.title)} class="scroll-mt-6 border-b border-rule py-8 grid gap-x-10 gap-y-4 md:grid-cols-[minmax(0,2fr)_minmax(0,3fr)] lg:has-[figure]:grid-cols-[minmax(0,2fr)_minmax(0,3fr)_auto]">
   <header>
     <h3 class="disp text-ink text-[clamp(1.75rem,3vw,2.5rem)]">{project.title}</h3>
     <p class="lab mt-3 text-muted">{project.yearTag} · {project.focus} · {l.theme}</p>
@@ -36,4 +37,5 @@ const l = labels ?? { problem: "Problem", solution: "Solution", theme: themeLabe
       </p>
     )}
   </div>
+  <Figure name={slugify(project.title)} title={project.title} class="w-[220px] max-w-full md:col-span-2 lg:col-span-1 lg:row-start-1 lg:col-start-3" />
 </article>

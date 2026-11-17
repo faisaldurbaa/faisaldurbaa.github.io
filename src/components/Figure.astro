@@ -6,8 +6,10 @@ interface Props {
   name: string;
   title: string;
   class?: string;
+  /** Crop for drawings that do not use the full 780x700 canvas. */
+  viewBox?: string;
 }
-const { name, title, class: className } = Astro.props;
+const { name, title, class: className, viewBox = '0 0 780 700' } = Astro.props;
 
 let order = 0;
 // Solid shapes draw themselves in; dashed lines and numerals fade in after.
@@ -18,7 +20,7 @@ const body = figures[name]?.().replace(
 ---
 {body && (
   <figure class:list={['figure-wrap', className]}>
-    <svg class="figure" viewBox="0 0 780 700" role="img" aria-label={`Illustrative line drawing: ${title}`} set:html={body} />
+    <svg class="figure" viewBox={viewBox} role="img" aria-label={`Illustrative line drawing: ${title}`} set:html={body} />
     <small>Illustrative · not to scale</small>
   </figure>
 )}
