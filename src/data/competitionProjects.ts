@@ -13,12 +13,12 @@ export type CompetitionProject = {
 
 export const competitionProjects: CompetitionProject[] = [
   {
-    title: "İRİS — Smart Gas Ventilation",
+    title: "IRIS — Smart Gas Ventilation",
     focus: "Disaster Management",
     roles: ["Team Lead"],
     competition: "Disaster Management",
     yearTag: "TEKNOFEST 2020",
-    achievement: "Türkiye Second Place",
+    achievement: "Turkey Second Place",
     problem:
       "Blocked residential vents to prevent heat loss create dangerous carbon monoxide/gas buildup; passive, fixed-size vents offer no active safety.",
     solution:

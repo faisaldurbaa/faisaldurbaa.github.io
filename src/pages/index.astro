@@ -13,38 +13,18 @@ const formatDate = (date?: Date) =>
 
 const seo = {
   title: 'Home',
-  description: 'Hardware and software by Faisal Durbaa: competition builds, machine-learning projects and writing, each with its report or repository.',
+  description: 'Machine learning, hardware and software by Faisal Durbaa: award-winning models, competition builds and writing, each with its report or code.',
 };
 ---
 <Layout seo={seo}>
-  <div class="pad grid gap-x-12 gap-y-8 pt-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,44%)]">
-    <div>
-      <h1 class="disp text-ink text-[clamp(2.75rem,6vw,4.75rem)]">Built, tested, judged.</h1>
+  {/* On wide screens the headline and figure hold still; only the index scrolls. */}
+  <div class="hero pad grid gap-x-12 gap-y-8 pt-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,44%)]">
+    <div class="flex min-h-0 flex-col">
+      <h1 class="disp text-ink text-[clamp(2.75rem,5.6vw,4.75rem)]">Models, machines, <span class="text-mark">software.</span></h1>
       <p class="mt-4 max-w-xl text-lg">
-        Hardware and software by Faisal Durbaa. One sheet per project: what it does, how it was judged, and the report behind it.
+        Work by Faisal Durbaa in machine learning, hardware and software. Each sheet carries its result and the report or code behind it.
       </p>
-    </div>
-    <aside class="lg:col-start-2 lg:row-start-1 lg:row-span-2" aria-label="Selected sheet">
-      <div class="frame lg:sticky lg:top-6">
-        {sheets.map((sheet, i) => (
-          <div class="p-5 sm:p-6" data-panel={i} hidden={i !== 0}>
-            {sheet.figure ? (
-              <Figure name={sheet.figure} title={sheet.title} class="mx-auto max-h-[52vh] max-w-md text-ink" />
-            ) : sheet.image ? (
-              <img src={sheet.image} alt="" class="plate w-full max-h-[44vh] object-cover" loading="lazy" />
-            ) : null}
-            <p class="lab mt-5 border-t border-rule pt-4 text-ink">
-              Fig. {sheet.no} — {sheet.title}{sheet.figure && ' (illustrative, not to scale)'}
-            </p>
-            <p class="mt-2">{sheet.summary}</p>
-            {sheet.win && <p class="stamp mt-5">{sheet.outcome}</p>}
-          </div>
-        ))}
-      </div>
-    </aside>
-
-    <div class="lg:col-start-1">
-      <ol class="index" id="sheet-index">
+      <ol class="index mt-7 min-h-0 flex-1 lg:overflow-y-auto" id="sheet-index" tabindex="-1">
         {sheets.map((sheet, i) => (
           <li>
             <a class="index-row" href={sheet.href} data-sheet={i} data-on={i === 0 ? 'true' : undefined}>
@@ -59,6 +39,25 @@ const seo = {
         ))}
       </ol>
     </div>
+
+    <aside class="row-start-2 min-h-0 lg:row-start-auto" aria-label="Selected sheet">
+      <div class="frame h-full">
+        {sheets.map((sheet, i) => (
+          <div class="flex h-full flex-col p-5 sm:p-6" data-panel={i} hidden={i !== 0}>
+            <div class="flex min-h-0 flex-1 items-center justify-center">
+              {sheet.figure ? (
+                <Figure name={sheet.figure} title={sheet.title} class="w-full max-w-[min(100%,52vh)] text-ink" />
+              ) : sheet.image ? (
+                <img src={sheet.image} alt="" class="plate max-h-[44vh] w-full object-cover" loading="lazy" />
+              ) : null}
+            </div>
+            <p class="lab mt-5 border-t border-rule pt-4 text-ink">Fig. {sheet.no} — {sheet.title}</p>
+            <p class="mt-2">{sheet.summary}</p>
+            {sheet.win && <p class="mt-4"><span class="stamp">{sheet.outcome}</span></p>}
+          </div>
+        ))}
+      </div>
+    </aside>
   </div>
 
   <section class="pad mt-20 grid gap-x-12 gap-y-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,44%)]">
@@ -87,6 +86,10 @@ const seo = {
 </Layout>
 
 <style>
+  @media (min-width: 1024px) {
+    .hero { height: calc(100dvh - 6.75rem); min-height: 34rem; }
+  }
+  [data-panel][hidden] { display: none; }
   /* Photos sit in the sheet as single-ink plates. */
   .plate { filter: grayscale(1) contrast(1.1); mix-blend-mode: luminosity; border: 1px solid var(--rule); }
 </style>

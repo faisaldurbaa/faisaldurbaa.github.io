@@ -1,11 +1,12 @@
 ---
+import { Icon } from 'astro-icon/components';
 const currentYear = new Date().getFullYear();
 ---
 <footer lang="en" class="pad lab flex flex-wrap items-center justify-between gap-x-8 gap-y-2 border-t-2 border-ink py-4 text-ink mt-16">
   <span>© {currentYear} Faisal Durbaa</span>
-  <span class="flex gap-6">
-    <a href="https://github.com/faisaldurbaa" target="_blank" rel="noopener noreferrer">GitHub</a>
-    <a href="https://www.linkedin.com/in/faisaldurbaa/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+  <span class="flex flex-wrap items-center gap-6">
+    <a href="https://github.com/faisaldurbaa" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2"><Icon name="mdi:github" class="h-5 w-5" aria-hidden="true" />GitHub</a>
+    <a href="https://www.linkedin.com/in/faisaldurbaa/" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2"><Icon name="mdi:linkedin" class="h-5 w-5" aria-hidden="true" />LinkedIn</a>
     <a href="/rss.xml">RSS</a>
   </span>
 </footer>

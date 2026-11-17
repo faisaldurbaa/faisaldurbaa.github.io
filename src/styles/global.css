@@ -5,12 +5,12 @@
 :root {
   color-scheme: light;
   --ground: #EDF1F8; --panel: #E1E8F4; --ink: #143C9E; --ink-rgb: 20 60 158;
-  --text: #0B1F5C; --muted: #3F5CAE; --rule: rgb(20 60 158 / .35); --stamp: #B23410;
+  --text: #0B1F5C; --muted: #3F5CAE; --rule: rgb(20 60 158 / .35); --stamp: #B23410; --mark: #8A5200;
 }
 html.dark {
   color-scheme: dark;
   --ground: #103C9E; --panel: #0D3389; --ink: #EEF4FF; --ink-rgb: 238 244 255;
-  --text: #EEF4FF; --muted: #C3D2F2; --rule: rgb(238 244 255 / .4); --stamp: #FF9466;
+  --text: #EEF4FF; --muted: #C3D2F2; --rule: rgb(238 244 255 / .4); --stamp: #FF9466; --mark: #FFD84D;
 }
 
 html { background: var(--ground); scrollbar-color: var(--ink) var(--ground); }
@@ -18,6 +18,7 @@ body { background: var(--ground); color: var(--text); font-variant-numeric: tabu
 ::selection { background: var(--ink); color: var(--ground); }
 :focus-visible { outline: 2px solid var(--stamp); outline-offset: 3px; }
 a { text-underline-offset: .2em; text-decoration-thickness: 1px; }
+a:hover { text-decoration-color: var(--mark); }
 
 @media (prefers-reduced-motion: no-preference) {
   html.theme-transition, html.theme-transition *, html.theme-transition *::before, html.theme-transition *::after {
@@ -33,10 +34,11 @@ a { text-underline-offset: .2em; text-decoration-thickness: 1px; }
 .disp { font-family: "Barlow Condensed", "Arial Narrow", sans-serif; font-weight: 600; text-transform: uppercase; line-height: .95; text-wrap: balance; }
 .lab { font-family: "Barlow Semi Condensed", Barlow, sans-serif; font-weight: 500; font-size: .8125rem; letter-spacing: .12em; text-transform: uppercase; }
 
-.strip { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .5rem 2rem; padding-block: .9rem; border-bottom: 2px solid var(--ink); }
+.strip { position: sticky; top: 0; z-index: 40; background: var(--ground); display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .5rem 2rem; padding-block: .9rem; border-bottom: 2px solid var(--ink); }
 .strip a { text-decoration: none; }
 .strip nav a { padding-block: .35rem; border-bottom: 2px solid transparent; }
-.strip nav a:hover, .strip nav a[aria-current="page"] { border-bottom-color: var(--ink); }
+.strip nav a:hover { border-bottom-color: var(--ink); }
+.strip nav a[aria-current="page"] { border-bottom-color: var(--mark); }
 
 .frame { border: 2px solid var(--ink); }
 .stamp { display: inline-block; border: 2px solid var(--stamp); color: var(--stamp); padding: .4rem .8rem; font-family: "Barlow Semi Condensed", sans-serif; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; transform: rotate(-3deg); }
@@ -45,12 +47,13 @@ a { text-underline-offset: .2em; text-decoration-thickness: 1px; }
 .index { border-top: 2px solid var(--ink); list-style: none; margin: 0; padding: 0; }
 .index-row { display: grid; grid-template-columns: 3.25rem 1fr; gap: .25rem 1rem; align-items: center; padding: .85rem .75rem; border-bottom: 1px solid var(--rule); text-decoration: none; color: inherit; }
 @media (min-width: 640px) { .index-row { grid-template-columns: 4.5rem 1fr auto; } }
-.index-row .no { font-family: "Barlow Condensed", sans-serif; font-weight: 600; font-size: clamp(2rem, 4vw, 3rem); line-height: 1; }
+.index-row .no { color: var(--mark); font-family: "Barlow Condensed", sans-serif; font-weight: 600; font-size: clamp(2rem, 4vw, 3rem); line-height: 1; }
 .index-row .ttl { font-family: "Barlow Condensed", sans-serif; font-weight: 500; font-size: clamp(1.35rem, 2.2vw, 1.75rem); line-height: 1.08; text-transform: uppercase; display: block; }
 .index-row .out { grid-column: 2; }
 @media (min-width: 640px) { .index-row .out { grid-column: 3; text-align: right; } }
 .index-row:hover, .index-row:focus-visible, .index-row[data-on="true"] { background: var(--ink); color: var(--ground); }
-.index-row:hover .win, .index-row:focus-visible .win, .index-row[data-on="true"] .win { color: inherit; }
+/* Everything inside an inverted row takes the row colour, whatever utility classes it carries. */
+.index-row:hover *, .index-row:focus-visible *, .index-row[data-on="true"] * { color: inherit; }
 
 .btn, .btn-solid { display: inline-flex; align-items: center; gap: .5rem; border: 2px solid var(--ink); padding: .7rem 1.1rem; font-family: "Barlow Semi Condensed", sans-serif; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; text-decoration: none; color: var(--ink); cursor: pointer; background: transparent; }
 .btn:hover, .btn-solid { background: var(--ink); color: var(--ground); }

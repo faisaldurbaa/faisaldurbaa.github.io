@@ -11,6 +11,7 @@ interface Props {
 const { languageSwitch } = Astro.props;
 
 const navLinks = [
+  { name: 'Home', href: '/', also: [] },
   { name: 'Projects', href: '/projects/', also: ['/projects/', '/courses/', '/red/', '/en/red/'] },
   { name: 'Writing', href: '/blog/', also: ['/blog/'] },
   { name: 'About', href: '/about/', also: [] },

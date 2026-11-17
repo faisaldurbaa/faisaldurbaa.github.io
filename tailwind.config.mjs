@@ -22,6 +22,7 @@ export default {
         muted: 'var(--muted)',
         rule: 'var(--rule)',
         stamp: 'var(--stamp)',
+        mark: 'var(--mark)',
         panel: 'var(--panel)',
       },
       fontFamily: {
