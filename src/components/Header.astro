@@ -21,14 +21,14 @@ const path = Astro.url.pathname;
 const isActive = (link: (typeof navLinks)[number]) =>
   path === link.href || link.also.some((prefix) => path.startsWith(prefix));
 ---
-<header class="strip pad">
+<header class="strip pad" lang="en">
   <a href="/" class="disp text-2xl text-ink" aria-current={path === '/' ? 'page' : undefined}>Faisal Durbaa</a>
   <nav class="lab flex flex-wrap items-center gap-x-6 gap-y-1 text-ink" aria-label="Main">
     {navLinks.map((link) => (
       <a href={link.href} aria-current={isActive(link) ? 'page' : undefined}>{link.name}</a>
     ))}
     {languageSwitch && (
-      <a href={languageSwitch.alternateHref} lang={languageSwitch.current === 'en' ? 'tr' : 'en'} aria-label={languageSwitch.accessibleLabel}>
+      <a href={languageSwitch.alternateHref} hreflang={languageSwitch.current === 'en' ? 'tr' : 'en'} aria-label={languageSwitch.accessibleLabel}>
         {languageSwitch.alternateLabel}
       </a>
     )}

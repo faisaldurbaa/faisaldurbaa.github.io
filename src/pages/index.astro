@@ -24,23 +24,6 @@ const seo = {
         Hardware and software by Faisal Durbaa. One sheet per project: what it does, how it was judged, and the report behind it.
       </p>
     </div>
-    <div class="lg:col-start-1">
-      <ol class="index" id="sheet-index">
-        {sheets.map((sheet, i) => (
-          <li>
-            <a class="index-row" href={sheet.href} data-sheet={i} data-on={i === 0 ? 'true' : undefined}>
-              <span class="no">{sheet.no}</span>
-              <span>
-                <span class="ttl">{sheet.title}</span>
-                <span class="lab">{sheet.context}</span>
-              </span>
-              <span class:list={['out', { win: sheet.win }]}>{sheet.outcome}</span>
-            </a>
-          </li>
-        ))}
-      </ol>
-    </div>
-
     <aside class="lg:col-start-2 lg:row-start-1 lg:row-span-2" aria-label="Selected sheet">
       <div class="frame lg:sticky lg:top-6">
         {sheets.map((sheet, i) => (
@@ -59,6 +42,23 @@ const seo = {
         ))}
       </div>
     </aside>
+
+    <div class="lg:col-start-1">
+      <ol class="index" id="sheet-index">
+        {sheets.map((sheet, i) => (
+          <li>
+            <a class="index-row" href={sheet.href} data-sheet={i} data-on={i === 0 ? 'true' : undefined}>
+              <span class="no">{sheet.no}</span>
+              <span>
+                <span class="ttl">{sheet.title}</span>
+                <span class="lab">{sheet.context}</span>
+              </span>
+              <span class:list={['out', { win: sheet.win }]}>{sheet.outcome}</span>
+            </a>
+          </li>
+        ))}
+      </ol>
+    </div>
   </div>
 
   <section class="pad mt-20 grid gap-x-12 gap-y-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,44%)]">
