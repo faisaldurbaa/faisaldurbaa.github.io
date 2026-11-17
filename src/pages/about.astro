@@ -1,104 +1,160 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import Figure from '../components/Figure.astro';
+import { getSheets } from '../lib/sheets';
+
+const sheets = await getSheets();
+const pick = (slugs: string[]) => sheets.filter((sheet) => slugs.includes(sheet.slug));
+
+// The path, in the order it happened. Each stage is a crop of the 'journey' drawing
+// (src/lib/figures.ts) and lists the sheets that came out of it.
+const stages = [
+  {
+    name: 'Robotics & mechatronics',
+    line: 'Where it started: competition hardware that had to run in front of judges.',
+    viewBox: '35 212 150 214',
+    work: pick(['iris-smart-gas-ventilation', 'e-seed-autonomous-reforestation', 'piezo-powered-wheelchair-visibility']),
+  },
+  {
+    name: 'Data analysis',
+    line: 'Making sense of what those projects measured.',
+    viewBox: '228 212 150 214',
+    work: pick(['duray-school-nutrition-planner', 'ai-earthquake-impact-analysis-intervention']),
+  },
+  {
+    name: 'Software development',
+    line: 'Tools and web apps that other people use.',
+    viewBox: '413 212 150 214',
+    work: pick(['inventory-management-system', 'ai-powered-physics-graph-generator']),
+  },
+  {
+    name: 'AI & machine learning',
+    line: 'Models for detection and prediction.',
+    viewBox: '608 212 150 214',
+    work: pick(['earthquake-damage-prediction', 'aircraft-detection', 'aipts-ai-icu-patient-monitoring']),
+  },
+];
+
+const tools = ['Python', 'AI/ML', 'Prompt Engineering', 'Linux', 'HTML', 'TypeScript', 'MS Office', 'Data Analysis', 'Multilingualism'];
 
 const seo = {
-  title: "About Me",
-  description: "Learn more about Faisal Durbaa, his skills, and professional background."
+  title: 'About Me',
+  description: 'How Faisal Durbaa got from robotics and mechatronics to data, software and AI, with the projects from each stage.',
 };
-
-const skills = ['Python', 'AI/ML', 'Prompt Engineering', 'Linux', 'HTML', 'TypeScript', 'MS Office', 'Data Analysis', 'Multilingualism'];
-
-// Each stage is a crop of the 'journey' drawing (src/lib/figures.ts). All crops share one
-// y-range so the drawings keep their common baseline; x-ranges stop short of the dashed hand-offs.
-const stages = [
-  { name: 'Robotics & mechatronics', line: 'Competition hardware for TEKNOFEST.', viewBox: '35 212 150 214' },
-  { name: 'Data analysis', line: 'Making sense of what those projects measured.', viewBox: '228 212 150 214' },
-  { name: 'Software development', line: 'Tools and web apps people actually use.', viewBox: '413 212 150 214' },
-  { name: 'AI & machine learning', line: 'Models for detection and prediction.', viewBox: '608 212 150 214' },
-];
 ---
 <Layout seo={seo}>
-  <div class="about pad pt-10 pb-16">
-    <h1 class="disp text-ink max-w-[22ch] text-[clamp(2.75rem,5.6vw,4.5rem)]">
-      I build things that <span class="whitespace-nowrap text-mark">have to work</span> in front of other people.
-    </h1>
+  <div class="about pad grid gap-x-14 pb-16 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)]">
+    {/* Pinned on wide screens while the path scrolls beside it. */}
+    <div class="intro">
+      <h1 class="disp text-ink text-[clamp(2.25rem,4.6vw,4rem)]">
+        I build things that <span class="text-mark">have to work</span> in front of other people.
+      </h1>
+      <p class="mt-6 max-w-[52ch] text-lg">
+        I started in robotics and mechatronics, and followed the data those projects produced into analysis, software and AI. That path is why I still care about the whole system, from the sensor to the screen.
+      </p>
+      <p class="mt-4 max-w-[52ch] text-lg">I'm on a gap year from Harvard University.</p>
+      <ul class="mt-6 flex max-w-[30rem] flex-wrap gap-2" aria-label="Tools">
+        {tools.map((tool) => <li class="lab border border-rule px-2.5 py-1.5">{tool}</li>)}
+      </ul>
+      <p class="mt-7 flex flex-wrap gap-3">
+        <a href="/contact/" class="btn-solid">Get in touch</a>
+        <a href="/projects/" class="btn">See the work</a>
+      </p>
+    </div>
 
-    <ol class="path mt-10 grid gap-10 md:grid-cols-2 md:gap-x-10 md:gap-y-8 lg:grid-cols-4" aria-label="Path">
-      {stages.map((stage, i: number) => (
-        <li class="plate frame relative flex flex-col">
-          <div class="draw relative px-4 pt-3 pb-4">
-            <span class="disp text-mark num text-[3.5rem] leading-none" aria-hidden="true">{i + 1}</span>
-            <Figure name="journey" title={stage.name} viewBox={stage.viewBox} class="text-ink -mt-8" />
+    <ol class="path" id="path">
+      {stages.map((stage, i) => (
+        <li class="station" data-station>
+          <span class="node disp" aria-hidden="true">{i + 1}</span>
+          <div class="flex items-center gap-5">
+            <Figure name="journey" title={stage.name} viewBox={stage.viewBox} class="icon shrink-0 text-ink" />
+            <div>
+              <h2 class="disp text-ink text-[clamp(1.6rem,2.6vw,2.25rem)]">{stage.name}</h2>
+              <p class="mt-2 max-w-[38ch]">{stage.line}</p>
+            </div>
           </div>
-          <div class="txt border-t border-rule p-4">
-            <h2 class="disp text-ink text-[1.35rem] sm:text-[1.65rem]"><span class="sr-only">{i + 1}. </span>{stage.name}</h2>
-            <p class="mt-2 text-body">{stage.line}</p>
-          </div>
-          {i < stages.length - 1 && (
-            <svg class="link" data-i={i} viewBox="0 0 40 16" aria-hidden="true" focusable="false">
-              <path d="M0 8H38M30 2L38 8L30 14" />
-            </svg>
-          )}
+          <ul class="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-3">
+            {stage.work.map((sheet) => (
+              <li>
+                <a class="plate-link" href={sheet.href}>
+                  {sheet.figure && <Figure name={sheet.figure} title={sheet.title} class="text-ink" />}
+                  <span class="lab mt-2 block">{sheet.title}</span>
+                </a>
+              </li>
+            ))}
+          </ul>
         </li>
       ))}
+      <li class="station" data-station>
+        <span class="node disp" aria-hidden="true">5</span>
+        <h2 class="disp text-ink text-[clamp(1.6rem,2.6vw,2.25rem)]">Next</h2>
+        <p class="mt-2 max-w-[38ch]">I'm always glad to hear from people working on something interesting.</p>
+        <p class="mt-5"><a href="/contact/" class="btn-solid">Get in touch</a></p>
+      </li>
     </ol>
-
-    <div class="mt-14 grid gap-x-16 gap-y-10 lg:grid-cols-[minmax(0,60ch)_minmax(0,1fr)]">
-      <div class="max-w-[60ch] space-y-4 text-lg leading-relaxed">
-        <p>I started in robotics and mechatronics, building competition hardware for TEKNOFEST. Working with the data those projects produced led me to data analysis, and from there to software development and AI. That path is why I still care about the whole system, from the sensor to the screen.</p>
-        <p>I'm on a gap year from Harvard University. I'm always glad to hear from people working on something interesting.</p>
-      </div>
-
-      <div class="lg:border-l lg:border-rule lg:pl-10">
-        <ul class="flex flex-wrap items-center gap-2" aria-label="Tools">
-          <li class="lab mr-2 text-muted" aria-hidden="true">Tools</li>
-          {skills.map((name: string) => (
-            <li class="lab border border-rule text-ink" style="padding:6px 10px">{name}</li>
-          ))}
-        </ul>
-        <p class="mt-8 flex flex-wrap gap-3">
-          <a href="/contact/" class="btn-solid">Get in touch</a>
-          <a href="/projects/" class="btn">See the work</a>
-        </p>
-      </div>
-    </div>
   </div>
 </Layout>
 
-<style is:global>
-  /* The figure's scale label is going away site-wide; keep it off this page now. */
-  .about .figure-wrap small { display: none; }
-  /* The svg box must match the crop's aspect, or letterboxing reveals the neighbouring stages. */
-  .about .plate .figure { height: clamp(12rem, 17vw, 16rem); width: auto; aspect-ratio: 150 / 214; margin-inline: auto; }
-  /* Stage crops show the drawing only; the numbered callout balloons and their leaders are
-     replaced by the plate's own number. Balloons are r=17 circles, leaders are the path just before each balloon. */
-  .about .plate .figure circle[r="17"],
-  .about .plate .figure text,
-  .about .plate .figure path:has(+ circle[r="17"]) { display: none; }
+<style>
+  .intro { padding-top: 2rem; }
 
-  /* Phones: drawing beside the text so four plates stay short. */
-  @media (max-width: 767px) {
-    .about .plate { flex-direction: row; }
-    .about .plate .draw { flex: 0 0 40%; padding: .5rem .5rem .75rem .75rem; }
-    .about .plate .num { font-size: 2.25rem; }
-    .about .plate .figure { height: 8.5rem; }
-    .about .plate .figure-wrap { margin-top: -.5rem; }
-    .about .plate .txt { flex: 1 1 auto; min-width: 0; border-top: 0; border-left: 1px solid var(--rule); align-self: stretch; display: flex; flex-direction: column; justify-content: center; }
+  /* The path: a rail that fills in as you scroll, with a numbered node per stage. */
+  .path { position: relative; list-style: none; margin: 2.5rem 0 0; padding: 0 0 0 3.25rem; --p: 0; }
+  .path::before, .path::after { content: ''; position: absolute; left: 1.05rem; top: .5rem; bottom: 0; width: 2px; background: var(--rule); }
+  .path::after { background: var(--mark); transform-origin: top; transform: scaleY(var(--p)); }
+  .station { position: relative; padding-bottom: 4rem; }
+  .station:last-child { padding-bottom: 0; }
+  .node { position: absolute; left: -3.25rem; top: 0; z-index: 1; display: grid; place-items: center; width: 2.25rem; height: 2.25rem; border: 2px solid var(--ink); background: var(--ground); color: var(--ink); font-size: 1.25rem; transition: color .3s, border-color .3s; }
+  .station[data-reached] .node { border-color: var(--mark); color: var(--mark); }
+
+  .station :global(.icon) { width: 5.5rem; }
+  /* Crops show the stage drawing only, without the journey figure's callouts. */
+  .station :global(.icon circle.hl), .station :global(.icon text) { display: none; }
+
+  .plate-link { display: block; height: 100%; border: 2px solid var(--ink); padding: .75rem; text-decoration: none; color: var(--ink); }
+  .plate-link:hover, .plate-link:focus-visible { border-color: var(--mark); color: var(--mark); }
+
+  /* Drawings wait for their station to be reached, then draw in. */
+  @media (prefers-reduced-motion: no-preference) {
+    .js .station:not([data-reached]) :global(.figure *) { animation-play-state: paused; }
   }
 
-  .about .plate { transition: border-color 160ms ease; }
-  .about .plate:hover { border-color: var(--mark); }
-
-  /* Arrows joining the plates, sitting in the grid gap: downward when stacked,
-     across within each row of two, across all three gaps in the row of four. */
-  .about .link { position: absolute; fill: none; stroke: var(--ink); stroke-width: 2; stroke-linecap: square; overflow: visible; }
-  .about .link { left: 50%; top: 100%; width: 2.5rem; height: 1rem; transform: translate(-50%, 0.75rem) rotate(90deg); }
-  @media (min-width: 768px) {
-    .about .link { left: 100%; top: 40%; width: 2.5rem; transform: none; }
-    .about .link[data-i="1"] { display: none; }
-  }
   @media (min-width: 1024px) {
-    .about .link[data-i="1"] { display: block; }
+    .intro { position: sticky; top: var(--header-h); align-self: start; padding-top: 3rem; }
+    .path { margin-top: 3.5rem; }
+    .station { padding-bottom: 5.5rem; }
   }
 </style>
+
+<script>
+  // Fill the rail to the reading line and mark the stations it has passed.
+  function bindPath() {
+    const path = document.getElementById('path');
+    if (!path) return;
+    const about = path.closest('.about');
+    about?.classList.add('js');
+    const stations = [...path.querySelectorAll<HTMLElement>('[data-station]')];
+    let queued = false;
+    const update = () => {
+      queued = false;
+      if (!document.body.contains(path)) return window.removeEventListener('scroll', onScroll);
+      const line = window.innerHeight * 0.72;
+      const box = path.getBoundingClientRect();
+      path.style.setProperty('--p', String(Math.min(1, Math.max(0, (line - box.top) / box.height))));
+      for (const station of stations) {
+        if (station.getBoundingClientRect().top < line) station.dataset.reached = 'true';
+      }
+    };
+    const onScroll = () => {
+      if (!queued) {
+        queued = true;
+        requestAnimationFrame(update);
+      }
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll);
+    update();
+  }
+  bindPath();
+  document.addEventListener('astro:after-swap', bindPath);
+</script>

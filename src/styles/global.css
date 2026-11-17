@@ -61,9 +61,11 @@ a:hover { text-decoration-color: var(--mark); }
 .index-row .ttl { font-family: "Barlow Condensed", sans-serif; font-weight: 500; font-size: clamp(1.35rem, 2.2vw, 1.75rem); line-height: 1.08; text-transform: uppercase; display: block; }
 .index-row .out { grid-column: 2; }
 @media (min-width: 640px) { .index-row .out { grid-column: 3; text-align: right; max-width: 11rem; } }
-.index-row:hover, .index-row:focus-visible, .index-row[data-on="true"] { background: var(--ink); color: var(--ground); }
-/* Everything inside an inverted row takes the row colour, whatever utility classes it carries. */
-.index-row:hover *, .index-row:focus-visible *, .index-row[data-on="true"] * { color: inherit; }
+/* Selected row inverts; a row you point at takes the highlight colour. */
+.index-row[data-on="true"] { background: var(--ink); color: var(--ground); }
+.index-row[data-on="true"] * { color: inherit; }
+.index-row:not([data-on="true"]):hover, .index-row:not([data-on="true"]):focus-visible { color: var(--mark); border-bottom-color: var(--mark); }
+.index-row:not([data-on="true"]):hover *, .index-row:not([data-on="true"]):focus-visible * { color: inherit; }
 
 .btn, .btn-solid { display: inline-flex; align-items: center; gap: .5rem; border: 2px solid var(--ink); padding: .7rem 1.1rem; font-family: "Barlow Semi Condensed", sans-serif; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; text-decoration: none; color: var(--ink); cursor: pointer; background: transparent; }
 .btn:hover, .btn-solid { background: var(--ink); color: var(--ground); }
@@ -83,3 +85,6 @@ a:hover { text-decoration-color: var(--mark); }
 /* Comfortable tap targets for footer links on touch screens. */
 footer a { display: inline-flex; align-items: center; min-height: 2.75rem; }
 .strip > a { display: inline-flex; align-items: center; min-height: 2.75rem; }
+
+/* Faint drafting grid, as on graph paper. */
+.grid-paper { background-color: var(--ground); background-image: linear-gradient(color-mix(in srgb, var(--ink) 7%, transparent) 1px, transparent 1px), linear-gradient(90deg, color-mix(in srgb, var(--ink) 7%, transparent) 1px, transparent 1px); background-size: 32px 32px; }

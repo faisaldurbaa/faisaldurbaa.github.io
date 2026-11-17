@@ -23,7 +23,7 @@ const seo = {
     <h1 class="hero-title disp text-ink text-[clamp(2.5rem,5.6vw,4.75rem)]">Models, machines, <span class="text-mark">software.</span></h1>
 
     <aside class="hero-figure" aria-label="Selected sheet">
-      <div class="frame h-full bg-ground">
+      <div class="frame grid-paper h-full">
         {sheets.map((sheet, i) => (
           <div class="flex h-full flex-col p-4 sm:p-6" data-panel={i} hidden={i !== 0}>
             <div class="flex min-h-0 flex-1 items-center justify-center">
@@ -105,7 +105,7 @@ const seo = {
 </style>
 
 <script>
-  // The row crossing the reading line becomes the selected sheet; pointing at a row selects it too.
+  // The first row clear of the pinned headline is the selected sheet.
   function bindIndex() {
     const rows = [...document.querySelectorAll<HTMLElement>('#sheet-index [data-sheet]')];
     const panels = document.querySelectorAll<HTMLElement>('[data-panel]');
@@ -134,10 +134,7 @@ const seo = {
       });
     };
     window.addEventListener('scroll', onScroll, { passive: true });
-    rows.forEach((row) => {
-      row.addEventListener('mouseenter', () => show(row.dataset.sheet!));
-      row.addEventListener('focus', () => show(row.dataset.sheet!));
-    });
+    rows.forEach((row) => row.addEventListener('focus', () => show(row.dataset.sheet!)));
   }
   bindIndex();
   document.addEventListener('astro:after-swap', bindIndex);
