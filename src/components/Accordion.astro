@@ -6,7 +6,7 @@ const { summary } = Astro.props;
 ---
 <details class="accordion-details group border-b border-rule first:border-t-2 first:border-ink">
   <summary class="flex items-center justify-between gap-4 cursor-pointer list-none px-3 py-4 hover:bg-ink hover:text-ground group-open:bg-panel group-open:hover:bg-ink">
-    <h3 class="disp text-[clamp(1.35rem,2.2vw,1.75rem)] m-0">{summary}</h3>
+    <h3 class="disp text-[clamp(1.35rem,2.2vw,1.75rem)] m-0 !text-inherit">{summary}</h3>
     <span class="lab shrink-0 border-2 border-current px-2 py-0.5" aria-hidden="true">
       <span class="group-open:hidden">Open</span><span class="hidden group-open:inline">Close</span>
     </span>

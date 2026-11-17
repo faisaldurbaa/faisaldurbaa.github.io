@@ -17,47 +17,45 @@ const seo = {
 };
 ---
 <Layout seo={seo}>
-  {/* On wide screens the headline and figure hold still; only the index scrolls. */}
-  <div class="hero pad grid gap-x-12 gap-y-8 pt-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,44%)]">
-    <div class="flex min-h-0 flex-col">
-      <h1 class="disp text-ink text-[clamp(2.75rem,5.6vw,4.75rem)]">Models, machines, <span class="text-mark">software.</span></h1>
-      <p class="mt-4 max-w-xl text-lg">
-        Work by Faisal Durbaa in machine learning, hardware and software. Each sheet carries its result and the report or code behind it.
-      </p>
-      <ol class="index mt-7 min-h-0 flex-1 lg:overflow-y-auto" id="sheet-index" tabindex="-1">
-        {sheets.map((sheet, i) => (
-          <li>
-            <a class="index-row" href={sheet.href} data-sheet={i} data-on={i === 0 ? 'true' : undefined}>
-              <span class="no">{sheet.no}</span>
-              <span>
-                <span class="ttl">{sheet.title}</span>
-                <span class="lab">{sheet.context}</span>
-              </span>
-              <span class:list={['out', { win: sheet.win }]}>{sheet.outcome}</span>
-            </a>
-          </li>
-        ))}
-      </ol>
-    </div>
+  {/* The headline and figure hold still while the index scrolls past; the row at the reading line drives the figure. */}
+  <div class="hero pad grid gap-x-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,44%)]">
+    <div class="hero-top">
+    <h1 class="hero-title disp text-ink text-[clamp(2.5rem,5.6vw,4.75rem)]">Models, machines, <span class="text-mark">software.</span></h1>
 
-    <aside class="row-start-2 min-h-0 lg:row-start-auto" aria-label="Selected sheet">
-      <div class="frame h-full">
+    <aside class="hero-figure" aria-label="Selected sheet">
+      <div class="frame h-full bg-ground">
         {sheets.map((sheet, i) => (
-          <div class="flex h-full flex-col p-5 sm:p-6" data-panel={i} hidden={i !== 0}>
+          <div class="flex h-full flex-col p-4 sm:p-6" data-panel={i} hidden={i !== 0}>
             <div class="flex min-h-0 flex-1 items-center justify-center">
               {sheet.figure ? (
-                <Figure name={sheet.figure} title={sheet.title} class="w-full max-w-[min(100%,52vh)] text-ink" />
+                <Figure name={sheet.figure} title={sheet.title} class="hero-drawing text-ink" />
               ) : sheet.image ? (
-                <img src={sheet.image} alt="" class="plate max-h-[44vh] w-full object-cover" loading="lazy" />
+                <img src={sheet.image} alt="" class="plate max-h-full w-full object-cover" loading="lazy" />
               ) : null}
             </div>
-            <p class="lab mt-5 border-t border-rule pt-4 text-ink">Fig. {sheet.no} — {sheet.title}</p>
-            <p class="mt-2">{sheet.summary}</p>
-            {sheet.win && <p class="mt-4"><span class="stamp">{sheet.outcome}</span></p>}
+            <p class="lab mt-3 border-t border-rule pt-3 text-ink lg:mt-5 lg:pt-4">Fig. {sheet.no} — {sheet.title}</p>
+            <p class="mt-2 hidden lg:block">{sheet.summary}</p>
+            {sheet.win && <p class="mt-4 hidden lg:block"><span class="stamp">{sheet.outcome}</span></p>}
           </div>
         ))}
       </div>
     </aside>
+    </div>
+
+    <ol class="index hero-index" id="sheet-index">
+      {sheets.map((sheet, i) => (
+        <li>
+          <a class="index-row" href={sheet.href} data-sheet={i} data-on={i === 0 ? 'true' : undefined}>
+            <span class="no">{sheet.no}</span>
+            <span>
+              <span class="ttl">{sheet.title}</span>
+              <span class="lab">{sheet.context}</span>
+            </span>
+            <span class:list={['out', { win: sheet.win }]}>{sheet.outcome}</span>
+          </a>
+        </li>
+      ))}
+    </ol>
   </div>
 
   <section class="pad mt-20 grid gap-x-12 gap-y-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,44%)]">
@@ -86,27 +84,59 @@ const seo = {
 </Layout>
 
 <style>
-  @media (min-width: 1024px) {
-    .hero { height: calc(100dvh - 6.75rem); min-height: 34rem; }
-  }
-  [data-panel][hidden] { display: none; }
   /* Photos sit in the sheet as single-ink plates. */
   .plate { filter: grayscale(1) contrast(1.1); mix-blend-mode: luminosity; border: 1px solid var(--rule); }
+  [data-panel][hidden] { display: none; }
+
+  /* Phone: headline and figure pin together as one block while rows scroll beneath. */
+  .hero-top { position: sticky; top: var(--header-h); z-index: 20; background: var(--ground); padding-bottom: .75rem; }
+  .hero-title { padding-block: 1rem .75rem; }
+  .hero-figure { height: 34svh; min-height: 13rem; }
+  .hero-index { padding-bottom: 30svh; }
+  :global(.hero-drawing) { height: 100%; width: 100%; }
+  :global(.hero-drawing .figure) { height: 100%; }
+
+  @media (min-width: 1024px) {
+    .hero-top { display: contents; }
+    .hero-title { grid-column: 1; position: sticky; top: var(--header-h); z-index: 20; background: var(--ground); padding-block: 2rem 1.5rem; }
+    .hero-figure { grid-column: 2; grid-row: 1 / span 2; position: sticky; top: calc(var(--header-h) + 1.5rem); height: calc(100dvh - var(--header-h) - 3rem); margin-top: 1.5rem; }
+    .hero-index { grid-column: 1; padding-bottom: 42dvh; }
+  }
 </style>
 
 <script>
-  // Moving through the index swaps the framed figure. Without JS the first sheet stays shown.
+  // The row crossing the reading line becomes the selected sheet; pointing at a row selects it too.
   function bindIndex() {
-    const rows = document.querySelectorAll<HTMLElement>('#sheet-index [data-sheet]');
+    const rows = [...document.querySelectorAll<HTMLElement>('#sheet-index [data-sheet]')];
     const panels = document.querySelectorAll<HTMLElement>('[data-panel]');
+    const figure = document.querySelector<HTMLElement>('.hero-figure');
+    const title = document.querySelector<HTMLElement>('.hero-title');
+    if (!rows.length || !figure || !title) return;
+    let current = '0';
     const show = (id: string) => {
+      if (id === current) return;
+      current = id;
       rows.forEach((row) => (row.dataset.sheet === id ? (row.dataset.on = 'true') : delete row.dataset.on));
       panels.forEach((panel) => (panel.hidden = panel.dataset.panel !== id));
     };
+    const wide = window.matchMedia('(min-width: 1024px)');
+    let queued = false;
+    const onScroll = () => {
+      if (queued) return;
+      queued = true;
+      requestAnimationFrame(() => {
+        queued = false;
+        if (!document.body.contains(figure)) return window.removeEventListener('scroll', onScroll);
+        // The selected sheet is the first row still clear of the pinned block above it.
+        const pinned = (wide.matches ? title : figure)!.getBoundingClientRect().bottom;
+        const best = rows.find((row) => row.getBoundingClientRect().bottom > pinned + 56) ?? rows[rows.length - 1]!;
+        show(best.dataset.sheet!);
+      });
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
     rows.forEach((row) => {
-      const id = row.dataset.sheet!;
-      row.addEventListener('mouseenter', () => show(id));
-      row.addEventListener('focus', () => show(id));
+      row.addEventListener('mouseenter', () => show(row.dataset.sheet!));
+      row.addEventListener('focus', () => show(row.dataset.sheet!));
     });
   }
   bindIndex();

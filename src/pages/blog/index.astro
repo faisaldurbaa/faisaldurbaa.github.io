@@ -10,33 +10,79 @@ const sortedContent = blogEntries.sort((a: CollectionEntry<'blog'>, b: Collectio
   (a.data.publishDate ? new Date(a.data.publishDate) : fallbackDate).valueOf()
 );
 
+// Organic blot shapes (each: main body plus satellite droplets) and where they sit.
+const blotBody = 'M118 22C150 6 196 20 214 52C226 74 252 82 250 112C248 146 214 150 200 176C184 206 140 226 104 210C72 196 70 166 46 150C18 132 20 96 40 74C58 54 84 40 118 22Z';
+const blotBodyAlt = 'M96 18C136 4 176 26 186 62C194 90 232 96 230 134C228 170 186 190 150 192C112 194 100 222 66 208C34 194 40 160 24 134C8 106 26 78 44 58C60 40 70 28 96 18Z';
+const blots = [
+  { body: blotBody, drops: [[268, 40, 9], [284, 130, 5], [20, 200, 7]], style: 'top:2%;left:-90px;width:300px;', delay: 0, op: 0.07 },
+  { body: blotBodyAlt, drops: [[250, 30, 8], [8, 176, 6]], style: 'top:16%;right:-110px;width:360px;', delay: 150, op: 0.06 },
+  { body: blotBody, drops: [[262, 190, 6], [30, 14, 8], [276, 96, 4]], style: 'top:44%;left:-120px;width:240px;', delay: 300, op: 0.06 },
+  { body: blotBodyAlt, drops: [[240, 220, 9], [4, 60, 5]], style: 'top:62%;right:-80px;width:200px;', delay: 450, op: 0.08 },
+  { body: blotBody, drops: [[20, 20, 6], [270, 150, 7]], style: 'bottom:2%;left:-60px;width:150px;', delay: 600, op: 0.07 },
+  { body: blotBodyAlt, drops: [[250, 60, 6], [60, 230, 5], [12, 120, 4]], style: 'bottom:-30px;right:6%;width:120px;', delay: 750, op: 0.06 },
+];
+
 const seo = {
   title: "Blog",
   description: "Explore my latest blog posts on AI, software, and technical strategy.",
 };
 ---
 <Layout seo={seo}>
-  <div class="pad pt-10 pb-16 max-w-[1100px]">
-    <h1 class="disp text-ink text-[clamp(2.5rem,5vw,4.5rem)]">Writing</h1>
-    <p class="mt-4 mb-10 max-w-[70ch] text-lg text-muted">Domesitcating technical advancements in technology and business.</p>
+  <div class="relative overflow-hidden">
+    {/* Ink drops: decorative only, kept to the page edges and very faint. */}
+    {blots.map((blot: { body: string; drops: number[][]; style: string; delay: number; op: number }) => (
+      <svg class="blot" viewBox="-10 -10 310 260" aria-hidden="true" focusable="false" style={`${blot.style}--d:${blot.delay}ms;--o:${blot.op};`}>
+        <path d={blot.body} />
+        {blot.drops.map((d: number[]) => <circle cx={d[0]} cy={d[1]} r={d[2]} />)}
+      </svg>
+    ))}
 
-    <ul id="blog-grid" class="index">
-      {sortedContent.map((item: CollectionEntry<'blog'>) => (
-        <li>
-          <a href={`/blog/${item.id}/`} class="block border-b border-rule px-3 py-4 no-underline text-body hover:bg-ink hover:text-ground group">
-            {item.data.publishDate && (
-              <p class="lab text-muted group-hover:text-ground">
-                {new Date(item.data.publishDate).toLocaleDateString('en-us', { year: 'numeric', month: 'short', day: 'numeric' })}
-              </p>
-            )}
-            <span class="font-display font-medium uppercase text-ink text-[clamp(1.35rem,2.2vw,1.75rem)] leading-[1.08] block mt-1 group-hover:text-ground">{item.data.title}</span>
-            <span class="block mt-2 max-w-[70ch] group-hover:text-ground">{item.data.description}</span>
-            {item.data.tags && item.data.tags.length > 0 && (
-              <span class="lab block mt-3 text-muted group-hover:text-ground">{item.data.tags.join(' / ')}</span>
-            )}
-          </a>
-        </li>
-      ))}
-    </ul>
+    <div class="pad relative pt-10 pb-16 max-w-[1100px]">
+      <h1 class="disp text-ink text-[clamp(2.5rem,5vw,4.5rem)]">Writing</h1>
+      <p class="mt-4 mb-10 max-w-[70ch] text-lg text-muted">Domesitcating technical advancements in technology and business.</p>
+
+      <ul id="blog-grid" class="entries">
+        {sortedContent.map((item: CollectionEntry<'blog'>) => (
+          <li>
+            <a href={`/blog/${item.id}/`} class="entry">
+              <span class="thumb" aria-hidden="true">
+                {item.data.heroImage && <img src={item.data.heroImage} alt="" class="plate" loading="lazy" />}
+              </span>
+              <span class="min-w-0">
+                {item.data.publishDate && (
+                  <span class="lab block text-muted">
+                    {new Date(item.data.publishDate).toLocaleDateString('en-us', { year: 'numeric', month: 'short', day: 'numeric' })}
+                  </span>
+                )}
+                <span class="disp ttl text-ink">{item.data.title}</span>
+                <span class="mt-2 block max-w-[70ch]">{item.data.description}</span>
+                {item.data.tags && item.data.tags.length > 0 && (
+                  <span class="lab mt-3 block text-muted">{item.data.tags.join(' / ')}</span>
+                )}
+              </span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
   </div>
 </Layout>
+
+<style>
+  .blot { position: absolute; z-index: 0; pointer-events: none; height: auto; fill: var(--ink); fill-opacity: var(--o); transform-origin: center; }
+  @media (prefers-reduced-motion: no-preference) {
+    .blot { animation: blot-in 900ms ease-out both; animation-delay: var(--d); }
+  }
+  @keyframes blot-in { from { opacity: 0; transform: scale(.6); } to { opacity: 1; transform: scale(1); } }
+
+  .entries { list-style: none; padding: 0; border-top: 2px solid var(--ink); }
+  .entry { display: grid; gap: 1rem; padding: 1.25rem .75rem; border-bottom: 1px solid var(--rule); border-left: 3px solid transparent; text-decoration: none; color: inherit; background: var(--ground); }
+  @media (min-width: 640px) { .entry { grid-template-columns: 180px minmax(0, 1fr); gap: 1.5rem; align-items: start; } }
+  .thumb { display: block; height: 160px; border: 1px solid var(--rule); overflow: hidden; background: var(--panel); }
+  @media (min-width: 640px) { .thumb { height: auto; aspect-ratio: 3 / 2; } }
+  .thumb .plate { display: block; width: 100%; height: 100%; object-fit: cover; filter: grayscale(1) contrast(1.1); mix-blend-mode: luminosity; }
+  .ttl { display: block; margin-top: .25rem; font-size: clamp(1.4rem, 3vw, 1.75rem); }
+  .entry:hover, .entry:focus-visible { border-left-color: var(--mark); }
+  .entry:hover .thumb, .entry:focus-visible .thumb { border-color: var(--mark); }
+  .entry:hover .ttl, .entry:focus-visible .ttl { color: var(--mark); }
+</style>

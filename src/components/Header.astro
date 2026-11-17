@@ -24,7 +24,11 @@ const isActive = (link: (typeof navLinks)[number]) =>
 ---
 <header class="strip pad" lang="en">
   <a href="/" class="disp text-2xl text-ink" aria-current={path === '/' ? 'page' : undefined}>Faisal Durbaa</a>
-  <nav class="lab flex flex-wrap items-center gap-x-6 gap-y-1 text-ink" aria-label="Main">
+  <button id="menu-toggle" type="button" class="menu-toggle lab" aria-expanded="false" aria-controls="main-nav">
+    <svg width="18" height="14" viewBox="0 0 18 14" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M0 1h18M0 7h18M0 13h18" /></svg>
+    Menu
+  </button>
+  <nav id="main-nav" class="lab text-ink" aria-label="Main">
     {navLinks.map((link) => (
       <a href={link.href} aria-current={isActive(link) ? 'page' : undefined}>{link.name}</a>
     ))}
@@ -70,6 +74,16 @@ const isActive = (link: (typeof navLinks)[number]) =>
     if (button && button.dataset.bound !== 'true') {
       button.dataset.bound = 'true';
       button.addEventListener('click', toggleTheme);
+    }
+    const menu = document.getElementById('menu-toggle');
+    const strip = menu?.closest<HTMLElement>('.strip');
+    if (menu && strip && menu.dataset.bound !== 'true') {
+      menu.dataset.bound = 'true';
+      menu.addEventListener('click', () => {
+        const open = strip.dataset.open !== 'true';
+        strip.dataset.open = String(open);
+        menu.setAttribute('aria-expanded', String(open));
+      });
     }
   }
 

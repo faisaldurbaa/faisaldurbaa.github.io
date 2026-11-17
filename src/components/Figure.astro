@@ -21,13 +21,11 @@ const body = figures[name]?.().replace(
 {body && (
   <figure class:list={['figure-wrap', className]}>
     <svg class="figure" viewBox={viewBox} role="img" aria-label={`Illustrative line drawing: ${title}`} set:html={body} />
-    <small>Illustrative · not to scale</small>
   </figure>
 )}
 
 <style is:global>
   .figure-wrap { position: relative; margin: 0; }
-  .figure-wrap small { position: absolute; right: 0; bottom: 0; font: 500 .625rem "Barlow Semi Condensed", sans-serif; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
   .figure { display: block; width: 100%; height: auto; fill: none; stroke: currentColor; stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
   .figure text { fill: currentColor; stroke: none; font: 500 15px "Barlow Semi Condensed", sans-serif; }
   .figure .hl { stroke: var(--mark); }

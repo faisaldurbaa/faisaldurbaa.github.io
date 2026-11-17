@@ -1,6 +1,8 @@
 ---
 import { getCollection, type CollectionEntry } from 'astro:content';
 import Layout from '../../layouts/Layout.astro';
+import Figure from '../../components/Figure.astro';
+import { hasFigure } from '../../lib/figures';
 import CompetitionCard from '../../components/CompetitionCard.astro';
 import competitionProjects from '../../data/competitionProjects';
 
@@ -24,27 +26,57 @@ const seo = {
 };
 ---
 <Layout seo={seo}>
-  <div class="pad pt-10 pb-16">
+  <div class="relative overflow-hidden">
+    {/* Quiet drafting layer: fine grid, a few construction lines and registration crosses in the margins. */}
+    <div class="drafting" aria-hidden="true"></div>
+    <svg class="pointer-events-none absolute inset-0 h-full w-full text-ink" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1" style="opacity:.22">
+      <g class="hidden md:block">
+        <line x1="24" y1="0" x2="24" y2="100%" stroke-dasharray="2 8" />
+        <svg x="100%" y="0" overflow="visible"><line x1="-24" y1="0" x2="-24" y2="4000" stroke-dasharray="2 8" /></svg>
+      </g>
+      <g transform="translate(40 150)"><circle r="9" /><line x1="-18" y1="0" x2="18" y2="0" /><line x1="0" y1="-18" x2="0" y2="18" /></g>
+      <svg x="100%" y="320" overflow="visible"><g transform="translate(-40 0)"><circle r="9" /><line x1="-18" y1="0" x2="18" y2="0" /><line x1="0" y1="-18" x2="0" y2="18" /></g></svg>
+      <svg x="0" y="100%" overflow="visible"><g transform="translate(40 -260)"><circle r="9" /><line x1="-18" y1="0" x2="18" y2="0" /><line x1="0" y1="-18" x2="0" y2="18" /></g></svg>
+      <line x1="0" y1="96" x2="64" y2="32" class="hidden sm:block" />
+    </svg>
+
+  <div class="pad relative pt-10 pb-16">
     <h1 class="disp text-ink text-[clamp(2.5rem,5vw,4.5rem)]">Projects</h1>
     <p class="mt-4 max-w-[70ch] text-lg">A single hub for my open-source projects, courses, and competition builds.</p>
 
     <h2 class="disp text-ink mt-14 mb-3 text-[clamp(1.75rem,3vw,2.5rem)]">Projects &amp; Courses</h2>
-    <ol class="index">
-      {combinedBuilds.map((item) => (
-        <li>
-          <a
-            class="index-row"
-            href={item.type === 'project' ? `/projects/${item.id}/` : `/courses/${item.id.replace(/\/index$/, '')}/`}
-          >
-            <span class="lab">{item.data.publishDate ? item.data.publishDate.getFullYear() : ''}</span>
-            <span>
-              <span class="ttl">{item.data.title}</span>
-              <span class="block">{item.data.description}</span>
-            </span>
-            <span class="out lab">{item.type === 'project' ? 'Project' : 'Course'}</span>
-          </a>
-        </li>
-      ))}
+    <ol class="entries">
+      {combinedBuilds.map((item) => {
+        const tags = (item.data.tags ?? []).slice(0, 3);
+        const year = item.data.publishDate ? item.data.publishDate.getFullYear() : '';
+        const typeLabel = item.type === 'project' ? 'Project' : 'Course';
+        const hero = item.data.heroImage;
+        return (
+          <li>
+            <a
+              class="entry"
+              href={item.type === 'project' ? `/projects/${item.id}/` : `/courses/${item.id.replace(/\/index$/, '')}/`}
+            >
+              <span class="thumb" aria-hidden="true">
+                {hasFigure(item.id) ? (
+                  <Figure name={item.id} title={item.data.title} class="w-full p-2 text-ink" />
+                ) : hero ? (
+                  <img src={hero} alt="" class="plate" loading="lazy" />
+                ) : (
+                  <span class="lab text-muted">{typeLabel}</span>
+                )}
+              </span>
+              <span class="min-w-0">
+                <span class="disp ttl text-ink">{item.data.title}</span>
+                <span class="mt-2 block max-w-[70ch]">{item.data.description}</span>
+                <span class="lab mt-3 block text-muted">
+                  {[year, typeLabel, ...tags].filter((part) => part !== '').join(' / ')}
+                </span>
+              </span>
+            </a>
+          </li>
+        );
+      })}
     </ol>
 
     <h2 class="disp text-ink mt-14 mb-3 text-[clamp(1.75rem,3vw,2.5rem)]">Competition Builds</h2>
@@ -55,4 +87,26 @@ const seo = {
       {competitionProjects.map((project) => <CompetitionCard project={project} />)}
     </div>
   </div>
+  </div>
 </Layout>
+
+<style>
+  .drafting {
+    position: absolute; inset: 0; pointer-events: none;
+    background-image:
+      linear-gradient(to right, color-mix(in srgb, var(--ink) 6%, transparent) 1px, transparent 1px),
+      linear-gradient(to bottom, color-mix(in srgb, var(--ink) 6%, transparent) 1px, transparent 1px);
+    background-size: 32px 32px;
+  }
+  .entries { list-style: none; padding: 0; border-top: 2px solid var(--ink); }
+  .entry { display: grid; grid-template-columns: 96px minmax(0, 1fr); gap: 1rem; align-items: start; padding: 1.25rem .75rem; border-bottom: 1px solid var(--rule); border-left: 3px solid transparent; text-decoration: none; color: inherit; background: var(--ground); }
+  @media (min-width: 640px) { .entry { grid-template-columns: 150px minmax(0, 1fr); gap: 1.5rem; } }
+  .thumb { display: flex; align-items: center; justify-content: center; aspect-ratio: 4 / 3; border: 1px solid var(--rule); overflow: hidden; background: var(--panel); }
+  .thumb :global(.figure-wrap) { width: 100%; }
+  .thumb :global(.figure-wrap small) { display: none; }
+  .thumb .plate { width: 100%; height: 100%; object-fit: cover; filter: grayscale(1) contrast(1.1); mix-blend-mode: luminosity; }
+  .ttl { display: block; font-size: clamp(1.4rem, 3vw, 1.75rem); }
+  .entry:hover, .entry:focus-visible { border-left-color: var(--mark); }
+  .entry:hover .thumb, .entry:focus-visible .thumb { border-color: var(--mark); }
+  .entry:hover .ttl, .entry:focus-visible .ttl { color: var(--mark); }
+</style>

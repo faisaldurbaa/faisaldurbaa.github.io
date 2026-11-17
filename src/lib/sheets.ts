@@ -33,7 +33,6 @@ const priority = ['earthquake-damage-prediction', 'aircraft-detection', 'iris-sm
 const overrides: Record<string, Partial<Sheet>> = {
   'earthquake-damage-prediction': {
     context: 'Frontier Academy · 2025',
-    outcome: 'International Data Storytelling Award',
     summary: 'A deep learning model that predicts post-earthquake building damage from the Nepal 2015 dataset, with an intervention framework built on its results.',
   },
   'aircraft-detection': {
