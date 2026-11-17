@@ -2,7 +2,7 @@
 import ShareButton from '../ShareButton.astro';
 import RelatedContent from '../RelatedContent.astro';
 ---
-<div class="px-4 sm:px-6 lg:px-8">
+<div class="playbook px-4 sm:px-6 lg:px-8">
     <style>
         .netflix-red { color: #E50914; }
         .bg-netflix-red { background-color: #E50914; }
@@ -164,7 +164,7 @@ import RelatedContent from '../RelatedContent.astro';
 
     <script>
     import type { TooltipItem } from 'chart.js';
-    import { getChartTheme } from '../../lib/chartTheme';
+    import { getChartTheme, token } from '../../lib/chartTheme';
 
     const buildNetflixChartOptions = () => {
         const theme = getChartTheme();
@@ -194,9 +194,9 @@ import RelatedContent from '../RelatedContent.astro';
         const { Chart } = await import('chart.js/auto');
         const chart = Chart.getChart(canvas);
         if (!chart) return;
-        const isDark = document.documentElement.classList.contains('dark');
         if (chart.data.datasets[0]) {
-            chart.data.datasets[0].borderColor = isDark ? '#334155' : '#f1f5f9';
+            chart.data.datasets[0].backgroundColor = [token('--stamp'), token('--muted')];
+            chart.data.datasets[0].borderColor = token('--ground');
         }
         Object.assign(chart.options, buildNetflixChartOptions());
         chart.update('none');
@@ -235,8 +235,8 @@ import RelatedContent from '../RelatedContent.astro';
                             labels: ['Judgment & Instinct', 'Data'],
                             datasets: [{
                                 data: [70, 30],
-                                backgroundColor: ['#E50914', '#5A5A5A'],
-                                borderColor: [document.documentElement.classList.contains('dark') ? '#334155' : '#f1f5f9'],
+                                backgroundColor: [token('--stamp'), token('--muted')],
+                                borderColor: token('--ground'),
                                 borderWidth: 4,
                             }]
                         },

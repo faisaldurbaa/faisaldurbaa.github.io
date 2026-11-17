@@ -7,11 +7,14 @@
   color-scheme: light;
   --ground: #EDF1F8; --panel: #E1E8F4; --ink: #143C9E; --ink-rgb: 20 60 158;
   --text: #0B1F5C; --muted: #3F5CAE; --rule: rgb(20 60 158 / .35); --stamp: #B23410; --mark: #8A5200;
+  /* Accents legible on an ink-filled (selected) row: the other theme's values. */
+  --stamp-on-ink: #FFA27A; --mark-on-ink: #FFD84D;
 }
 html.dark {
   color-scheme: dark;
   --ground: #103C9E; --panel: #0D3389; --ink: #EEF4FF; --ink-rgb: 238 244 255;
   --text: #EEF4FF; --muted: #C3D2F2; --rule: rgb(238 244 255 / .4); --stamp: #FFA27A; --mark: #FFD84D;
+  --stamp-on-ink: #B23410; --mark-on-ink: #8A5200;
 }
 
 html { background: var(--ground); scrollbar-color: var(--ink) var(--ground); }
@@ -64,8 +67,11 @@ a:hover { text-decoration-color: var(--mark); }
 /* Selected row inverts; a row you point at takes the highlight colour. */
 .index-row[data-on="true"] { background: var(--ink); color: var(--ground); }
 .index-row[data-on="true"] * { color: inherit; }
+.index-row[data-on="true"] .no { color: var(--mark-on-ink); }
+.index-row[data-on="true"] .win { color: var(--stamp-on-ink); }
 .index-row:not([data-on="true"]):hover, .index-row:not([data-on="true"]):focus-visible { color: var(--mark); border-bottom-color: var(--mark); }
 .index-row:not([data-on="true"]):hover *, .index-row:not([data-on="true"]):focus-visible * { color: inherit; }
+.index-row:not([data-on="true"]):hover .win, .index-row:not([data-on="true"]):focus-visible .win { color: var(--stamp); }
 
 .btn, .btn-solid { display: inline-flex; align-items: center; gap: .5rem; border: 2px solid var(--ink); padding: .7rem 1.1rem; font-family: "Barlow Semi Condensed", sans-serif; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; text-decoration: none; color: var(--ink); cursor: pointer; background: transparent; }
 .btn:hover, .btn-solid { background: var(--ink); color: var(--ground); }
@@ -88,3 +94,16 @@ footer a { display: inline-flex; align-items: center; min-height: 2.75rem; }
 
 /* Faint drafting grid, as on graph paper. */
 .grid-paper { background-color: var(--ground); background-image: linear-gradient(color-mix(in srgb, var(--ink) 7%, transparent) 1px, transparent 1px), linear-gradient(90deg, color-mix(in srgb, var(--ink) 7%, transparent) 1px, transparent 1px); background-size: 32px 32px; }
+
+/* Interactive playbooks (src/components/interactive/*) were written in generic Tailwind
+   cards; this layer redraws them on the sheet without rewriting each component. */
+.playbook :is(.rounded, .rounded-md, .rounded-lg, .rounded-xl, .rounded-2xl) { border-radius: 0; }
+.playbook [class*="shadow"] { box-shadow: none !important; }
+.playbook .bg-white { background: var(--ground) !important; border: 2px solid var(--ink) !important; }
+.playbook :is(h1, h2, h3, h4) { font-family: "Barlow Condensed", sans-serif; font-weight: 600; text-transform: uppercase; letter-spacing: 0; color: var(--ink) !important; }
+.playbook :is([class*="text-cyan-"], .text-blue-600, .netflix-red, .g-blue, .g-red, .g-yellow, .g-green) { color: var(--stamp) !important; }
+.playbook :is(.bg-cyan-600, .bg-cyan-700, .bg-netflix-red) { background: var(--ink) !important; color: var(--ground) !important; }
+.playbook :is(.bg-cyan-100, .bg-cyan-900, .bg-slate-300, .bg-slate-600) { background: var(--panel) !important; }
+.playbook :is(.border-blue-500, [class*="border-gray-"], [class*="border-slate-"]) { border-color: var(--rule) !important; }
+.playbook .card-hover:hover { transform: none; border-color: var(--mark) !important; }
+.playbook .timeline-item.active { border-color: var(--mark) !important; }

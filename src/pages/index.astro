@@ -2,6 +2,7 @@
 import { getCollection, type CollectionEntry } from 'astro:content';
 import Layout from '../layouts/Layout.astro';
 import Figure from '../components/Figure.astro';
+import InkBlots from '../components/InkBlots.astro';
 import { getSheets } from '../lib/sheets';
 
 const sheets = await getSheets();
@@ -58,8 +59,9 @@ const seo = {
     </ol>
   </div>
 
-  <section class="pad mt-20 grid gap-x-12 gap-y-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,44%)]">
-    <div>
+  <section class="pad relative mt-20 overflow-hidden pt-4 pb-16 grid gap-x-12 gap-y-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,44%)]">
+    <InkBlots set="section" />
+    <div class="relative">
       <h2 class="disp text-ink text-4xl">Writing</h2>
       <ol class="index mt-5">
         {posts.map((post: CollectionEntry<'blog'>) => (
@@ -76,7 +78,7 @@ const seo = {
         <a class="btn" href="/courses/ms-excel-documentation/">Excel course</a>
       </p>
     </div>
-    <div class="lg:pt-14">
+    <div class="relative lg:pt-14">
       <p class="max-w-md text-lg">Working on something where this would help, or want the details behind a sheet?</p>
       <p class="mt-5"><a class="btn-solid" href="/contact/">Get in touch</a></p>
     </div>

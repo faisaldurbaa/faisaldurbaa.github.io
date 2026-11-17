@@ -2,7 +2,7 @@
 import ShareButton from '../ShareButton.astro';
 import RelatedContent from '../RelatedContent.astro';
 ---
-<div class="px-4 sm:px-6 lg:px-8">
+<div class="playbook px-4 sm:px-6 lg:px-8">
     <section class="mb-12 section-fade-in">
         <div class="bg-white dark:bg-slate-800 p-6 sm:p-8 border border-gray-200 dark:border-slate-700 rounded-lg shadow-sm">
             <div class="flex justify-between items-center mb-4">
@@ -178,7 +178,7 @@ import RelatedContent from '../RelatedContent.astro';
 
 <script>
     import type { TooltipItem } from 'chart.js';
-    import { getChartTheme } from '../../lib/chartTheme';
+    import { getChartTheme, token } from '../../lib/chartTheme';
 
     const buildGoogleChartOptions = () => {
         const theme = getChartTheme();
@@ -224,6 +224,10 @@ import RelatedContent from '../RelatedContent.astro';
         if (!chart) return;
         const options = buildGoogleChartOptions();
         Object.assign(chart.options, options);
+        if (chart.data.datasets[0]) {
+            chart.data.datasets[0].backgroundColor = [token('--muted'), token('--ink')];
+            chart.data.datasets[0].borderColor = [token('--muted'), token('--ink')];
+        }
         chart.update('none');
     };
 
@@ -261,8 +265,8 @@ import RelatedContent from '../RelatedContent.astro';
                             datasets: [{
                                 label: 'Market Share %',
                                 data: [2, 19],
-                                backgroundColor: ['#cccccc', '#4285F4'],
-                                borderColor: ['#999999', '#4285F4'],
+                                backgroundColor: [token('--muted'), token('--ink')],
+                                borderColor: [token('--muted'), token('--ink')],
                                 borderWidth: 1,
                                 barThickness: 50
                             }]

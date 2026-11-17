@@ -28,7 +28,7 @@ const tags = entry.data.tags ?? [];
   image: entry.data.heroImage
 }}>
   <article class="pad pt-10 pb-16 grid gap-x-12 gap-y-6 lg:grid-cols-[13rem_minmax(0,1fr)]">
-    <aside class="flex flex-col gap-3 lab text-muted lg:sticky lg:top-6 lg:self-start">
+    <aside class="flex flex-col gap-3 lab text-muted lg:sticky lg:top-[calc(var(--header-h)+1.5rem)] lg:self-start">
       <a href={backLink} class="text-ink hover:underline">&larr; {backText}</a>
       {date && <p>{date}</p>}
       {tags.length > 0 && <p>{tags.join(' / ')}</p>}
