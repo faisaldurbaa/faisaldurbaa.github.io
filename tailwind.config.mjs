@@ -3,7 +3,7 @@ import typography from '@tailwindcss/typography';
 // Blue-tinted neutrals: content written against slate/gray keeps working in the sheet palette.
 const sheetScale = {
   50: '#F4F7FC', 100: '#EEF4FF', 200: '#DCE6F7', 300: '#C3D2F2', 400: '#9DB3E3',
-  500: '#5174BE', 600: '#3B5FB4', 700: '#1F49A8', 800: '#0D3389', 900: '#0A2A78', 950: '#071F5C',
+  500: '#4466B2', 600: '#3B5FB4', 700: '#1F49A8', 800: '#0D3389', 900: '#0A2A78', 950: '#071F5C',
 };
 
 /** @type {import('tailwindcss').Config} */

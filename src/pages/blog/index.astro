@@ -1,8 +1,6 @@
 ---
 import { getCollection, type CollectionEntry } from 'astro:content';
 import Layout from '../../layouts/Layout.astro';
-import FadeIn from '../../components/FadeIn.astro';
-import Card from '../../components/Card.astro';
 
 const blogEntries = await getCollection('blog');
 const fallbackDate = new Date('1970-01-01');
@@ -18,103 +16,27 @@ const seo = {
 };
 ---
 <Layout seo={seo}>
-  <div class="mx-auto w-full max-w-[1800px] px-[clamp(3.25rem,8vw,7.25rem)] py-16 space-y-10">
-    <FadeIn>
-      <div class="rounded-3xl bg-gradient-to-br from-white via-[#eef3fb] to-[#dfe9f5] dark:from-slate-800 dark:via-slate-800/90 dark:to-slate-900 border border-white/60 dark:border-slate-700/60 shadow-xl px-6 py-8 md:px-10 md:py-10 flex flex-col md:flex-row md:items-center md:justify-between gap-6">
-        <div class="space-y-1">
-          <h1 class="text-4xl font-bold text-gray-900 dark:text-slate-100">BLOG POSTS</h1>
-          <p class="text-gray-600 dark:text-slate-400 max-w-2xl">Domesitcating technical advancements in technology and business.</p>
-        </div>
-        <div class="flex gap-3">
-          <div class="stat-pill">
-            <span class="text-xs uppercase text-gray-600 dark:text-slate-400 text-center w-full">Articles</span>
-            <span class="text-2xl font-bold text-gray-900 dark:text-slate-100 text-center w-full counter" data-target={sortedContent.length}>0</span>
-          </div>
-        </div>
-      </div>
-    </FadeIn>
+  <div class="pad pt-10 pb-16 max-w-[1100px]">
+    <h1 class="disp text-ink text-[clamp(2.5rem,5vw,4.5rem)]">Writing</h1>
+    <p class="mt-4 mb-10 max-w-[70ch] text-lg text-muted">Domesitcating technical advancements in technology and business.</p>
 
-    <div id="blog-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-8 lg:gap-10 items-stretch">
+    <ul id="blog-grid" class="index">
       {sortedContent.map((item: CollectionEntry<'blog'>) => (
-        <FadeIn>
-          <Card
-            title={item.data.title}
-            description={item.data.description}
-            href={`/blog/${item.id}/`}
-            tags={item.data.tags ?? []}
-            type="blog"
-            publishDate={item.data.publishDate}
-            heroImage={item.data.heroImage}
-          />
-        </FadeIn>
+        <li>
+          <a href={`/blog/${item.id}/`} class="block border-b border-rule px-3 py-4 no-underline text-body hover:bg-ink hover:text-ground group">
+            {item.data.publishDate && (
+              <p class="lab text-muted group-hover:text-ground">
+                {new Date(item.data.publishDate).toLocaleDateString('en-us', { year: 'numeric', month: 'short', day: 'numeric' })}
+              </p>
+            )}
+            <span class="font-display font-medium uppercase text-ink text-[clamp(1.35rem,2.2vw,1.75rem)] leading-[1.08] block mt-1 group-hover:text-ground">{item.data.title}</span>
+            <span class="block mt-2 max-w-[70ch] group-hover:text-ground">{item.data.description}</span>
+            {item.data.tags && item.data.tags.length > 0 && (
+              <span class="lab block mt-3 text-muted group-hover:text-ground">{item.data.tags.join(' / ')}</span>
+            )}
+          </a>
+        </li>
       ))}
-    </div>
+    </ul>
   </div>
 </Layout>
-
-<style>
-  .stat-pill {
-    display: inline-flex;
-    flex-direction: column;
-    gap: 0.1rem;
-    padding: 0.65rem 0.9rem;
-    border-radius: 0.9rem;
-    background: rgba(255, 255, 255, 0.9);
-    border: 1px solid rgba(226, 232, 240, 0.9);
-    box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
-    min-width: 90px;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-  }
-
-  :global(.dark) .stat-pill {
-    background: rgba(30, 41, 59, 0.8);
-    border-color: rgba(71, 85, 105, 0.6);
-    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.2);
-  }
-</style>
-
-<script>
-  function setupBlogCounters() {
-    const counters = document.querySelectorAll('.counter:not([data-animated])');
-    if (!counters.length) return;
-
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          const el = entry.target as HTMLElement;
-          el.setAttribute('data-animated', 'true');
-          const target = Number(el.dataset?.target || 0);
-          const duration = 900;
-          const start = performance.now();
-
-          function tick(now: number) {
-            const progress = Math.min((now - start) / duration, 1);
-            const value = Math.floor(progress * target);
-            el.textContent = value.toString();
-            if (progress < 1) requestAnimationFrame(tick);
-            else el.textContent = target.toString();
-          }
-
-          requestAnimationFrame(tick);
-          observer.unobserve(el);
-        }
-      });
-    }, { threshold: 0.5 });
-
-    counters.forEach((counter) => {
-      counter.textContent = '0';
-      observer.observe(counter);
-    });
-  }
-
-  if (typeof window !== 'undefined') {
-    setupBlogCounters();
-    document.addEventListener('astro:after-swap', () => {
-      const counters = document.querySelectorAll('.counter');
-      counters.forEach((c) => c.removeAttribute('data-animated'));
-      setupBlogCounters();
-    });
-  }
-</script>

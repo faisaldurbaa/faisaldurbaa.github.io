@@ -1,153 +1,35 @@
 ---
-import { Icon } from 'astro-icon/components';
 import Layout from '../layouts/Layout.astro';
-import FadeIn from '../components/FadeIn.astro';
-import { buttonPrimary } from '../lib/buttonStyles';
 
 const seo = {
   title: "About Me",
   description: "Learn more about Faisal Durbaa, his skills, and professional background."
 };
 
-const skills = [
-  { name: 'Python', icon: 'mdi:language-python' },
-  { name: 'AI/ML', icon: 'mdi:brain' },
-  { name: 'Prompt Engineering', icon: 'mdi:robot' },
-  { name: 'Linux', icon: 'mdi:linux' },
-  { name: 'HTML', icon: 'mdi:language-html5' },
-  { name: 'TypeScript', icon: 'mdi:language-typescript' },
-  { name: 'MS Office', icon: 'mdi:microsoft-office' },
-  { name: 'Data Analysis', icon: 'mdi:chart-line' },
-  { name: 'Multilingualism', icon: 'mdi:translate' }
-];
-
-const desktopIcons = [
-  { name: 'mdi:language-python', classes: 'top-[8%] left-[15%] w-16 h-16 -rotate-12 text-slate-400/25 dark:text-slate-500/12' },
-  { name: 'mdi:language-typescript', classes: 'bottom-[15%] right-[18%] w-14 h-14 rotate-6 text-slate-400/25 dark:text-slate-500/12' },
-  { name: 'mdi:git', classes: 'top-[55%] left-[12%] w-16 h-16 rotate-12 text-slate-400/25 dark:text-slate-500/12' },
-  { name: 'mdi:terminal', classes: 'top-[12%] right-[25%] w-14 h-14 -rotate-6 text-slate-400/25 dark:text-slate-500/12' },
-  { name: 'mdi:brain', classes: 'top-[20%] left-[25%] w-20 h-20 -rotate-8 text-slate-400/25 dark:text-slate-500/12' },
-  { name: 'mdi:security', classes: 'top-[35%] right-[12%] w-16 h-16 rotate-15 text-slate-400/25 dark:text-slate-500/12' },
-  { name: 'mdi:chart-bar', classes: 'bottom-[35%] right-[25%] w-16 h-16 rotate-3 text-slate-400/25 dark:text-slate-500/12' },
-  { name: 'mdi:robot', classes: 'top-[65%] right-[20%] w-14 h-14 rotate-12 text-slate-400/25 dark:text-slate-500/12' },
-  { name: 'mdi:cube-outline', classes: 'bottom-[18%] left-[20%] w-20 h-20 -rotate-12 text-slate-400/25 dark:text-slate-500/12' },
-  { name: 'mdi:language-html5', classes: 'top-[40%] left-[8%] w-14 h-14 rotate-15 text-slate-400/25 dark:text-slate-500/12' },
-  { name: 'mdi:nodejs', classes: 'bottom-[40%] left-[25%] w-16 h-16 -rotate-15 text-slate-400/25 dark:text-slate-500/12' },
-  { name: 'mdi:database', classes: 'top-[75%] left-[35%] w-14 h-14 rotate-8 text-slate-400/25 dark:text-slate-500/12' },
-  { name: 'mdi:cloud-outline', classes: 'top-[5%] left-[35%] w-20 h-20 -rotate-8 text-slate-400/25 dark:text-slate-500/12' },
-  { name: 'mdi:code-braces', classes: 'top-[70%] right-[10%] w-12 h-12 rotate-15 text-slate-400/25 dark:text-slate-500/12' },
-  { name: 'mdi:linux', classes: 'bottom-[25%] left-[10%] w-14 h-14 -rotate-15 text-slate-400/25 dark:text-slate-500/12' },
-  { name: 'mdi:atom', classes: 'bottom-[8%] right-[35%] w-16 h-16 rotate-10 text-slate-400/25 dark:text-slate-500/12' },
-  { name: 'mdi:chart-bubble', classes: 'bottom-[55%] right-[40%] w-12 h-12 -rotate-10 text-slate-400/25 dark:text-slate-500/12' },
-  { name: 'mdi:server', classes: 'top-[50%] right-[35%] w-14 h-14 rotate-5 text-slate-400/25 dark:text-slate-500/12' },
-  { name: 'mdi:flask', classes: 'bottom-[30%] left-[35%] w-12 h-12 -rotate-5 text-slate-400/25 dark:text-slate-500/12' },
-  { name: 'mdi:api', classes: 'top-[25%] right-[45%] w-14 h-14 rotate-8 text-slate-400/25 dark:text-slate-500/12' },
-  { name: 'mdi:react', classes: 'top-[3%] right-[15%] w-16 h-16 rotate-12 text-slate-400/25 dark:text-slate-500/12' },
-  { name: 'mdi:docker', classes: 'top-[6%] left-[8%] w-14 h-14 -rotate-15 text-slate-400/25 dark:text-slate-500/12' },
-  { name: 'mdi:kubernetes', classes: 'top-[15%] right-[8%] w-12 h-12 rotate-8 text-slate-400/25 dark:text-slate-500/12' },
-  { name: 'mdi:github', classes: 'top-[2%] left-[25%] w-14 h-14 -rotate-6 text-slate-400/25 dark:text-slate-500/12' },
-  { name: 'mdi:matrix', classes: 'top-[10%] left-[5%] w-16 h-16 rotate-10 text-slate-400/25 dark:text-slate-500/12' },
-  { name: 'mdi:vuejs', classes: 'top-[4%] right-[35%] w-14 h-14 -rotate-12 text-slate-400/25 dark:text-slate-500/12' },
-  { name: 'mdi:jquery', classes: 'top-[18%] right-[5%] w-12 h-12 rotate-15 text-slate-400/25 dark:text-slate-500/12' },
-  { name: 'mdi:angular', classes: 'top-[1%] left-[45%] w-14 h-14 -rotate-8 text-slate-400/25 dark:text-slate-500/12' },
-  { name: 'mdi:webpack', classes: 'top-[8%] right-[45%] w-12 h-12 rotate-6 text-slate-400/25 dark:text-slate-500/12' },
-  { name: 'mdi:npm', classes: 'top-[22%] left-[5%] w-14 h-14 -rotate-10 text-slate-400/25 dark:text-slate-500/12' }
-];
-
-const mobileIcons = [
-  { name: 'mdi:code-braces', classes: 'top-[12%] left-[5%] w-10 h-10 -rotate-12 text-slate-400/25 dark:text-slate-500/12' },
-  { name: 'mdi:brain', classes: 'top-[18%] right-[8%] w-12 h-12 rotate-12 text-slate-400/25 dark:text-slate-500/12' },
-  { name: 'mdi:chart-line', classes: 'bottom-[12%] right-[5%] w-10 h-10 rotate-6 text-slate-400/25 dark:text-slate-500/12' },
-  { name: 'mdi:security', classes: 'bottom-[18%] left-[8%] w-12 h-12 -rotate-6 text-slate-400/25 dark:text-slate-500/12' },
-  { name: 'mdi:terminal', classes: 'top-[35%] right-[5%] w-10 h-10 -rotate-6 text-slate-400/25 dark:text-slate-500/12' },
-  { name: 'mdi:robot', classes: 'top-[45%] left-[5%] w-11 h-11 rotate-8 text-slate-400/25 dark:text-slate-500/12' }
-];
+const skills = ['Python', 'AI/ML', 'Prompt Engineering', 'Linux', 'HTML', 'TypeScript', 'MS Office', 'Data Analysis', 'Multilingualism'];
 ---
 <Layout seo={seo}>
-  <div class="relative min-h-screen py-20">
-    <!-- Floating Background Icons -->
-    <div class="absolute inset-0 z-0 hidden md:block pointer-events-none" aria-hidden="true">
-      {desktopIcons.map((icon, index) => (
-        <Icon 
-          name={icon.name} 
-          class:list={[ "absolute animate-float", icon.classes ]}
-          style={`animation-delay: ${index * 600}ms; animation-duration: ${8 + index % 5}s;`}
-        />
+  <div class="pad pt-10 pb-20">
+    <h1 class="disp text-ink text-[clamp(2.5rem,5vw,4.5rem)]">About</h1>
+    <div class="prose-sheet mt-6 space-y-5">
+      <p>Hey there! I'm on a gap year from Harvard University, and passionate about the intersection of artificial intelligence, and human-computer interaction. My journey began with Python programming and quickly evolved into exploring machine learning algorithms, prompt engineering techniques, and security analysis.</p>
+      <p>Currently, I'm diving deep into AI/ML research and exploring the fascinating world of prompt engineering. I believe that understanding how to effectively communicate with AI systems is becoming as crucial as traditional programming skills.</p>
+      <p>When I'm not coding or studying, you'll find me experimenting with Linux systems, exploring new technologies, or working on web development projects. I'm particularly interested in how technology can solve real-world problems and make data more accessible and secure.</p>
+      <p>As someone who believes that facts are powerful tools, I'm committed to using technology ethically and transparently. I'm always eager to collaborate on innovative projects and connect with fellow tech enthusiasts who share a passion for learning and building.</p>
+    </div>
+
+    <h2 class="disp text-ink text-4xl mt-16">Skills &amp; Interests</h2>
+    <ul class="index mt-5 max-w-[70ch]">
+      {skills.map((name: string) => (
+        <li class="border-b border-rule px-3 py-3 text-lg">{name}</li>
       ))}
-    </div>
+    </ul>
 
-    <!-- Mobile Icons -->
-    <div class="absolute inset-0 z-0 block md:hidden pointer-events-none" aria-hidden="true">
-      {mobileIcons.map((icon, index) => (
-        <Icon 
-          name={icon.name} 
-          class:list={[ "absolute animate-float", icon.classes ]}
-          style={`animation-delay: ${index * 600}ms; animation-duration: ${8 + index % 5}s;`}
-        />
-      ))}
-    </div>
+    <blockquote class="prose-sheet mt-16 border-t-2 border-ink pt-6 text-xl">
+      <p>"The best managers are the great individual contributors, who never ever want to be a manager, but decide they have to be a manager because no one else is going to be able to do as good a job as them."</p>
+      <cite class="lab mt-3 block not-italic text-muted">— Steve Jobs</cite>
+    </blockquote>
 
-    <div class="container mx-auto max-w-5xl px-4 sm:px-8 relative z-10">
-      <FadeIn>
-        <!-- Hero Section -->
-        <div class="text-center mb-10">
-          <h1 class="text-4xl sm:text-5xl font-bold text-gray-900 dark:text-slate-100 mb-3">Faisal Durbaa</h1>
-          <p class="text-xl text-gray-600 dark:text-slate-400 mb-6">A Curious Young Man</p>
-        </div>
-
-        <!-- About Content -->
-        <div class="bg-white/60 dark:bg-slate-800/60 backdrop-blur-sm border border-gray-200/50 dark:border-slate-700/50 rounded-2xl p-8 sm:p-12 shadow-lg mb-12">
-          <div class="prose prose-lg prose-slate dark:prose-invert max-w-none text-gray-700 dark:text-slate-300">
-            <p class="text-lg leading-relaxed mb-6">
-              Hey there! I'm a high school student passionate about the intersection of artificial intelligence, and human-computer interaction. My journey began with Python programming and quickly evolved into exploring machine learning algorithms, prompt engineering techniques, and security analysis.
-            </p>
-            <p class="text-lg leading-relaxed mb-6">
-              Currently, I'm diving deep into AI/ML research and exploring the fascinating world of prompt engineering. I believe that understanding how to effectively communicate with AI systems is becoming as crucial as traditional programming skills.
-            </p>
-            <p class="text-lg leading-relaxed mb-6">
-              When I'm not coding or studying, you'll find me experimenting with Linux systems, exploring new technologies, or working on web development projects. I'm particularly interested in how technology can solve real-world problems and make data more accessible and secure.
-            </p>
-            <p class="text-lg leading-relaxed">
-              As someone who believes that facts are powerful tools, I'm committed to using technology ethically and transparently. I'm always eager to collaborate on innovative projects and connect with fellow tech enthusiasts who share a passion for learning and building.
-            </p>
-          </div>
-        </div>
-
-        <!-- Skills Section -->
-        <div class="bg-white/60 dark:bg-slate-800/60 backdrop-blur-sm border border-gray-200/50 dark:border-slate-700/50 rounded-2xl p-8 sm:p-12 shadow-lg mb-12">
-          <h2 class="text-2xl font-bold text-gray-900 dark:text-slate-100 mb-8 text-center">Skills & Interests</h2>
-          <div class="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
-            {skills.map((skill) => (
-              <div class="flex items-center space-x-3 bg-white/50 dark:bg-slate-700/50 backdrop-blur-sm border border-gray-200/30 dark:border-slate-600/40 rounded-xl p-4 hover:bg-white/70 dark:hover:bg-slate-700/70 transition-all duration-200 hover:scale-105 col-span-2 md:col-span-1">
-                <Icon name={skill.icon} class="w-6 h-6 text-accent dark:text-slate-300 flex-shrink-0" />
-                <span class="font-medium text-gray-800 dark:text-slate-200">{skill.name}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <!-- Quote Section -->
-        <div class="bg-gradient-to-r from-accent/5 to-accent/10 dark:from-slate-700/30 dark:to-slate-800/30 border border-accent/20 dark:border-slate-600/40 rounded-2xl p-8 sm:p-12 mb-12">
-          <div class="text-center">
-            <Icon name="mdi:format-quote-open" class="w-8 h-8 text-accent/60 dark:text-slate-400 mx-auto mb-4" />
-            <blockquote class="text-xl sm:text-2xl font-medium text-gray-800 dark:text-slate-200 italic mb-4">
-              "The best managers are the great individual contributors, who never ever want to be a manager, but decide they have to be a manager because no one else is going to be able to do as good a job as them."
-            </blockquote>
-            <cite class="block not-italic text-accent dark:text-slate-300 font-semibold">— Steve Jobs</cite>
-          </div>
-        </div>
-
-        <!-- CTA Section -->
-        <div class="text-center">
-          <a 
-            href="/contact/" 
-            class:list={[buttonPrimary, 'px-8 py-4']}
-          >
-            <Icon name="mdi:email" class="w-5 h-5" />
-            <span>Get in Touch</span>
-          </a>
-        </div>
-      </FadeIn>
-    </div>
+    <p class="mt-12"><a href="/contact/" class="btn-solid">Get in Touch</a></p>
   </div>
 </Layout>

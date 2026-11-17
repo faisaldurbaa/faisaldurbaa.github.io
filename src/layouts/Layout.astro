@@ -33,7 +33,8 @@ const {
   lang = 'en',
   languageSwitch,
   alternateLanguages = [],
-  defaultTheme = 'dark',
+  // Pages rendered straight from MDX (the interactive playbooks) are long reads too.
+  defaultTheme = Astro.props.frontmatter ? 'light' : 'dark',
 } = Astro.props;
 
 const seo = seoProp || {
