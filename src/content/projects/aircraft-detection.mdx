@@ -22,13 +22,13 @@ This paradox echoes the ancient Roman adage:
 
 > Si vis pacem, para bellum - If you want peace, prepare for war.
 
-This paradox grounds the development of many advanced military technologies, including the focus of this project: 
+This paradox grounds the development of many advanced technologies, including the focus of this project: 
 aircraft detection systems. These systems are not theoretical concepts, but widely used tools in real-world scenarios, 
 with key applications that include:
 
 - **Automated Target Recognition (ATR):** In a combat scenario where speed is critical, ATR 
 systems integrated into fighter jets, bombers, and drones autonomously detect and classify enemy aircraft with a high 
-degree of accuracy, reducing the cognitive load on military personnel and speeding up the process.
+degree of accuracy, reducing the cognitive load on personnel and speeding up the process.
 - **Intelligence, Surveillance, and Reconnaissance (ISR):** Computer vision systems are used to automate the analysis of 
 vast amounts of visual data collected from satellites, high-altitude aircraft, and surveillance drones. For this specific 
 category, *change detection* is the most popular application.
@@ -36,7 +36,7 @@ category, *change detection* is the most popular application.
 computer vision to detect, track, and identify incoming aerial threats. Computer vision provides an additional layer 
 of verification, helping to distinguish between enemy aircraft, civilian planes, and even flocks of birds, thereby 
 reducing the risk of friendly fire or false alarms.
-- **Autonomous Navigation and Threat Avoidance:** Military drones, especially those designed for stealth or operations in 
+- **Autonomous Navigation and Threat Avoidance:** Drones, especially those designed for stealth or operations in 
 GPS-denied environments, rely on computer vision to navigate and identify potential threats.
 
 These are only a few of the real-world applications of aircraft detection and identification systems. 
@@ -48,7 +48,7 @@ In this project article, you will witness the entire process of developing such 
 
 <Accordion summary="Dataset">
 ### 1. Desired Dataset
-To train an AI model to detect and identify military aircraft, the desired dataset needs to have the following features:
+To train an AI model to detect and identify aircraft, the desired dataset needs to have the following features:
 - High number of images and instances
 - High number of aircraft types
 - High variance in image size & quality
@@ -61,7 +61,7 @@ I utilized the following tools during this module: Kaggle, Google Datasets, Gemi
 Based on the features determined above, my research identified several datasets prominent in the field of computer vision for aircraft detection & identification:
 1. **DOTA (Dataset for Object deTection in Aerial images):** A massive-scale dataset for general object detection in overhead aerial images.
 2. **RarePlanes:** A unique hybrid dataset combining real satellite imagery with a vast amount of synthetic data, focusing on fine-grained attribute recognition for each aircraft type.
-3. **MAR20 (Military Aircraft Recognition 20):** A specialized benchmark for military aircraft in remote sensing images, notable for its high-precision Oriented Bounding Box (OBB) annotations.
+3. **MAR20:** A specialized benchmark for aircraft in remote sensing images, notable for its high-precision Oriented Bounding Box (OBB) annotations.
 4. **ADCOS (Aircraft Detection in Complex Optical Scene):** A modern dataset designed to test model robustness using challenging satellite imagery with clutter, shadows, and occlusion.
 5. **HRPlanesv2:** A dataset focused on aircraft detection in very-high-resolution (VHR) satellite imagery sourced from Google Earth.
 
@@ -70,17 +70,17 @@ Referring back to the real-world applications of aircraft detection and identifi
 limitations on the public in this field:
 
 As civilians, we cannot possess automated targeting systems for combat scenarios or air defense target verification systems. 
-Almost every country has laws forcing these limitations. Specifically, data from such sensitive military applications is usually classified. 
+Almost every country has laws forcing these limitations. Specifically, data from such sensitive applications is usually classified. 
 As a result, the primary public-facing application for these technologies is change detection - which is widely used by journalists
 and open source intelligence researchers.
 
 Consequently, the majority of the datasets that are available to the public - like the ones above - are focused on 
 change detection use cases, which require overhead imagery. This represents a major hurdle in developing a 
-military aircraft detection & identification system.
+aircraft detection & identification system.
 
 Fortunately, I was able to find a dataset that practically suits all our needs:
 
-### 4. Military Aircraft Detection Dataset
+### 4. Aircraft Detection Dataset
 This [dataset](https://www.kaggle.com/datasets/a2015003713/militaryaircraftdetectiondataset):
 - Is publicly available on Kaggle,
 - Consists of 85 types of aircraft,
@@ -491,7 +491,7 @@ The trained YOLOv8 model achieved impressive accuracy metrics across training se
 - **mAP50(B)**: 78.3% - Strong performance in detecting aircraft at moderate IoU threshold
 - **mAP50-95(B)**: 72.0% - High precision across stricter IoU thresholds  
 - **Inference Speed**: ~200ms per image on standard hardware
-- **Supported Classes**: 43 military aircraft types with balanced detection capabilities
+- **Supported Classes**: 43 aircraft types with balanced detection capabilities
 
 ### Web Application Features
 
@@ -537,7 +537,7 @@ In short, this project was a great learning opportunity for me. I had the chance
 <Accordion summary='Future Work & Recommendations'>
 My recommended workflow for a new model:
 1. Use a dataset like HRPlanesv2 to initially train the model to detect aircrafts generally.
-2. Train the resulting model on the Military Aircraft Detection dataset to add identification capability. Freeze initial layers.
+2. Train the resulting model on the Aircraft Detection dataset to add identification capability. Freeze initial layers.
 3. Create a PRD and a development plan for the web app. Ensure that you cover all aspects of the app before starting the development process. You are ready to start after this.
 
 During this workflow:
