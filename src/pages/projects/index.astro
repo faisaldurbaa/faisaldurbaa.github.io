@@ -2,23 +2,25 @@
 import { getCollection, type CollectionEntry } from 'astro:content';
 import Layout from '../../layouts/Layout.astro';
 import Figure from '../../components/Figure.astro';
-import { hasFigure } from '../../lib/figures';
-import CompetitionCard from '../../components/CompetitionCard.astro';
 import competitionProjects from '../../data/competitionProjects';
+import { getSheets, slugify } from '../../lib/sheets';
 
-const projectEntries = await getCollection('projects');
-const courseEntries = (await getCollection('courses')).filter(
-  (course: CollectionEntry<'courses'>) => course.data.lessonNumber === undefined
-);
-const fallbackDate = new Date('1970-01-01');
-
-const combinedBuilds = [
-  ...projectEntries.map((item: CollectionEntry<'projects'>) => ({ ...item, type: 'project' as const })),
-  ...courseEntries.map((item: CollectionEntry<'courses'>) => ({ ...item, type: 'course' as const })),
-].sort((a, b) =>
-  (b.data.publishDate ? new Date(b.data.publishDate) : fallbackDate).valueOf() -
-  (a.data.publishDate ? new Date(a.data.publishDate) : fallbackDate).valueOf()
-);
+const sheets = await getSheets();
+const competition = new Map(competitionProjects.map((p) => [slugify(p.title), p]));
+// Write-ups on this site first, newest first; then competition builds by year, newest first.
+const entries = new Map((await getCollection('projects')).map((e: CollectionEntry<'projects'>) => [e.id, e.data]));
+const published = new Map([...entries].map(([id, d]) => [id, d.publishDate?.valueOf() ?? 0]));
+const own = sheets.filter((s) => !competition.has(s.slug)).sort((a, b) => (published.get(b.slug) ?? 0) - (published.get(a.slug) ?? 0));
+// Entries without a year in their tag sort last.
+const contest = sheets.filter((s) => competition.has(s.slug)).sort((a, b) => (b.year ?? 0) - (a.year ?? 0));
+const groups = [
+  { id: 'articles', title: '', intro: '', items: own },
+  { id: 'competitions', title: 'TEKNOFEST & TÜBİTAK', intro: "Builds made for student competitions between 2020 and 2025, most of them Turkey's national TEKNOFEST and TÜBİTAK contests. Each was made to solve a specific problem, entered with a written report, and judged against other teams.", items: contest },
+].map((g, gi, all) => ({ ...g, start: all.slice(0, gi).reduce((n, x) => n + x.items.length, 0) }));
+const allCourse = await getCollection('courses');
+const courses = allCourse.filter((course: CollectionEntry<'courses'>) => course.data.lessonNumber === undefined);
+const courseDir = (id: string) => id.replace(/\/index$/, '');
+const lessons = (id: string) => allCourse.filter((c: CollectionEntry<'courses'>) => c.data.lessonNumber !== undefined && c.id.startsWith(`${courseDir(id)}/`)).length;
 
 const seo = {
   title: "Projects",
@@ -26,67 +28,88 @@ const seo = {
 };
 ---
 <Layout seo={seo}>
-  <div class="relative overflow-hidden">
-    {/* Quiet drafting layer: fine grid, a few construction lines and registration crosses in the margins. */}
+  {/* No overflow clipping here: it would break the sticky drawings. */}
+  <div class="relative">
     <div class="drafting" aria-hidden="true"></div>
-    <svg class="pointer-events-none absolute inset-0 h-full w-full text-ink" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1" style="opacity:.22">
-      <g class="hidden md:block">
-        <line x1="24" y1="0" x2="24" y2="100%" stroke-dasharray="2 8" />
-        <svg x="100%" y="0" overflow="visible"><line x1="-24" y1="0" x2="-24" y2="4000" stroke-dasharray="2 8" /></svg>
-      </g>
-      <g transform="translate(40 150)"><circle r="9" /><line x1="-18" y1="0" x2="18" y2="0" /><line x1="0" y1="-18" x2="0" y2="18" /></g>
-      <svg x="100%" y="320" overflow="visible"><g transform="translate(-40 0)"><circle r="9" /><line x1="-18" y1="0" x2="18" y2="0" /><line x1="0" y1="-18" x2="0" y2="18" /></g></svg>
-      <svg x="0" y="100%" overflow="visible"><g transform="translate(40 -260)"><circle r="9" /><line x1="-18" y1="0" x2="18" y2="0" /><line x1="0" y1="-18" x2="0" y2="18" /></g></svg>
-      <line x1="0" y1="96" x2="64" y2="32" class="hidden sm:block" />
-    </svg>
 
-  <div class="pad relative pt-10 pb-16">
-    <h1 class="disp text-ink text-[clamp(2.5rem,5vw,4.5rem)]">Projects</h1>
-    <p class="mt-4 max-w-[70ch] text-lg">A single hub for my open-source projects, courses, and competition builds.</p>
+    <div class="pad relative pt-10 pb-16">
+      <h1 class="disp text-ink text-[clamp(2.5rem,5vw,4.5rem)]">Projects</h1>
+      <p class="mt-4 max-w-[70ch] text-lg">Articles on my own projects, then builds made for national student competitions. Every sheet links to its article, report or code.</p>
 
-    <h2 class="disp text-ink mt-14 mb-3 text-[clamp(1.75rem,3vw,2.5rem)]">Projects &amp; Courses</h2>
-    <ol class="entries">
-      {combinedBuilds.map((item) => {
-        const tags = (item.data.tags ?? []).slice(0, 3);
-        const year = item.data.publishDate ? item.data.publishDate.getFullYear() : '';
-        const typeLabel = item.type === 'project' ? 'Project' : 'Course';
-        const hero = item.data.heroImage;
+      {groups.map((g, gi) => (<>
+        <section id={g.id} class="group" aria-labelledby={g.title ? `g-${g.id}` : undefined} aria-label={g.title ? undefined : 'Articles'}>
+          {g.title && (
+            <header class="group-head">
+              <h2 id={`g-${g.id}`} class="disp text-ink text-[clamp(2rem,3.6vw,3rem)]">{g.title}</h2>
+              <p class="mt-3 max-w-[70ch]">{g.intro}</p>
+            </header>
+          )}
+        {g.items.map((sheet, j) => {
+        const i = g.start + j;
+        const project = competition.get(sheet.slug);
+        const article = entries.get(sheet.slug);
+        // What else an article offers, in the order a visitor would reach for it.
+        const extras = article ? [[article.repoUrl, 'Source code'], [article.liveUrl, 'Live demo'], [article.datasetUrl, 'Dataset']].filter((x): x is [string, string] => Boolean(x[0])) : [];
+        const drawn = Boolean(sheet.figure || sheet.image);
+        const FigTag = article ? 'a' : 'div';
         return (
-          <li>
-            <a
-              class="entry"
-              href={item.type === 'project' ? `/projects/${item.id}/` : `/courses/${item.id.replace(/\/index$/, '')}/`}
-            >
-              <span class="thumb" aria-hidden="true">
-                {hasFigure(item.id) ? (
-                  <Figure name={item.id} title={item.data.title} class="w-full p-2 text-ink" />
-                ) : hero ? (
-                  <img src={hero} alt="" class="plate" loading="lazy" />
+          <section id={`sheet-${sheet.slug}`} class="plate" data-flip={i % 2 === 1 ? '' : undefined} aria-labelledby={`t-${sheet.slug}`}>
+            {/* Anchor for /projects/#<slug> deep links from competition sheets. */}
+            {project && <span id={sheet.slug} class="anchor"></span>}
+            {drawn && (
+              <FigTag class="frame grid-paper plate-fig" href={article ? sheet.href : undefined} tabindex={article ? -1 : undefined} aria-hidden={article ? 'true' : undefined}>
+                {sheet.figure ? (
+                  <Figure name={sheet.figure} title={sheet.title} vt={`fig-${sheet.slug}`} class="h-full w-full text-ink" />
                 ) : (
-                  <span class="lab text-muted">{typeLabel}</span>
+                  <img src={sheet.image} alt="" class="plate-img" loading="lazy" />
                 )}
-              </span>
-              <span class="min-w-0">
-                <span class="disp ttl text-ink">{item.data.title}</span>
-                <span class="mt-2 block max-w-[70ch]">{item.data.description}</span>
-                <span class="lab mt-3 block text-muted">
-                  {[year, typeLabel, ...tags].filter((part) => part !== '').join(' / ')}
-                </span>
-              </span>
-            </a>
-          </li>
+              </FigTag>
+            )}
+            <div class="plate-text" data-solo={drawn ? undefined : ''}>
+              <div class="flex items-baseline gap-4 border-b-2 border-ink pb-3">
+                <span class="no disp text-mark text-5xl">{String(i + 1).padStart(2, '0')}</span>
+                <h3 id={`t-${sheet.slug}`} class="disp text-ink text-[clamp(1.9rem,3.2vw,2.75rem)]">{article ? <a class="ttl-link" href={sheet.href}>{sheet.title}</a> : sheet.title}</h3>
+              </div>
+              <p class="lab mt-3 text-muted">
+                {project ? `${sheet.context} · ${project.focus} · ${project.roles.join(' · ')}` : sheet.context}
+              </p>
+              {/* Non-award outcomes are just the links, which the buttons below already carry. */}
+              {sheet.win && <p class="stamp mt-5">{sheet.outcome}</p>}
+              <div class="mt-5 max-w-[60ch] space-y-3">
+                {project && <p><span class="lab text-ink">Problem</span><br />{project.problem}</p>}
+                <p>{project && <><span class="lab text-ink">Solution</span><br /></>}{article?.intro ?? sheet.summary}</p>
+              </div>
+              <p class="mt-6 flex flex-wrap items-center gap-3">
+                {article && <a class="btn-solid" href={sheet.href}>Read<span class="sr-only"> the article: {sheet.title}</span></a>}
+                {[...extras, ...(project?.links ?? []).map((l) => [l.href, l.label] as [string, string])].map(([href, label]) => (
+                  <a href={href} target="_blank" rel="noopener noreferrer" class="btn">{label}<span class="sr-only"> ({sheet.title}, opens in a new tab)</span></a>
+                ))}
+              </p>
+            </div>
+          </section>
         );
-      })}
-    </ol>
+        })}
+        </section>
+        {gi === 0 && courses.map((course: CollectionEntry<'courses'>) => (
+          <section class="course" aria-labelledby={`c-${courseDir(course.id)}`}>
+            {course.data.heroImage && (
+              <a class="course-img frame" href={`/courses/${courseDir(course.id)}/`} tabindex="-1" aria-hidden="true">
+                <img src={course.data.heroImage} alt="" loading="lazy" decoding="async" />
+              </a>
+            )}
+            <div>
+            <h2 id={`c-${courseDir(course.id)}`} class="disp text-ink text-[clamp(2.25rem,4.5vw,3.75rem)]">
+              <a class="ttl-link" href={`/courses/${courseDir(course.id)}/`}>{course.data.title}</a>
+            </h2>
+            <p class="lab mt-3 text-mark">Course · {lessons(course.id)} lessons</p>
+            <p class="mt-4 max-w-[60ch] text-lg">{course.data.description}</p>
+            <p class="mt-6"><a class="btn-solid" href={`/courses/${courseDir(course.id)}/`}>Start the course</a></p>
+            </div>
+          </section>
+        ))}
+      </>))}
 
-    <h2 class="disp text-ink mt-14 mb-3 text-[clamp(1.75rem,3vw,2.5rem)]">Competition Builds</h2>
-    <p class="mb-6 max-w-[70ch]">
-      Seven projects built for student competitions between 2020 and 2025, most of them Turkey's national TEKNOFEST and TÜBİTAK contests. Each was made to solve a specific problem, entered with a written report, and judged against other teams.
-    </p>
-    <div class="border-t-2 border-ink">
-      {competitionProjects.map((project) => <CompetitionCard project={project} />)}
     </div>
-  </div>
   </div>
 </Layout>
 
@@ -98,15 +121,27 @@ const seo = {
       linear-gradient(to bottom, color-mix(in srgb, var(--ink) 6%, transparent) 1px, transparent 1px);
     background-size: 32px 32px;
   }
-  .entries { list-style: none; padding: 0; border-top: 2px solid var(--ink); }
-  .entry { display: grid; grid-template-columns: 96px minmax(0, 1fr); gap: 1rem; align-items: start; padding: 1.25rem .75rem; border-bottom: 1px solid var(--rule); border-left: 3px solid transparent; text-decoration: none; color: inherit; background: var(--ground); }
-  @media (min-width: 640px) { .entry { grid-template-columns: 150px minmax(0, 1fr); gap: 1.5rem; } }
-  .thumb { display: flex; align-items: center; justify-content: center; aspect-ratio: 4 / 3; border: 1px solid var(--rule); overflow: hidden; background: var(--panel); }
-  .thumb :global(.figure-wrap) { width: 100%; }
-  .thumb :global(.figure-wrap small) { display: none; }
-  .thumb .plate { width: 100%; height: 100%; object-fit: cover; filter: grayscale(1) contrast(1.1); mix-blend-mode: luminosity; }
-  .ttl { display: block; font-size: clamp(1.4rem, 3vw, 1.75rem); }
-  .entry:hover, .entry:focus-visible { border-left-color: var(--mark); }
-  .entry:hover .thumb, .entry:focus-visible .thumb { border-color: var(--mark); }
-  .entry:hover .ttl, .entry:focus-visible .ttl { color: var(--mark); }
+  .group { margin-top: 4rem; }
+  .course { margin-top: 4rem; padding: 2rem 0 2.5rem; border-block: 2px solid var(--ink); display: grid; gap: 1.5rem; align-items: center; }
+  .course-img { display: block; height: min(52vw, 14rem); overflow: hidden; }
+  .course-img img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(1) contrast(1.1); mix-blend-mode: luminosity; transition: filter .3s; }
+  .course-img:hover img { filter: none; }
+  @media (min-width: 1024px) { .course { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 3rem; } .course-img { height: 100%; min-height: 14rem; } }
+  .group-head { padding-bottom: .5rem; }
+  a.plate-fig { text-decoration: none; transition: border-color .2s; }
+  a.plate-fig[href]:hover { border-color: var(--mark); }
+  .ttl-link { color: inherit; text-decoration: none; }
+  .ttl-link:hover, .ttl-link:focus-visible { color: var(--mark); }
+  .anchor { position: absolute; top: calc(-1 * var(--header-h) - 1rem); }
+  .plate { position: relative; display: grid; gap: 1.5rem; margin-top: 3.5rem; padding-top: 1.5rem; border-top: 2px solid var(--ink); scroll-margin-top: calc(var(--header-h) + 1rem); }
+  .plate-fig { height: min(68vw, 18rem); padding: 1rem; display: flex; align-items: center; justify-content: center; }
+  .plate-img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(1) contrast(1.1); mix-blend-mode: luminosity; }
+  .plate-fig :global(.figure-wrap), .plate-fig :global(.figure) { height: 100%; width: 100%; }
+
+  @media (min-width: 1024px) {
+    .plate { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 3rem; min-height: 70svh; }
+    .plate-fig { position: sticky; top: calc(var(--header-h) + 1.5rem); height: min(60svh, 32rem); align-self: start; padding: 1.5rem; }
+    .plate[data-flip] .plate-fig { order: 2; }
+    .plate-text[data-solo] { grid-column: 1 / -1; }
+  }
 </style>

@@ -62,6 +62,10 @@ const seo = seoProp || {
           : document.documentElement.dataset.defaultTheme === 'light' ? 'light' : 'dark';
       document.documentElement.classList.toggle('dark', theme === 'dark');
       document.documentElement.dataset.theme = theme;
+      // Lets CSS hold figure draw-ins until they scroll into view; without JS they draw on load.
+      document.documentElement.classList.add('js');
+      // Client navigation swaps <html class>; put the flag back each time.
+      document.addEventListener('astro:after-swap', () => document.documentElement.classList.add('js'));
     })();
   </script>
   <Seo {...seo} alternateLanguages={alternateLanguages} />

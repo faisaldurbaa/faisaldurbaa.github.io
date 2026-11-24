@@ -40,12 +40,16 @@ a:hover { text-decoration-color: var(--mark); }
 
 .strip { position: sticky; top: 0; z-index: 40; background: var(--ground); display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0 2rem; min-height: var(--header-h); border-bottom: 2px solid var(--ink); }
 .menu-toggle { display: inline-flex; align-items: center; gap: .5rem; min-height: 2.75rem; border: 2px solid var(--ink); padding: .35rem .6rem; color: var(--ink); background: transparent; cursor: pointer; }
-.strip nav { display: none; flex-basis: 100%; flex-direction: column; align-items: flex-start; gap: .25rem; padding-bottom: 1rem; }
-.strip[data-open="true"] nav { display: flex; }
+/* Phone menu drops down over the page from under the strip, so the strip itself never moves. */
+.strip nav { position: absolute; left: 0; right: 0; top: 100%; display: flex; flex-direction: column; align-items: flex-start; gap: .25rem; margin-top: 2px; padding: .5rem clamp(1rem, 4vw, 3.5rem) 1rem; background: var(--ground); border-bottom: 2px solid var(--ink); visibility: hidden; clip-path: inset(0 0 100% 0); transition: clip-path .35s cubic-bezier(.16, 1, .3, 1), visibility 0s .35s; }
+.strip[data-open="true"] nav { visibility: visible; clip-path: inset(0 0 -2px 0); transition: clip-path .4s cubic-bezier(.16, 1, .3, 1), visibility 0s; }
 .strip nav a, .strip nav button { font-size: 1rem; padding-block: .7rem; min-height: 2.75rem; display: inline-flex; align-items: center; }
+.menu-toggle svg path { transition: d .3s cubic-bezier(.16, 1, .3, 1); }
+.strip[data-open="true"] .menu-toggle svg path { d: path("M2 1L16 13M9 7h0M2 13L16 1"); }
+@media (prefers-reduced-motion: reduce) { .strip nav, .strip[data-open="true"] nav { transition: none; } }
 @media (min-width: 768px) {
   .menu-toggle { display: none; }
-  .strip nav { display: flex; flex-basis: auto; flex-direction: row; align-items: center; gap: 0 1.5rem; padding-bottom: 0; }
+  .strip nav { position: static; visibility: visible; clip-path: none; transition: none; margin: 0; background: none; border: 0; flex-direction: row; align-items: center; gap: 0 1.5rem; padding: 0; }
   .strip nav a, .strip nav button { font-size: inherit; padding-block: .35rem; min-height: 0; }
 }
 .strip a { text-decoration: none; }

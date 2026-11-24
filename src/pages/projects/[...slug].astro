@@ -54,7 +54,7 @@ const { title, tags = [], publishDate, repoUrl, liveUrl, datasetUrl } = entry.da
     </p>
     <p class="mt-5 max-w-[70ch] text-lg">{entry.data.intro || entry.data.description}</p>
     </div>
-    <Figure name={entry.id} title={title} class="w-full max-w-[22rem] lg:shrink-0" />
+    <Figure name={entry.id} title={title} vt={`fig-${entry.id}`} class="w-full max-w-[22rem] lg:shrink-0" />
     </div>
 
     <div class="mt-6 flex flex-wrap gap-3">

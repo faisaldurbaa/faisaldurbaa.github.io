@@ -27,7 +27,7 @@ export const slugify = (text: string) =>
     .replace(/^-|-$/g, '');
 
 // Sheets listed here lead the index in this order; the rest follow by outcome, then year.
-const priority = ['earthquake-damage-prediction', 'aircraft-detection', 'iris-smart-gas-ventilation'];
+const priority = ['earthquake-damage-prediction', 'aircraft-detection', 'iris-smart-gas-ventilation', 'e-seed-autonomous-reforestation'];
 
 // Facts the content files do not carry, supplied by the author.
 const overrides: Record<string, Partial<Sheet>> = {
