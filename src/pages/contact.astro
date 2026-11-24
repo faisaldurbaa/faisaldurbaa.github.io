@@ -62,9 +62,10 @@ const recaptchaSiteKey = import.meta.env.PUBLIC_RECAPTCHA_SITE_KEY ?? '';
 
 <style is:global>
   @media (min-width: 1024px) {
-    /* Footer + header take ~11.5rem; keep the content area inside the viewport so the page never scrolls */
-    .contact { height: calc(100svh - 17.5rem); }
-    .contact-fig { height: 100%; }
+    /* Fill the viewport above the footer, but grow (and scroll) when the form plus a status message is taller; a fixed height let it spill over the footer. */
+    .contact { min-height: calc(100svh - 17.5rem); }
+    /* Out of flow so the drawing fills the leftover space without setting the row height. */
+    .contact-fig { position: absolute; inset: 0; }
     .contact-fig .figure { height: 100%; max-height: 100%; }
     .contact section > div { position: relative; }
   }

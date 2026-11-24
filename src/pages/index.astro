@@ -9,7 +9,8 @@ const sheets = await getSheets();
 const posts = (await getCollection('blog')).sort(
   (a: CollectionEntry<'blog'>, b: CollectionEntry<'blog'>) => (b.data.publishDate?.valueOf() ?? 0) - (a.data.publishDate?.valueOf() ?? 0),
 );
-const courses = (await getCollection('courses')).filter((c: CollectionEntry<'courses'>) => c.data.lessonNumber === undefined);
+const allCourses = await getCollection('courses');
+const courses = allCourses.filter((c: CollectionEntry<'courses'>) => c.data.lessonNumber === undefined);
 
 // The desk: the best projects and essays as loose sheets. This order is the phone order too.
 const order = ['earthquake-damage-prediction', 'ai-and-privacy', 'aircraft-detection', 'the-mark-cuban-playbook', 'iris-smart-gas-ventilation'];
@@ -20,7 +21,9 @@ const desk: DeskSheet[] = order.flatMap((key): DeskSheet[] => {
   const s = sheets.find((x) => x.slug === key);
   if (s) return [{ key, href: s.href, title: s.title, kind: 'Project', meta: s.context, figure: s.figure, morph: s.figure ? `fig-${key}` : undefined, win: s.win ? s.outcome : undefined }];
   const p = posts.find((x: CollectionEntry<'blog'>) => x.id === key);
-  if (p) return [{ key, href: `/blog/${key}/`, title: p.data.title, kind: key.includes('playbook') ? 'Interactive essay' : 'Essay', meta: year(p.data.publishDate), figure: hasFigure(key) ? key : undefined }];
+  if (p) return [{ key, href: `/blog/${key}/`, title: p.data.title, kind: 'Essay', meta: year(p.data.publishDate), figure: hasFigure(key) ? key : undefined }];
+  const l = allCourses.find((x: CollectionEntry<'courses'>) => x.id.endsWith(`/${key}`));
+  if (l) return [{ key, href: `/courses/${l.id}/`, title: l.data.title, kind: 'Course · Open Horizon', meta: `Lesson ${l.data.lessonNumber}`, figure: hasFigure(key) ? key : undefined }];
   return [];
 });
 
@@ -29,7 +32,7 @@ const go = '<svg class="go" viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5
 
 const seo = {
   title: 'Home',
-  description: 'Faisal Durbaa: machine-learning models, competition hardware, software and writing, each with its report, code or full text.',
+  description: 'Faisal Durbaa: AI models, competition hardware, software and writing, each with its report, code or full text.',
 };
 ---
 <Layout seo={seo}>
@@ -39,9 +42,9 @@ const seo = {
     {/* Who: facts in a drawing's title block, not a story. */}
     <dl class="tblock" id="about" aria-label="About Faisal Durbaa">
       <div class="tb-name"><dt class="sr-only">Name</dt><dd class="disp">Faisal Durbaa</dd></div>
-      <div><dt class="lab">I build</dt><dd>Machine-learning models, competition hardware and software</dd></div>
-      <div><dt class="lab">I write</dt><dd>Essays and interactive playbooks</dd></div>
-      <div><dt class="lab">Now</dt><dd>I'm on a gap year from Harvard University</dd></div>
+      <div><dt class="lab">I build</dt><dd>AI models, competition robots and the software around them</dd></div>
+      <div><dt class="lab">I write</dt><dd>Essays on technology and the world</dd></div>
+      <div><dt class="lab">Now</dt><dd>Gap year from Harvard University</dd></div>
       <div class="tb-act">
         <a href="/contact/" class="btn-solid">Get in touch</a>
         <a href="#more" class="btn">Everything else</a>
@@ -87,7 +90,7 @@ const seo = {
           <span class="ex-n disp">{sheets.length}</span>
           <span class="ex-t disp">Projects</span>
           <Fragment set:html={go} />
-          <span class="ex-d">Competition hardware, machine-learning models and tools, each with its drawing, report or code.</span>
+          <span class="ex-d">Competition hardware, AI models and tools, each with its drawing, report or code.</span>
         </a>
       </li>
       <li>
@@ -95,19 +98,17 @@ const seo = {
           <span class="ex-n disp">{posts.length}</span>
           <span class="ex-t disp">Writing</span>
           <Fragment set:html={go} />
-          <span class="ex-d">Essays on technology and security, and interactive playbooks on how Mark Cuban, Ted Sarandos and others work.</span>
+          <span class="ex-d">Essays on technology and the world.</span>
         </a>
       </li>
-      {courses.map((c: CollectionEntry<'courses'>) => (
-        <li>
-          <a href={`/courses/${c.id.replace(/\/index$/, '')}/`}>
-            <span class="ex-n disp">1</span>
-            <span class="ex-t disp">Course</span>
+      <li>
+        <a href="/blog/#courses">
+          <span class="ex-n disp">{courses.length}</span>
+          <span class="ex-t disp">Courses</span>
           <Fragment set:html={go} />
-            <span class="ex-d">{c.data.title}: {c.data.description}</span>
-          </a>
-        </li>
-      ))}
+          <span class="ex-d">An Excel course, and Open Horizon: interactive lessons from top founders and executives.</span>
+        </a>
+      </li>
     </ol>
   </section>
 </Layout>

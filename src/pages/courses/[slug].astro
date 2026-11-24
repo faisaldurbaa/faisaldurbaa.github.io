@@ -40,7 +40,7 @@ const sortedLessons = allLessons.sort(
 }}>
   <div class="pad pt-10 pb-16 max-w-[1100px]">
     <div class="flex justify-between items-center gap-4 mb-10 lab">
-      <a href="/projects/" class="text-ink hover:underline">&larr; Back to Projects</a>
+      <a href="/blog/" class="text-ink hover:underline">&larr; Back to Writing</a>
       <ShareButton title={entry.data.title} />
     </div>
 
@@ -57,6 +57,7 @@ const sortedLessons = allLessons.sort(
               <span class="ttl">{lesson.data.title}</span>
               <span class="block mt-1">{lesson.data.description}</span>
             </span>
+            {lesson.data.heroImage && <img src={lesson.data.heroImage} alt="" class="lesson-img" loading="lazy" decoding="async" />}
           </a>
         </li>
       ))}
@@ -65,3 +66,8 @@ const sortedLessons = allLessons.sort(
 
   <RelatedContent currentSlug={courseSlug} />
 </Layout>
+
+<style>
+  .lesson-img { grid-column: 2; width: 100%; max-width: 14rem; aspect-ratio: 3 / 2; object-fit: cover; border: 1px solid var(--rule); }
+  @media (min-width: 640px) { .lesson-img { grid-column: 3; width: 11rem; } }
+</style>

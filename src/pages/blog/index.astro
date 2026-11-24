@@ -4,6 +4,10 @@ import { getCollection, type CollectionEntry } from 'astro:content';
 import Layout from '../../layouts/Layout.astro';
 
 const blogEntries = await getCollection('blog');
+const allCourses = await getCollection('courses');
+const courseDir = (id: string) => id.replace(/\/index$/, '');
+const courses = allCourses.filter((c: CollectionEntry<'courses'>) => c.data.lessonNumber === undefined);
+const lessons = (id: string) => allCourses.filter((c: CollectionEntry<'courses'>) => c.data.lessonNumber !== undefined && c.id.startsWith(`${courseDir(id)}/`)).length;
 const fallbackDate = new Date('1970-01-01');
 
 const sortedContent = blogEntries.sort((a: CollectionEntry<'blog'>, b: CollectionEntry<'blog'>) =>
@@ -13,8 +17,8 @@ const sortedContent = blogEntries.sort((a: CollectionEntry<'blog'>, b: Collectio
 
 
 const seo = {
-  title: "Blog",
-  description: "Explore my latest blog posts on AI, software, and technical strategy.",
+  title: "Writing",
+  description: "Essays on technology and the world, plus courses and interactive reading notes.",
 };
 ---
 <Layout seo={seo}>
@@ -23,7 +27,7 @@ const seo = {
 
     <div class="pad relative pt-10 pb-16 max-w-[1100px]">
       <h1 class="disp text-ink text-[clamp(2.5rem,5vw,4.5rem)]">Writing</h1>
-      <p class="mt-4 mb-10 max-w-[70ch] text-lg text-muted">Domesitcating technical advancements in technology and business.</p>
+      <p class="mt-4 mb-10 max-w-[70ch] text-lg text-muted">Domesticating technical advancements in technology and business.</p>
 
       <ul id="blog-grid" class="entries">
         {sortedContent.map((item: CollectionEntry<'blog'>) => (
@@ -48,6 +52,24 @@ const seo = {
           </li>
         ))}
       </ul>
+
+      <h2 id="courses" class="disp text-ink text-[clamp(2rem,3.6vw,3rem)] mt-16 mb-6 scroll-mt-[var(--header-h)]">Courses</h2>
+      <ul class="entries">
+        {courses.map((c: CollectionEntry<'courses'>) => (
+          <li>
+            <a href={`/courses/${courseDir(c.id)}/`} class="entry">
+              <span class="thumb" aria-hidden="true">
+                {c.data.heroImage && <img src={c.data.heroImage} alt="" class="plate" loading="lazy" />}
+              </span>
+              <span class="min-w-0">
+                <span class="lab block text-mark">Course · {lessons(c.id)} lessons</span>
+                <span class="disp ttl text-ink">{c.data.title}</span>
+                <span class="mt-2 block max-w-[70ch]">{c.data.description}</span>
+              </span>
+            </a>
+          </li>
+        ))}
+      </ul>
     </div>
   </div>
 </Layout>
@@ -59,7 +81,7 @@ const seo = {
   @media (min-width: 640px) { .entry { grid-template-columns: 180px minmax(0, 1fr); gap: 1.5rem; align-items: start; } }
   .thumb { display: block; height: 160px; border: 1px solid var(--rule); overflow: hidden; background: var(--panel); }
   @media (min-width: 640px) { .thumb { height: auto; aspect-ratio: 3 / 2; } }
-  .thumb .plate { display: block; width: 100%; height: 100%; object-fit: cover; filter: grayscale(1) contrast(1.1); mix-blend-mode: luminosity; }
+  .thumb .plate { display: block; width: 100%; height: 100%; object-fit: cover; }
   .ttl { display: block; margin-top: .25rem; font-size: clamp(1.4rem, 3vw, 1.75rem); }
   .entry:hover, .entry:focus-visible { border-left-color: var(--mark); }
   .entry:hover .thumb, .entry:focus-visible .thumb { border-color: var(--mark); }

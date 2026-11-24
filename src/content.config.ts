@@ -34,6 +34,8 @@ const courses = defineCollection({
   schema: contentBaseSchema.extend({
     lessonNumber: z.number().optional(),
     intro: z.string().optional(),
+    // Interactive lessons render as their own full page.
+    layout: z.string().optional(),
   }),
 });
 

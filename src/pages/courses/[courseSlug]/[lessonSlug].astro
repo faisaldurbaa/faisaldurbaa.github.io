@@ -1,5 +1,5 @@
 ---
-import { getCollection, type CollectionEntry } from 'astro:content';
+import { getCollection, render, type CollectionEntry } from 'astro:content';
 import ArticleLayout from '../../../layouts/ArticleLayout.astro';
 
 export async function getStaticPaths() {
@@ -34,12 +34,13 @@ const currentLessonNumber = entry.data.lessonNumber || 0;
 const currentIndex = allCourseLessons.findIndex((lesson: CollectionEntry<'courses'>) => lesson.data.lessonNumber === currentLessonNumber);
 const previousLesson = currentIndex > 0 ? allCourseLessons[currentIndex - 1] : null;
 const nextLesson = currentIndex < allCourseLessons.length - 1 ? allCourseLessons[currentIndex + 1] : null;
+const { Content } = await render(entry);
 ---
-<ArticleLayout 
+{entry.data.layout ? <Content /> : <ArticleLayout 
   entry={entry}
   backLink={`/courses/${courseSlug}/`}
   backText="Back to Course"
   previousLesson={previousLesson}
   nextLesson={nextLesson}
   courseSlug={courseSlug}
-/>
+/>}
