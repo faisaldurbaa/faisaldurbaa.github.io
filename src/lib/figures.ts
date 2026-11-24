@@ -22,7 +22,27 @@ export function box(x: number, y: number, w: number, d: number, h: number, extra
 /** Numbered balloon at (bx, by) with a leader line to (lx, ly). */
 export const balloon = (n: number, bx: number, by: number, lx: number, ly: number) => {
   const dx = lx - bx, dy = ly - by, len = Math.hypot(dx, dy) || 1;
-  return `<path d="M${f(bx + (dx / len) * 17)} ${f(by + (dy / len) * 17)}L${lx} ${ly}" stroke-width="1"/><circle class="hl" cx="${bx}" cy="${by}" r="17"/><text class="hl" x="${bx}" y="${by + 5}" text-anchor="middle">${n}</text>`;
+  return `<g class="bal"><path d="M${f(bx + (dx / len) * 17)} ${f(by + (dy / len) * 17)}L${lx} ${ly}" stroke-width="1"/><circle class="hl" cx="${bx}" cy="${by}" r="17"/><text class="hl" x="${bx}" y="${by + 5}" text-anchor="middle">${n}</text></g>`;
+};
+/** Idle-loop wrapper: the group is animated, never the drawn shapes. `cls` is m-* (+ `fx` for overlays hidden under reduced motion); `style` sets --t/--k/--tr etc. */
+const lp = (cls: string, body: string, style = '') => (body ? `<g class="lp ${cls}"${style ? ` style="${style}"` : ''}>${body}</g>` : '');
+/** Draw-in choreography per drawing; Figure.astro derives each shape's delay from its geometry. `origin` is the radial centre. */
+export const figureMotion: Record<string, { order: 'sequence' | 'rise' | 'fall' | 'sweep' | 'radial'; origin?: readonly [number, number] }> = {
+  'iris-smart-gas-ventilation': { order: 'fall' }, // exploded assembly lowers into place, top first
+  'aircraft-detection': { order: 'sweep' }, // pass left to right like a scan
+  'inventory-management-system': { order: 'rise' }, // shelving built from the floor up
+  'earthquake-damage-prediction': { order: 'rise' }, // ground and building first, then the model
+  'e-seed-autonomous-reforestation': { order: 'sequence' }, // terrain, target, drone, seeds
+  'aipts-ai-icu-patient-monitoring': { order: 'sweep' }, // bed, board, phone: the signal path
+  'ai-earthquake-impact-analysis-intervention': { order: 'radial', origin: [300, 282] }, // spreads out from the epicentre
+  'ai-powered-physics-graph-generator': { order: 'sweep' }, // incline then plots
+  'duray-school-nutrition-planner': { order: 'fall' }, // menu grid, tray, scale
+  'piezo-powered-wheelchair-visibility': { order: 'rise' }, // wheels up to the floating cushion
+  'ai-and-privacy': { order: 'sweep' }, // crowd, then data left to right into the assistant
+  'the-ted-sarandos-playbook': { order: 'sequence' }, // screen, film strip, then the strategy tree
+  'the-mark-cuban-playbook': { order: 'rise' }, // funnel feeds blocks that climb, step by step
+  journey: { order: 'sweep' },
+  contact: { order: 'sequence' },
 };
 
 type Pt = readonly [number, number];
@@ -153,7 +173,7 @@ export const figures: Record<string, () => string> = {
       const w = 118 * Math.sqrt(1 - t * t);
       s += `<path d="M${f(cx - w)} ${f(y)}H${f(cx + w)}" stroke-width="1.4"/>`;
     }
-    s += ellipse(cx, 244, 140) + ellipse(cx, 244, 44, 'class="hl"');
+    s += ellipse(cx, 244, 140) + lp('m-breathe', ellipse(cx, 244, 44, 'class="hl"'), '--t:5s');
     for (let i = 0; i < 8; i++) {
       const a = (i * Math.PI) / 4;
       s += `<path d="M${at(cx, 244, 140, a)}Q${at(cx, 244, 112, a + 1)} ${at(cx, 244, 44, a + 2)}" stroke-width="1.4"/>`;
@@ -175,6 +195,9 @@ export const figures: Record<string, () => string> = {
     s += box(566, 286, 150, 96, 7) + box(566, 310, 74, 26, 7) + cylinder(600, 372, 17, -20);
     s += box(580, 470, 96, 54, 34);
     s += `<path d="M604 184V292M604 432V478M482 384H392" stroke-width="1" stroke-dasharray="5 5"/>`;
+    s += lp('m-flow fx', `<path d="M${cx} 560V130" stroke-width="1.6" stroke-dasharray="2 10"/>`, '--t:1.6s;--p:-12');
+    // overall height dimension
+    s += D(`M440 108V580${head([440, 104], [440, 160], 9)}${head([440, 584], [440, 528], 9)}M430 104h20M430 584h20`, T1) + `<text x="452" y="348">H</text>`;
     s += balloon(1, 60, 104, 110, 104) + balloon(2, 60, 244, 110, 244) + balloon(3, 60, 384, 110, 384) + balloon(4, 60, 540, 110, 540);
     s += balloon(5, 736, 96, 694, 120) + balloon(6, 736, 340, 700, 350) + balloon(7, 736, 520, 676, 524);
     return s;
@@ -189,11 +212,14 @@ export const figures: Record<string, () => string> = {
       const [x0, y0, x1, y1] = [b[0] - m, b[1] - m, b[2] + m, b[3] + m];
       const frame = `<rect x="${f(x0)}" y="${f(y0)}" width="${f(x1 - x0)}" height="${f(y1 - y0)}" stroke-width="1"/>`;
       const t = `M${f(x0)} ${f(y0 + L)}V${f(y0)}H${f(x0 + L)}M${f(x1 - L)} ${f(y0)}H${f(x1)}V${f(y0 + L)}M${f(x1)} ${f(y1 - L)}V${f(y1)}H${f(x1 - L)}M${f(x0 + L)} ${f(y1)}H${f(x0)}V${f(y1 - L)}`;
-      return { s: frame + D(t, extra), x0, y0, x1, y1 };
+      return { s: frame + lp('m-snap', D(t, extra), '--t:5s'), x0, y0, x1, y1 };
     };
     const big = jet(330, 395, 1, 0), small = jet(588, 262, 0.36, -0.45);
     const bb = detect(big.box, 16, 30, 'class="hl" stroke-width="3"'), sb = detect(small.box, 10, 16, 'stroke-width="2.4"');
     s += big.s + small.s + bb.s + sb.s;
+    s += lp('m-scan fx', D('M96 136H684', 'class="hl" stroke-width="1.4"'), '--tr:476px;--t:7s');
+    // bounding-box dimension
+    s += D(`M${f(bb.x0)} 604H300M360 604H${f(bb.x1)}M${f(bb.x0)} 596v16M${f(bb.x1)} 596v16${head([bb.x0, 604], [bb.x0 + 30, 604], 8)}${head([bb.x1, 604], [bb.x1 - 30, 604], 8)}`, T1) + `<text x="330" y="609" text-anchor="middle">bbox</text>`;
     // label tab on the main detection
     s += `<rect x="${f(bb.x0)}" y="${f(bb.y0 - 22)}" width="84" height="22" stroke-width="1.4"/>` + D(`M${f(bb.x0 + 10)} ${f(bb.y0 - 11)}h40M${f(bb.x0 + 58)} ${f(bb.y0 - 11)}h16`, T14);
     // detections list panel
@@ -220,7 +246,8 @@ export const figures: Record<string, () => string> = {
     boxes.forEach((b, i) => {
       const occ = [...boxes.filter((o) => o.l === b.l && o.a > b.a).map((o) => o.g.hull), ...(slabs[b.l + 1] ? [slabs[b.l + 1]!.hull] : [])];
       const extra = i === HL ? 'class="hl"' : '';
-      s += D(hd(b.g.lines, occ), extra) + D(hd(b.detail, occ), extra + (extra ? ' ' : '') + T1);
+      const bs = D(hd(b.g.lines, occ), extra) + D(hd(b.detail, occ), extra + (extra ? ' ' : '') + T1);
+      s += i === HL ? lp('m-pulse', bs, '--t:3.6s') : bs;
     });
     const top = levels[3] + t;
     s += D(dl([P(0, Dp, 0), P(0, Dp, top)]) + dl([P(W, Dp, 0), P(W, Dp, top)]) + dl([P(W, 0, 0), P(W, 0, top)]));
@@ -238,9 +265,9 @@ export const figures: Record<string, () => string> = {
     }
     for (const x of [416, 456, 576, 626]) g += `M${x} 271h${x === 456 ? 50 : 22}`;
     s += D(g, T1);
-    s += `<rect class="hl" x="403" y="339" width="276" height="36" rx="4"/>`;
+    s += lp('m-pulse', `<rect class="hl" x="403" y="339" width="276" height="36" rx="4"/>`, '--t:3.6s');
     const hb = boxes[HL]!, from = P(hb.b, Dp / 2, hb.z + hb.h / 2);
-    s += `<path d="M${pp(from)}C${f(from[0] + 90)} ${f(from[1])} 330 357 403 357" ${DASH}/>`;
+    s += lp('m-flow', `<path d="M${pp(from)}C${f(from[0] + 90)} ${f(from[1])} 330 357 403 357" ${DASH}/>`, '--t:1.4s');
     const d1 = P(0, Dp, 50);
     s += balloon(1, 55, d1[1] + 30, d1[0], d1[1]) + balloon(2, 55, 330, P(70, Dp - 6, hb.z + 30)[0], P(70, Dp - 6, hb.z + 30)[1]);
     s += balloon(3, 728, 203, 686, 203) + balloon(4, 728, 357, 679, 357) + balloon(5, 55, 140, P(90, Dp - 6, top + 30)[0], P(90, Dp - 6, top + 30)[1]);
@@ -252,7 +279,7 @@ export const figures: Record<string, () => string> = {
     const P = isoAt(180, 392), W = 110, Dp = 90, H = 250;
     const b = isoBox(P, 0, 0, 0, W, Dp, H);
     let s = D(hd([closed([P(-25, -25), P(W + 25, -25), P(W + 25, Dp + 25), P(-25, Dp + 25)])], [b.hull]), T14);
-    s += D(hd(b.lines));
+    let bs = D(hd(b.lines));
     const left = (a: number, z: number) => P(a, Dp, z), right = (a: number, z: number) => P(W, a, z);
     const win = (q: (a: number, z: number) => Pt, a0: number, a1: number, z: number) => dl([q(a0, z), q(a1, z), q(a1, z + 20), q(a0, z + 20)], true);
     let det = '';
@@ -262,10 +289,14 @@ export const figures: Record<string, () => string> = {
       for (const v of [10, 62]) det += win(right, v, v + 18, z + 16);
     }
     det += dl([left(46, 0), left(46, 34), left(64, 34), left(64, 0)]);
-    s += D(det, T1);
+    bs += D(det, T1);
     const ck = (pts: readonly (readonly [number, number])[]) => dl(pts.map(([v, z]) => right(v, z)));
-    s += D(ck([[45, H], [39, 226], [50, 203], [42, 178], [53, 150], [44, 124], [55, 98], [47, 72]]) + ck([[42, 178], [32, 166]]) + ck([[53, 150], [59, 136]]), 'stroke-width="1.8"');
-    // seismogram at the base
+    bs += D(ck([[45, H], [39, 226], [50, 203], [42, 178], [53, 150], [44, 124], [55, 98], [47, 72]]) + ck([[42, 178], [32, 166]]) + ck([[53, 150], [59, 136]]), 'stroke-width="1.8"');
+    s += lp('m-shake', bs, '--t:6s');
+    // seismogram at the base, on a hatched ground line
+    let gh = 'M70 598H330';
+    for (let x = 80; x <= 330; x += 12) gh += `M${x} 598l-8 10`;
+    s += D(gh, T1);
     let w = '';
     for (let x = 70; x <= 330; x += 1.5) {
       const t = (x - 70) / 260;
@@ -275,6 +306,8 @@ export const figures: Record<string, () => string> = {
     s += D(w, T14);
     const n = net([440, 525, 610, 695], [4, 5, 5, 3], 342, 58, 13, (l, i) => (l === 3 && i === 0 ? 'class="hl"' : ''));
     s += n.s + circ(695, 284, 20, 'class="hl" stroke-width="1"');
+    n.nodes.forEach((layer, li) => { s += lp('m-node fx', layer.map((p) => circ(p[0], p[1], 13, 'class="hl"')).join(''), `--k:${li};--t:6s`); });
+    ['input', 'hidden', 'hidden', 'grade'].forEach((label, li) => { s += `<text x="${[440, 525, 610, 695][li]}" y="500" text-anchor="middle">${label}</text>`; });
     s += `<path d="M288 307C350 307 380 342 412 342M338 582C392 582 396 402 412 342" ${DASH}/>` + D('M413 335L424 342L413 349');
     s += balloon(1, 60, 172, ...xy(P(0, Dp, 215))) + balloon(2, 340, 182, ...xy(right(50, 203))) + balloon(3, 60, 522, 82, 578);
     s += balloon(4, 525, 132, 525, 200) + balloon(5, 725, 187, 704, 266);
@@ -313,10 +346,14 @@ export const figures: Record<string, () => string> = {
     // seeds falling to the target
     const top: Pt = [sx - 2, cone + 6], bot: Pt = [tg[0], tg[1] - 22];
     s += `<path d="M${pp(top)}L${pp(bot)}" stroke-width="1" stroke-dasharray="2 6"/>`;
-    for (const t of [0.3, 0.55, 0.8]) {
+    for (const [k, t] of ([0.3, 0.55, 0.8] as const).entries()) {
       const [x, y] = lerp(top, bot, t);
-      s += `<ellipse cx="${f(x - 14)}" cy="${f(y)}" rx="5" ry="11" stroke-width="1.8"/>` + D(dl(Array.from({ length: 25 }, (_, i): Pt => [x - 14 + 5 * Math.sin(i * 0.8), y - 11 - i * 1.4])), T14);
+      const seed = `<ellipse cx="${f(x - 14)}" cy="${f(y)}" rx="5" ry="11" stroke-width="1.8"/>` + D(dl(Array.from({ length: 25 }, (_, i): Pt => [x - 14 + 5 * Math.sin(i * 0.8), y - 11 - i * 1.4])), T14);
+      s += lp('m-drop', seed, `--k:${k};--t:3.6s;--dx:${f((bot[0] - top[0]) * 0.2)}px;--dy:${f((bot[1] - top[1]) * 0.2)}px`);
     }
+    s += lp('m-ring fx', pl(closed(isoRing(P, 228, 58, 0, 24)), 'class="hl" stroke-width="1.4"'), '--t:3.6s');
+    // north arrow
+    s += D(`M650 520V472${head([650, 468], [650, 500], 10)}`, T14) + `<text x="650" y="458" text-anchor="middle">N</text>`;
     s += balloon(1, 722, 70, ...xy(PD(36, -78, 25)));
     s += balloon(2, sx - 150, 250, sx - 11, +f(sy + 10)) + balloon(3, 80, 560, ...xy(P(0, 200)));
     s += balloon(4, 720, 340, ...xy(lerp([sx - 14 + 5, cone + 6], [tg[0] - 14 + 5, tg[1] - 22], 0.55)));
@@ -347,7 +384,7 @@ export const figures: Record<string, () => string> = {
     }
     s += D(e, 'class="hl"');
     const sTop = P(178, 59, 112);
-    s += `<path d="M${pp(sTop)}V180" ${DASH}/>`;
+    s += `<path d="M${pp(sTop)}V180" ${DASH}/>` + lp('m-sweep fx', D('M100 82V176', T1), '--tr:370px;--t:4.5s');
     // controller board with chip, pins and meander antenna
     const B = isoAt(560, 470), board = isoBox(B, 0, 0, 0, 120, 75, 6), chip = isoBox(B, 18, 22, 6, 36, 30, 8);
     s += D(hd(board.lines)) + D(hd(chip.lines), T14);
@@ -357,10 +394,10 @@ export const figures: Record<string, () => string> = {
     for (let k = 0; k < 6; k++) mz.push(B(k % 2 ? 114 : 96, 12 + k * 10, 6), B(k % 2 ? 96 : 114, 12 + k * 10, 6));
     s += D(pins + dl(mz), T1);
     const sR = P(191, 59, 104), ant: Pt = B(105, 40, 6);
-    s += `<path d="M${pp(sR)}C420 350 500 420 ${pp(B(0, 36, 6))}M${pp(ant)}C${f(ant[0] + 30)} 470 650 380 650 312" ${DASH}/>`;
+    s += lp('m-flow', `<path d="M${pp(sR)}C420 350 500 420 ${pp(B(0, 36, 6))}M${pp(ant)}C${f(ant[0] + 30)} 470 650 380 650 312" ${DASH}/>`, '--t:1.6s');
     let arcs = '';
     for (const r of [16, 28]) arcs += `M${f(ant[0] + 30 - r * 0.64)} ${f(ant[1] - 30 - r * 0.77)}A${r} ${r} 0 0 1 ${f(ant[0] + 30 + r * 0.64)} ${f(ant[1] - 30 - r * 0.77)}`;
-    s += D(arcs, T14);
+    s += lp('m-pulse', D(arcs, T14), '--t:2.8s');
     // phone with alert card
     s += `<rect x="595" y="100" width="110" height="205" rx="16"/><rect x="605" y="122" width="90" height="166" rx="4" stroke-width="1.4"/>`;
     s += `<rect x="612" y="140" width="76" height="46" rx="6" stroke-width="1.4"/>` + pl([[628, 150], [641, 174], [615, 174]], 'class="hl"', true);
@@ -398,7 +435,8 @@ export const figures: Record<string, () => string> = {
     const x1 = near(A, 75), x2 = near(B, 75);
     s += D([x1, x2].map(([x, y]) => `M${f(x - 10)} ${f(y - 10)}l20 20M${f(x + 10)} ${f(y - 10)}l-20 20`).join(''), 'stroke-width="3"');
     const centres = [bnd(62, 0.45), bnd(132, 0.45), bnd(318, 0.62)];
-    s += D(centres.map(([x, y]) => `M${f(x - 12)} ${f(y - 12)}h24v24h-24ZM${f(x)} ${f(y - 7)}v14M${f(x - 7)} ${f(y)}h14`).join(''), 'class="hl"');
+    s += lp('m-pulse', D(centres.map(([x, y]) => `M${f(x - 12)} ${f(y - 12)}h24v24h-24ZM${f(x)} ${f(y - 7)}v14M${f(x - 7)} ${f(y)}h14`).join(''), 'class="hl"'), '--t:3.6s');
+    s += lp('m-ripple fx', circ(E[0], E[1], 130, 'class="hl" stroke-width="1"'), '--t:5s');
     s += balloon(1, 70, 90, ...xy(bnd(222))) + balloon(2, 722, 470, ...xy(A[44]!)) + balloon(3, 190, 70, E[0] - 4, E[1] - 6);
     s += balloon(4, 70, 470, ...xy(x1)) + balloon(5, 722, 120, ...xy([centres[2]![0] + 12, centres[2]![1] - 12]));
     return `<g transform="translate(0 40)">${s}</g>`;
@@ -414,7 +452,7 @@ export const figures: Record<string, () => string> = {
     for (let x = 74; x <= 404; x += 20) h += `M${x} 510l-10 12`;
     s += D(h + `M335 510A55 55 0 0 1 ${f(390 - 55 * 0.791)} ${f(510 - 55 * 0.612)}`, T1);
     const ball = on(0.36, 26), ghost = on(0.08, 26);
-    s += circ(ball[0], ball[1], 26) + circ(ball[0], ball[1], 3, T14) + `<circle cx="${f(ghost[0])}" cy="${f(ghost[1])}" r="26" stroke-width="1"/>`;
+    s += lp('m-roll', circ(ball[0], ball[1], 26) + circ(ball[0], ball[1], 3, T14), '--t:5s;--dx:78px;--dy:60px') + `<circle cx="${f(ghost[0])}" cy="${f(ghost[1])}" r="26" stroke-width="1"/>`;
     const a0 = on(0.46, 62), a1 = on(0.72, 62);
     s += D(dl([a0, a1]) + head(a1, a0, 13));
     s += circ(412, 370, 4, T14) + `<path d="${[175, 345, 515].map((y) => `M416 370L458 ${y}`).join('')}" ${DASH}/>` + D([175, 345, 515].map((y) => head([466, y], [416, 370], 9)).join(''), T14);
@@ -427,6 +465,7 @@ export const figures: Record<string, () => string> = {
       if (k === 2) s += D(curve((t) => t * t) + curve((t) => 1 - t * t));
       s += `<text x="462" y="${yb + 8}" text-anchor="middle">${['X', 'V', 'E'][k]}</text>`;
     }
+    s += lp('m-scrub fx', D([130, 300, 470].map((yb) => `M490 ${yb}v92`).join(''), T1), '--t:5s;--tr:188px');
     s += balloon(1, 120, 190, ...xy(on(0.30, 46))) + balloon(2, 230, 600, 230, 490) + balloon(3, 330, 290, ...xy(lerp(a0, a1, 0.5)));
     s += balloon(4, 728, 140, 678, 140) + balloon(5, 728, 320, 678, 320) + balloon(6, 728, 500, 678, 500);
     return `<g transform="translate(-8 -18)">${s}</g>`;
@@ -449,7 +488,7 @@ export const figures: Record<string, () => string> = {
       if (c >= 5) g += `M${x - 20} ${y + 10}l40 -20`;
     }));
     s += D(g, T1) + D(mk, 'stroke-width="1.8"');
-    s += `<rect class="hl" x="${gx - 5}" y="${gy + 22 + rh - 5}" width="${7 * cw + 10}" height="${rh + 10}" rx="4"/>`;
+    s += lp('m-pulse', `<rect class="hl" x="${gx - 5}" y="${gy + 22 + rh - 5}" width="${7 * cw + 10}" height="${rh + 10}" rx="4"/>`, '--t:3.6s');
     // tray with rounded compartments
     const P = isoAt(230, 330), W = 250, Dp = 160, H = 18;
     s += D(hd(isoBox(P, 0, 0, 0, W, Dp, H).lines)) + pl(closed([P(10, 10, H), P(W - 10, 10, H), P(W - 10, Dp - 10, H), P(10, Dp - 10, H)]), T14);
@@ -462,10 +501,12 @@ export const figures: Record<string, () => string> = {
     s += cylinder(cup[0], cup[1] - 34, 26, 34) + ellipse(cup[0], cup[1] - 34, 21, T1);
     // balance scale
     const tilt = 0.09, L: Pt = [600 - 100 * Math.cos(tilt), 380 + 100 * Math.sin(tilt)], R: Pt = [600 + 100 * Math.cos(tilt), 380 - 100 * Math.sin(tilt)];
-    s += D(dl([L, R]), 'stroke-width="2.4"') + circ(600, 380, 6) + D('M600 386V588M545 600H655L642 588H558ZM594 370L600 356L606 370');
+    s += D('M600 386V588M545 600H655L642 588H558ZM594 370L600 356L606 370');
+    let beam = D(dl([L, R]), 'stroke-width="2.4"') + circ(600, 380, 6);
     let pans = '';
     for (const [x, y] of [L, R]) pans += `M${f(x)} ${f(y)}L${f(x - 32)} ${f(y + 90)}M${f(x)} ${f(y)}L${f(x + 32)} ${f(y + 90)}M${f(x - 38)} ${f(y + 90)}Q${f(x)} ${f(y + 124)} ${f(x + 38)} ${f(y + 90)}Z`;
-    s += D(pans, T14) + circ(L[0], L[1] + 82, 12) + D(`M${f(L[0])} ${f(L[1] + 70)}l3 -8M${f(R[0] - 14)} ${f(R[1] + 92)}h28l-5 -20h-18Z`);
+    beam += D(pans, T14) + circ(L[0], L[1] + 82, 12) + D(`M${f(L[0])} ${f(L[1] + 70)}l3 -8M${f(R[0] - 14)} ${f(R[1] + 92)}h28l-5 -20h-18Z`);
+    s += lp('m-tilt', beam, '--t:6s;transform-box:view-box;transform-origin:600px 380px');
     s += balloon(1, 70, 110, gx, 110) + balloon(2, 728, gy + 22 + rh * 1.5, gx + 7 * cw + 5, gy + 22 + rh * 1.5);
     s += balloon(3, 60, 440, ...xy(P(0, Dp, 9))) + balloon(4, 420, 285, ...xy([cup[0] + 22, cup[1] - 40])) + balloon(5, 728, 300, ...xy(R));
     return `<g transform="translate(0 16)">${s}</g>`;
@@ -486,14 +527,16 @@ export const figures: Record<string, () => string> = {
     // exploded cushion with piezo disks
     const PC = isoAt(400, 118), W = 200, Dp = 120, H = 22;
     s += D(hd(isoBox(PC, 0, 0, 0, W, Dp, H).lines));
-    let disks = '', wires = '';
-    for (const v of [26, 60, 94]) {
+    let wires = '';
+    for (const [vi, v] of [26, 60, 94].entries()) {
+      let disks = '';
       for (const u of [32, 78, 124, 170]) {
         disks += dl(closed(isoRing(PC, u, v, H, 13, 28)));
         if (u < 170) wires += dl([PC(u + 13, v, H), PC(u + 33, v, H)]);
       }
+      s += lp('m-pulse', D(disks, 'class="hl"'), `--k:${vi};--t:3.2s`);
     }
-    s += D(disks, 'class="hl"') + D(wires, T1);
+    s += D(wires, T1);
     const c0 = PC(0, Dp, 0), c1 = PC(W, Dp, 0);
     s += `<path d="M${f(c0[0])} ${f(c0[1] + 6)}V366M${f(c1[0])} ${f(c1[1] + 6)}V366" ${DASH}/>`;
     // LED strip on the backrest, wired from the cushion
@@ -506,12 +549,173 @@ export const figures: Record<string, () => string> = {
       leds += `M${f(x - 2.5)} ${f(y)}a2.5 2.5 0 1 0 5 0a2.5 2.5 0 1 0 -5 0`;
       for (const da of [-0.5, 0, 0.5]) rays += `M${f(x - 13 * Math.cos(da))} ${f(y + 13 * Math.sin(da))}l${f(-14 * Math.cos(da))} ${f(14 * Math.sin(da))}`;
     }
-    s += D(leds, T1) + D(rays, 'class="hl" stroke-width="1.6"');
+    s += D(leds, T1) + lp('m-pulse', D(rays, 'class="hl" stroke-width="1.6"'), '--k:3;--t:3.2s');
     const wEnd = along(0.25, 9.5), wStart = PC(10, Dp, 0);
     s += D(`M${pp(wStart)}C${f(wStart[0])} ${f(wStart[1] + 75)} ${f(wEnd[0] + 18)} ${f(wEnd[1] + 14)} ${f(wEnd[0] + 3)} ${f(wEnd[1] + 3)}`, T14);
     s += balloon(1, 700, 250, ...xy(PC(W, 60, 11))) + balloon(2, 640, 70, ...xy(PC(183, 26, 22))) + balloon(3, 150, 160, ...xy([wStart[0] - 4, wStart[1] + 42]));
     s += balloon(4, 110, 290, ...xy([along(0.55, 34)[0], along(0.55, 34)[1]])) + balloon(5, 110, 530, 166, 510) + balloon(6, 640, 600, 558, 588);
     return `<g transform="translate(-14 14)">${s}</g>`;
+  },
+
+  // AI & privacy: a crowd reduced to identical points; one individual's data flows through a lock into a chat assistant that builds a profile.
+  'ai-and-privacy'() {
+    const G = isoAt(215, 330), step = 58, h = 22, r = 8;
+    const pawn = (i: number, j: number) => {
+      const [x, y] = G(i * step + 9, j * step + 9).map(Math.round) as [number, number];
+      return { x, y, top: y - h - 24, s: cylinder(x, y - h, r, h) + circ(x, y - h - 14, 7.5) };
+    };
+    const HL = [4, 0] as const;
+    let s = pl(closed([G(-16, -16), G(266, -16), G(266, 208), G(-16, 208)]), T14);
+    const heads: Record<number, number> = {};
+    for (let j = 0; j < 4; j++) {
+      for (let i = 0; i < 5; i++) {
+        if (i === HL[0] && j === HL[1]) continue;
+        const p = pawn(i, j);
+        s += p.s;
+        if (j === 0) heads[i] = p.x;
+      }
+    }
+    const me = pawn(HL[0], HL[1]);
+    s += lp('m-pulse', `<g class="hl">${me.s}${ellipse(me.x, me.y, 22, 'stroke-width="1.4"')}</g>`, '--t:3s');
+    // chat assistant: standing panel with message bubbles on a base slab
+    const P = isoAt(570, 420), W = 160, Dp = 12, z0 = 14, H = 230;
+    const panel = isoBox(P, 0, 0, z0, W, Dp, H), slab = isoBox(P, 15, -24, 0, 130, 62, z0);
+    s += D(hd(slab.lines, [panel.hull])) + D(hd(panel.lines));
+    const F = (u: number, z: number) => P(u, Dp, z);
+    const quad = (u0: number, u1: number, a: number, b: number, e = T14) => pl(closed([F(u0, a), F(u1, a), F(u1, b), F(u0, b)]), e);
+    let det = dl([F(0, 222), F(W, 222)]);
+    s += D(det, T14) + circ(F(14, 233)[0], F(14, 233)[1], 3.5, T1) + circ(F(26, 233)[0], F(26, 233)[1], 3.5, T1) + circ(F(38, 233)[0], F(38, 233)[1], 3.5, T1);
+    s += quad(12, 112, 170, 208) + quad(56, 148, 118, 156) + quad(12, 120, 58, 106) + quad(12, 148, 24, 44);
+    det = '';
+    for (const [z, u1] of [[198, 100], [188, 86], [178, 64], [144, 140], [132, 110], [96, 108], [86, 96], [76, 104], [66, 70], [34, 70]] as const) {
+      det += dl([F(z > 120 && z < 150 ? 64 : 20, z), F(u1, z)]);
+    }
+    s += D(det, T1);
+    // identity card the assistant assembles
+    const P3 = isoAt(110, 170), C = (u: number, z: number) => P3(u, 0, z);
+    s += pl(closed([C(0, 0), C(130, 0), C(130, 76), C(0, 76)]));
+    s += pl(closed([C(10, 38), C(42, 38), C(42, 68), C(10, 68)]), T14);
+    let cd = dl([C(10, 38), C(42, 68)]) + dl([C(10, 68), C(42, 38)]);
+    for (const [z, u0, u1] of [[60, 52, 118], [48, 52, 100], [36, 52, 110], [20, 10, 118], [10, 10, 80]] as const) cd += dl([C(u0, z), C(u1, z)]);
+    s += D(cd, T1);
+    const cardEnd: Pt = [226, 196];
+    s += `<path d="M${pp(F(0, 236))}C470 70 330 100 ${pp(cardEnd)}" ${DASH}/>` + D(head(cardEnd, [300, 134], 9), T14);
+    // countermeasure: shield with padlock gating the data path
+    const [sx, sy] = [416, 262];
+    s += D(`M${sx} ${sy - 33}L${sx + 28} ${sy - 22}V${sy + 4}Q${sx + 28} ${sy + 26} ${sx} ${sy + 35}Q${sx - 28} ${sy + 26} ${sx - 28} ${sy + 4}V${sy - 22}Z`);
+    s += D(`M${sx} ${sy - 24}L${sx + 20} ${sy - 16}V${sy + 3}Q${sx + 20} ${sy + 19} ${sx} ${sy + 26}Q${sx - 20} ${sy + 19} ${sx - 20} ${sy + 3}V${sy - 16}Z`, T1);
+    s += `<g class="hl"><rect x="${sx - 10}" y="${sy}" width="20" height="16" rx="2"/>` + D(`M${sx - 6} ${sy}V${sy - 5}a6 6 0 0 1 12 0V${sy}`) + circ(sx, sy + 8, 2, T1) + '</g>';
+    // data paths
+    const ends: Record<number, number> = { 3: 266, 2: 256, 1: 246 };
+    let fan = '';
+    for (const i of [3, 2, 1]) {
+      const x = heads[i]!, y = Math.round(G(i * step + 9, 9)[1]) - h - 26;
+      fan += `M${x} ${y}Q${x} ${ends[i]} ${sx - 28} ${ends[i]}`;
+    }
+    s += lp('m-flow', `<path d="${fan}M${me.x} ${me.top}V${sy + 37}M${sx + 28} ${sy}L${pp(F(0, 170))}" ${DASH}/>`, '--t:1.4s');
+    s += balloon(1, 500, 560, me.x + 8, me.y - 8) + balloon(2, 440, 170, sx + 2, sy - 30) + balloon(3, 736, 200, ...xy(F(W, 196)));
+    s += balloon(4, 60, 150, ...xy(C(0, 38))) + balloon(5, 40, 540, ...xy(G(9, 183)));
+    return `<g transform="translate(0 40)">${s}</g>`;
+  },
+
+  // Netflix playbook: a film strip feeds a TV of content rows; a strategy tree picks one highlighted path to the chosen title.
+  'the-ted-sarandos-playbook'() {
+    const P = isoAt(430, 330), W = 250, Dp = 14, TZ = 40, TH = 170;
+    const tv = isoBox(P, 0, 0, TZ, W, Dp, TH), neck = isoBox(P, 105, 0, 8, 40, Dp, 32), foot = isoBox(P, 60, -22, 0, 130, 56, 8);
+    const strip = isoBox(P, -240, 44, 10, 370, 26, 2);
+    const ring = (u0: number, v: number, z0: number, rr: number, n = 40): Pt[] => Array.from({ length: n }, (_, i) => {
+      const a = (i / n) * 2 * Math.PI;
+      return P(u0 + rr * Math.cos(a), v, z0 + rr * Math.sin(a));
+    });
+    const [RU, RV0, RV1, RZ, RR] = [-232, 50, 64, 72, 60] as const;
+    const back = ring(RU, RV0, RZ, RR), front = ring(RU, RV1, RZ, RR), reelHull = hull([...back, ...front]);
+    let s = D(hd(foot.lines, [tv.hull, neck.hull, strip.hull])) + D(hd(neck.lines, [tv.hull])) + D(hd(tv.lines));
+    // screen: bezel, content rows with one selected tile
+    const F = (u: number, z: number) => P(u, Dp, z);
+    s += pl(closed([F(8, 48), F(242, 48), F(242, 202), F(8, 202)]), T14) + circ(F(125, 44)[0], F(125, 44)[1], 1.8, T1);
+    let det = '', tiles = '';
+    ([[146, 186], [100, 140], [54, 94]] as const).forEach(([z, hz], r) => {
+      det += dl([F(18, hz), F(66, hz)]);
+      for (let c = 0; c < 4; c++) {
+        const u = 18 + c * 56;
+        det += dl([F(u + 6, z + 8), F(u + 34, z + 8)]);
+        if (r === 1 && c === 1) continue;
+        tiles += dl(closed([F(u, z), F(u + 48, z), F(u + 48, z + 28), F(u, z + 28)]));
+      }
+    });
+    s += D(tiles, T14) + D(det, T1);
+    s += lp('m-pulse', pl(closed([F(74, 100), F(122, 100), F(122, 128), F(74, 128)]), 'class="hl"', true) + pl([F(92, 106), F(92, 122), F(106, 114)], 'class="hl"', true) + pl(closed([F(69, 95), F(127, 95), F(127, 133), F(69, 133)]), 'class="hl" stroke-width="1"'), '--t:3.6s');
+    // film reel and strip
+    s += D(hd([closed(back)], [hull(front)]), T14) + pl(front, '', true) + pl(ring(RU, RV1, RZ, RR - 9), T1, true) + pl(ring(RU, RV1, RZ, 13, 20), T14, true);
+    for (let k = 0; k < 5; k++) {
+      const a = (k * 72 + 18) * (Math.PI / 180);
+      s += pl(ring(RU + 34 * Math.cos(a), RV1, RZ + 34 * Math.sin(a), 8, 16), T14, true);
+    }
+    s += D(dl([back[15]!, front[15]!]) + dl([back[35]!, front[35]!]));
+    s += D(hd(strip.lines, [reelHull]));
+    const frames: Pt[][] = [], holes: Pt[][] = [];
+    for (let u = -205; u < 110; u += 30) frames.push(closed([P(u, 51, 12), P(u + 22, 51, 12), P(u + 22, 63, 12), P(u, 63, 12)]));
+    for (let u = -236; u < 126; u += 12) holes.push([P(u, 46, 12), P(u + 5, 46, 12)], [P(u, 68, 12), P(u + 5, 68, 12)]);
+    s += D(hd(frames, [reelHull]), T14) + D(hd(holes, [reelHull]), T1);
+    // strategy tree on the floor: selected path in highlight
+    const T = isoAt(290, 440), Z = 8, N = 15;
+    const nodes = ([[0, 60], [110, 10], [110, 110], [220, -25], [220, 45], [220, 75], [220, 145]] as const).map(([u, v]): readonly [number, number] => [u * 1.2, v * 1.2]);
+    const edges = [[0, 1], [0, 2], [1, 3], [1, 4], [2, 5], [2, 6]] as const;
+    const HLN = new Set([0, 1, 3]), HLE = new Set(['0-1', '1-3']);
+    let plain = '', sel = '', selE = '', plainE = '';
+    edges.forEach(([a, b]) => {
+      const [pu, pv] = nodes[a]!, [cu, cv] = nodes[b]!, m = (pu + cu) / 2;
+      const e = dl([T(pu + N, pv, Z), T(m, pv, Z), T(m, cv, Z), T(cu - N, cv, Z)]);
+      if (HLE.has(`${a}-${b}`)) selE += e; else plainE += e;
+    });
+    nodes.forEach(([u, v], i) => {
+      const d = hd(isoBox(T, u - N, v - N, 0, 2 * N, 2 * N, Z).lines);
+      if (HLN.has(i)) sel += d; else plain += d;
+      if (i > 2 && i !== 3) plain += dl([T(u - 8, v - 8, Z), T(u + 8, v + 8, Z)]) + dl([T(u + 8, v - 8, Z), T(u - 8, v + 8, Z)]);
+    });
+    const [lu, lv] = nodes[3]!;
+    s += D(plain) + D(plainE, T14);
+    s += lp('m-pulse', D(sel + selE + dl([T(lu - 7, lv - 1, Z), T(lu - 2, lv + 5, Z), T(lu + 8, lv - 8, Z)]), 'class="hl"'), '--t:3.6s;--k:1');
+    // feed paths: strip to screen, selected leaf to screen
+    const A = P(30, 57, 13), B = F(30, TZ), leaf = T(lu + N, lv, Z), tip = P(W, 7, 120);
+    s += lp('m-flow', `<path d="M${pp(A)}L${pp(B)}M${pp(leaf)}C700 572 724 430 ${pp(tip)}" ${DASH}/>`, '--t:1.4s');
+    s += D(head(B, A, 9) + head(tip, [724, 430], 9), T14);
+    s += balloon(1, 60, 90, ...xy(front[20]!)) + balloon(2, 150, 360, ...xy(P(-120, 57, 12))) + balloon(3, 600, 60, ...xy(F(98, 114)));
+    s += balloon(4, 120, 500, ...xy(T(-N, 72, Z))) + balloon(5, 640, 640, ...xy(T(lu, lv, Z)));
+    return `<g transform="translate(0 14)">${s}</g>`;
+  },
+
+  // Mark Cuban playbook: a sales funnel feeds a staircase of compounding blocks; a ledger tracks the numbers; one highlighted path climbs.
+  'the-mark-cuban-playbook'() {
+    const P = isoAt(470, 400), W = 120, Dp = 76, Hs = [56, 106, 156, 206, 256] as const;
+    const blocks = Hs.map((H, i) => ({ H, v: (4 - i) * Dp, ...isoBox(P, 0, (4 - i) * Dp, 0, W, Dp, H) }));
+    let s = '';
+    // staircase: lowest block is in front, so each block is clipped by the lower ones before it
+    for (let i = 4; i >= 0; i--) {
+      const b = blocks[i]!, front = blocks.slice(0, i).map((q) => q.hull);
+      s += D(hd(b.lines, front));
+    }
+    const c = blocks.map((b) => P(W / 2, b.v + Dp / 2, b.H));
+    // the chosen path: one step at a time, to the top
+    s += `<g class="hl">${pl(c, 'fill="none"')}${c.map((p) => circ(p[0], p[1], 5)).join('')}${D(head([c[4]![0] + 16, c[4]![1] - 22], c[4]!, 13), T14)}${pl([c[4]!, [c[4]![0] + 16, c[4]![1] - 22]])}</g>`;
+    // sales funnel
+    const fx = 170, r = (y: number) => 95 - (69 * (y - 130)) / 140;
+    s += ellipse(fx, 130, 95) + D(`M${fx - 95} 130L${fx - 26} 270M${fx + 95} 130L${fx + 26} 270M${fx - 26} 270V322M${fx + 26} 270V322`) + lower(fx, 270, 26) + lower(fx, 322, 26);
+    s += D(lower(fx, 190, r(190)).replace(/^<path d="|"\/>$/g, '') + lower(fx, 230, r(230)).replace(/^<path d="|"\/>$/g, ''), T1);
+    for (const [x, y, k] of [[118, 36, 1], [170, 22, 0], [222, 40, 1], [144, 70, 0], [198, 76, 0]] as const) s += circ(x, y, k ? 6 : 8, T14) + D(`M${x} ${y + 12}V${y + 22}`, T1);
+    // ledger slab with a highlighted total row
+    const L = isoAt(668, 470), led = isoBox(L, 0, 0, 0, 130, 120, 16);
+    s += D(hd(led.lines));
+    let rows = dl([L(90, 10, 16), L(90, 110, 16)]);
+    for (const v of [24, 44, 64]) rows += dl([L(12, v, 16), L(118, v, 16)]);
+    s += D(rows, T1) + pl(closed([L(12, 78, 16), L(118, 78, 16), L(118, 106, 16), L(12, 106, 16)]), 'class="hl" stroke-width="1.4"');
+    // hand-offs: customers into the first block, ledger back to it
+    const tip: Pt = [206, 520], lt: Pt = [284, 594];
+    s += lp('m-flow', `<path d="M${fx} 330C${fx} 420 186 462 ${pp(tip)}M${pp(L(0, 60, 8))}L${pp(lt)}" ${DASH}/>`, '--t:1.4s');
+    s += D(head(tip, [190, 470], 9) + head(lt, L(0, 60, 8), 9), T14);
+    s += balloon(1, 50, 200, fx - 66, 190) + balloon(2, 60, 640, ...xy(P(40, 380, 28))) + balloon(3, 660, 330, ...xy(P(W, 38, 128)));
+    s += balloon(4, 400, 70, ...xy(c[3]!)) + balloon(5, 700, 380, ...xy(L(50, 34, 16)));
+    return s;
   },
 
   // About page: robotics, data analysis, software and AI as four stages in sequence.
@@ -534,9 +738,9 @@ export const figures: Record<string, () => string> = {
     s += `<rect x="418" y="282" width="140" height="164" rx="8"/>` + D('M418 304H558M432 293h1M442 293h1M452 293h1M436 412h46M436 428h72M500 334l-14 54', T14);
     s += D('M470 342L450 362L470 382M516 342L536 362L516 382', 'stroke-width="2.6"');
     // 4 neural network
-    s += net([628, 680, 732], [3, 4, 2], 364, 38, 10, () => 'class="hl"').s;
+    s += lp('m-pulse', net([628, 680, 732], [3, 4, 2], 364, 38, 10, () => 'class="hl"').s, '--t:4s');
     // dashed hand-offs between stages
-    s += `<path d="M186 364H214M380 364H404M570 364H602" ${DASH}/>` + D(head([218, 364], [186, 364], 9) + head([408, 364], [380, 364], 9) + head([606, 364], [570, 364], 9), T14);
+    s += lp('m-flow', `<path d="M186 364H214M380 364H404M570 364H602" ${DASH}/>`, '--t:1.4s') + D(head([218, 364], [186, 364], 9) + head([408, 364], [380, 364], 9) + head([606, 364], [570, 364], 9), T14);
     s += balloon(1, 110, 506, 110, 462) + balloon(2, 300, 506, 300, 462) + balloon(3, 488, 506, 488, 448) + balloon(4, 680, 506, 680, 433);
     return `<g transform="translate(0 -40)">${s}</g>`;
   },
@@ -563,14 +767,13 @@ export const figures: Record<string, () => string> = {
       tw += `M${f(xl(y0))} ${f(y0)}L${f(xr(y1))} ${f(y1)}M${f(xr(y0))} ${f(y0)}L${f(xl(y1))} ${f(y1)}M${f(xl(y1))} ${f(y1)}H${f(xr(y1))}`;
     }
     s += D(tw, T1) + circ(640, 190, 5);
-    let arcs = '';
-    for (const r of [18, 32, 46]) {
+    for (const [k, r] of [18, 32, 46].entries()) {
       const c = Math.cos(0.6) * r, sn = Math.sin(0.6) * r;
-      arcs += `M${f(640 + c)} ${f(190 - sn)}A${r} ${r} 0 0 1 ${f(640 + c)} ${f(190 + sn)}M${f(640 - c)} ${f(190 + sn)}A${r} ${r} 0 0 1 ${f(640 - c)} ${f(190 - sn)}`;
+      const arc = `M${f(640 + c)} ${f(190 - sn)}A${r} ${r} 0 0 1 ${f(640 + c)} ${f(190 + sn)}M${f(640 - c)} ${f(190 + sn)}A${r} ${r} 0 0 1 ${f(640 - c)} ${f(190 - sn)}`;
+      s += lp('m-pulse', D(arc, 'class="hl"'), `--k:${k};--t:2.4s`);
     }
-    s += D(arcs, 'class="hl"');
     const st = P(118, 10, 244);
-    s += `<path d="M${pp(st)}Q500 100 580 176" ${DASH}/>`;
+    s += lp('m-flow', `<path d="M${pp(st)}Q500 100 580 176" ${DASH}/>`, '--t:1.4s');
     s += balloon(1, 60, 530, ...xy(P(0, Dp, 3))) + balloon(2, 545, 420, ...xy(lerp(P(W, 0, 6), P(W / 2, -20, 150), 0.45)));
     s += balloon(3, 130, 230, ...xy(P(8, 10, 200))) + balloon(4, 420, 90, 470, 147) + balloon(5, 728, 470, ...xy([xr(470), 470]));
     s += balloon(6, 728, 120, ...xy([640 + Math.cos(0.4) * 46, 190 - Math.sin(0.4) * 46]));

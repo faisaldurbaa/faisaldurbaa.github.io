@@ -32,7 +32,7 @@ const recaptchaSiteKey = import.meta.env.PUBLIC_RECAPTCHA_SITE_KEY ?? '';
         <strong class="font-semibold">Thanks!</strong> Your message has been sent.
       </div>
       <div id="error-message" class="hidden border-2 border-stamp text-stamp px-3 py-2 mb-3" role="alert" aria-live="polite">
-        <strong class="font-semibold">Oops.</strong> Something went wrong. Please try again.
+        <strong class="font-semibold">Not sent.</strong> <span id="error-detail">Something went wrong. Please try again.</span>
       </div>
 
       <form id="contact-form" class="space-y-3" autocomplete="on">
@@ -71,71 +71,73 @@ const recaptchaSiteKey = import.meta.env.PUBLIC_RECAPTCHA_SITE_KEY ?? '';
 </style>
 
 <script is:inline define:vars={{ formspreeFormId, recaptchaSiteKey }}>
-  document.addEventListener('astro:page-load', () => {
+  // Bound once per form element, so returning to this page via client navigation never doubles submissions.
+  function bindContact() {
     const form = document.getElementById('contact-form');
-    if (!form) return;
+    if (!form || form.dataset.bound) return;
+    form.dataset.bound = 'true';
 
     const successMessage = document.getElementById('success-message');
     const errorMessage = document.getElementById('error-message');
+    const errorDetail = document.getElementById('error-detail');
     const submitButton = document.getElementById('submit-button');
 
-    const scriptId = 'recaptcha-script';
-    const existingScript = document.getElementById(scriptId);
-    const badge = document.querySelector('.grecaptcha-badge');
-
-    if (!existingScript || (window.grecaptcha && !badge)) {
-      if (existingScript) existingScript.remove();
-
+    if (!document.getElementById('recaptcha-script')) {
       const script = document.createElement('script');
-      script.id = scriptId;
+      script.id = 'recaptcha-script';
       script.src = `https://www.google.com/recaptcha/api.js?render=${recaptchaSiteKey}`;
       script.async = true;
-      script.defer = true;
-      document.body.appendChild(script);
+      document.head.appendChild(script);
     }
 
-    form.addEventListener('submit', function(e) {
-      e.preventDefault();
-
-      if (!window.grecaptcha) {
-        console.error("reCAPTCHA not loaded");
-        errorMessage.classList.remove('hidden');
-        return;
-      }
-
-      grecaptcha.ready(function() {
-        grecaptcha.execute(recaptchaSiteKey, { action: 'submit' }).then(async function(token) {
-          const formData = new FormData(form);
-          formData.append('g-recaptcha-response', token);
-
-          submitButton.disabled = true;
-          submitButton.textContent = 'Sending...';
-
-          try {
-            const response = await fetch(`https://formspree.io/f/${formspreeFormId}`, {
-              method: 'POST',
-              body: formData,
-              headers: { 'Accept': 'application/json' }
-            });
-
-            if (response.ok) {
-              form.reset();
-              successMessage.classList.remove('hidden');
-              errorMessage.classList.add('hidden');
-              setTimeout(() => successMessage.classList.add('hidden'), 5000);
-            } else {
-              errorMessage.classList.remove('hidden');
-              successMessage.classList.add('hidden');
-            }
-          } catch (error) {
-            errorMessage.classList.remove('hidden');
-            successMessage.classList.add('hidden');
-          } finally {
-            submitButton.disabled = false;
-            submitButton.textContent = 'Send Message';
-          }
-        });
-      });
+    const showError = (detail) => {
+      errorDetail.textContent = detail || 'Something went wrong. Please try again, or reach me on LinkedIn.';
+      errorMessage.classList.remove('hidden');
+      successMessage.classList.add('hidden');
+    };
+    const setBusy = (busy) => {
+      submitButton.disabled = busy;
+      submitButton.textContent = busy ? 'Sending…' : 'Send Message';
+    };
+    // reCAPTCHA can hang when blocked by an extension or network; give up after 10 s instead of doing nothing.
+    const getToken = () => new Promise((resolve, reject) => {
+      if (!window.grecaptcha) return reject(new Error('The spam check did not load. Disable content blockers for this page and try again.'));
+      const timer = setTimeout(() => reject(new Error('The spam check timed out. Please try again.')), 10000);
+      grecaptcha.ready(() => grecaptcha.execute(recaptchaSiteKey, { action: 'submit' }).then(
+        (token) => { clearTimeout(timer); resolve(token); },
+        () => { clearTimeout(timer); reject(new Error('The spam check failed. Please try again.')); },
+      ));
     });
-  });
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (submitButton.disabled) return;
+      setBusy(true);
+      try {
+        const formData = new FormData(form);
+        formData.append('g-recaptcha-response', await getToken());
+        const response = await fetch(`https://formspree.io/f/${formspreeFormId}`, {
+          method: 'POST',
+          body: formData,
+          headers: { Accept: 'application/json' },
+        });
+        if (response.ok) {
+          form.reset();
+          successMessage.classList.remove('hidden');
+          errorMessage.classList.add('hidden');
+          setTimeout(() => successMessage.classList.add('hidden'), 6000);
+        } else {
+          // Formspree explains rejections (validation, limits, spam); show its words.
+          const data = await response.json().catch(() => ({}));
+          showError(data.errors?.map((x) => x.message).join('. ') || data.error);
+        }
+      } catch (err) {
+        showError(err instanceof Error && err.message !== 'Failed to fetch' ? err.message : 'Could not reach the mail service. Check your connection and try again.');
+      } finally {
+        setBusy(false);
+      }
+    });
+  }
+  bindContact();
+  document.addEventListener('astro:page-load', bindContact);
 </script>

@@ -14,7 +14,6 @@ const navLinks = [
   { name: 'Home', href: '/', also: [] },
   { name: 'Projects', href: '/projects/', also: ['/projects/', '/courses/', '/red/', '/en/red/'] },
   { name: 'Writing', href: '/blog/', also: ['/blog/'] },
-  { name: 'About', href: '/about/', also: [] },
   { name: 'Contact', href: '/contact/', also: [] },
 ];
 
@@ -79,10 +78,13 @@ const isActive = (link: (typeof navLinks)[number]) =>
     const strip = menu?.closest<HTMLElement>('.strip');
     if (menu && strip && menu.dataset.bound !== 'true') {
       menu.dataset.bound = 'true';
-      menu.addEventListener('click', () => {
-        const open = strip.dataset.open !== 'true';
+      const setOpen = (open: boolean) => {
         strip.dataset.open = String(open);
         menu.setAttribute('aria-expanded', String(open));
+      };
+      menu.addEventListener('click', () => setOpen(strip.dataset.open !== 'true'));
+      strip.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && strip.dataset.open === 'true') { setOpen(false); menu.focus(); }
       });
     }
   }

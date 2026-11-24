@@ -2,142 +2,343 @@
 import { getCollection, type CollectionEntry } from 'astro:content';
 import Layout from '../layouts/Layout.astro';
 import Figure from '../components/Figure.astro';
-import InkBlots from '../components/InkBlots.astro';
 import { getSheets } from '../lib/sheets';
+import { hasFigure } from '../lib/figures';
 
 const sheets = await getSheets();
-const posts = (await getCollection('blog'))
-  .sort((a: CollectionEntry<'blog'>, b: CollectionEntry<'blog'>) => (b.data.publishDate?.valueOf() ?? 0) - (a.data.publishDate?.valueOf() ?? 0))
-  .slice(0, 4);
-const formatDate = (date?: Date) =>
-  date ? date.toLocaleDateString('en-GB', { year: 'numeric', month: 'short' }) : '';
+const posts = (await getCollection('blog')).sort(
+  (a: CollectionEntry<'blog'>, b: CollectionEntry<'blog'>) => (b.data.publishDate?.valueOf() ?? 0) - (a.data.publishDate?.valueOf() ?? 0),
+);
+const courses = (await getCollection('courses')).filter((c: CollectionEntry<'courses'>) => c.data.lessonNumber === undefined);
+
+// The desk: the best projects and essays as loose sheets. This order is the phone order too.
+const order = ['earthquake-damage-prediction', 'ai-and-privacy', 'aircraft-detection', 'the-mark-cuban-playbook', 'iris-smart-gas-ventilation'];
+const year = (d?: Date) => (d ? String(d.getFullYear()) : '');
+
+interface DeskSheet { key: string; href: string; title: string; kind: string; meta: string; figure?: string; morph?: string; win?: string }
+const desk: DeskSheet[] = order.flatMap((key): DeskSheet[] => {
+  const s = sheets.find((x) => x.slug === key);
+  if (s) return [{ key, href: s.href, title: s.title, kind: 'Project', meta: s.context, figure: s.figure, morph: s.figure ? `fig-${key}` : undefined, win: s.win ? s.outcome : undefined }];
+  const p = posts.find((x: CollectionEntry<'blog'>) => x.id === key);
+  if (p) return [{ key, href: `/blog/${key}/`, title: p.data.title, kind: key.includes('playbook') ? 'Interactive essay' : 'Essay', meta: year(p.data.publishDate), figure: hasFigure(key) ? key : undefined }];
+  return [];
+});
+
+// Small drawn arrow marking something you can open.
+const go = '<svg class="go" viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 9.5L9.5 2.5M4 2.5h5.5V8"/></svg>';
 
 const seo = {
   title: 'Home',
-  description: 'Machine learning, hardware and software by Faisal Durbaa: award-winning models, competition builds and writing, each with its report or code.',
+  description: 'Faisal Durbaa: machine-learning models, competition hardware, software and writing, each with its report, code or full text.',
 };
 ---
 <Layout seo={seo}>
-  {/* The headline and figure hold still while the index scrolls past; the row at the reading line drives the figure. */}
-  <div class="hero pad grid gap-x-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,44%)]">
-    <div class="hero-top">
-    <h1 class="hero-title disp text-ink text-[clamp(2.5rem,5.6vw,4.75rem)]">Models, machines, <span class="text-mark">software.</span></h1>
+  <section class="desk grid-paper" id="desk" aria-label="Selected work" tabindex="-1">
+    <h1 class="desk-title disp text-ink">Models, machines, <span class="text-mark">software.</span></h1>
 
-    <aside class="hero-figure" aria-label="Selected sheet">
-      <div class="frame grid-paper h-full">
-        {sheets.map((sheet, i) => (
-          <div class="flex h-full flex-col p-4 sm:p-6" data-panel={i} hidden={i !== 0}>
-            <div class="flex min-h-0 flex-1 items-center justify-center">
-              {sheet.figure ? (
-                <Figure name={sheet.figure} title={sheet.title} class="hero-drawing text-ink" />
-              ) : sheet.image ? (
-                <img src={sheet.image} alt="" class="plate max-h-full w-full object-cover" loading="lazy" />
-              ) : null}
-            </div>
-            <p class="lab mt-3 border-t border-rule pt-3 text-ink lg:mt-5 lg:pt-4">Fig. {sheet.no} — {sheet.title}</p>
-            <p class="mt-2 hidden lg:block">{sheet.summary}</p>
-            {sheet.win && <p class="mt-4 hidden lg:block"><span class="stamp">{sheet.outcome}</span></p>}
-          </div>
-        ))}
+    {/* Who: facts in a drawing's title block, not a story. */}
+    <dl class="tblock" id="about" aria-label="About Faisal Durbaa">
+      <div class="tb-name"><dt class="sr-only">Name</dt><dd class="disp">Faisal Durbaa</dd></div>
+      <div><dt class="lab">I build</dt><dd>Machine-learning models, competition hardware and software</dd></div>
+      <div><dt class="lab">I write</dt><dd>Essays and interactive playbooks</dd></div>
+      <div><dt class="lab">Now</dt><dd>I'm on a gap year from Harvard University</dd></div>
+      <div class="tb-act">
+        <a href="/contact/" class="btn-solid">Get in touch</a>
+        <a href="#more" class="btn">Everything else</a>
       </div>
-    </aside>
-    </div>
+    </dl>
 
-    <ol class="index hero-index" id="sheet-index">
-      {sheets.map((sheet, i) => (
-        <li>
-          <a class="index-row" href={sheet.href} data-sheet={i} data-on={i === 0 ? 'true' : undefined}>
-            <span class="no">{sheet.no}</span>
-            <span>
-              <span class="ttl">{sheet.title}</span>
-              <span class="lab">{sheet.context}</span>
+    <ul class="sheets">
+      {desk.map((s, i) => (
+        <li class="sheet-slot" style={`--i:${i}`}>
+          <a class="dsheet" href={s.href} data-key={s.key} data-morph={s.morph} draggable="false">
+            <span class="ds-fig" aria-hidden="true">
+              {s.figure ? (
+                <Figure name={s.figure} title={s.title} class="text-ink" />
+              ) : (
+                <span class="ds-text disp text-ink" aria-hidden="true">{s.title}</span>
+              )}
             </span>
-            <span class:list={['out', { win: sheet.win }]}>{sheet.outcome}</span>
+            <span class="ds-strip">
+              <span class="lab ds-kind">{s.kind}</span>
+              <Fragment set:html={go} />
+              <span class="ds-ttl">{s.title}</span>
+              <span class="lab ds-meta">{s.meta}</span>
+            </span>
+            {s.win && <span class="stamp ds-stamp">{s.win}</span>}
+          </a>
+        </li>
+      ))}
+    </ul>
+
+    {/* Drafting crosshair that follows the pointer, with its coordinates. */}
+    <div class="xhair" aria-hidden="true"><span class="xh-x"></span><span class="xh-y"></span><span class="xh-read lab"></span></div>
+    {/* First visit: a tag rides the cursor for a few seconds so the drag is discoverable. */}
+    <span class="drag-tag lab" aria-hidden="true">Hold &amp; drag the sheets</span>
+    <p class="desk-hint lab" aria-hidden="true">Drag the sheets · click one to open it</p>
+    <button type="button" class="desk-reset lab" hidden>Reset desk</button>
+  </section>
+
+  {/* Exits: where the rest of the work is filed. */}
+  <section id="more" class="pad scroll-mt-[var(--header-h)] py-14 lg:py-20">
+    <ol class="exits">
+      <li>
+        <a href="/projects/">
+          <span class="ex-n disp">{sheets.length}</span>
+          <span class="ex-t disp">Projects</span>
+          <Fragment set:html={go} />
+          <span class="ex-d">Competition hardware, machine-learning models and tools, each with its drawing, report or code.</span>
+        </a>
+      </li>
+      <li>
+        <a href="/blog/">
+          <span class="ex-n disp">{posts.length}</span>
+          <span class="ex-t disp">Writing</span>
+          <Fragment set:html={go} />
+          <span class="ex-d">Essays on technology and security, and interactive playbooks on how Mark Cuban, Ted Sarandos and others work.</span>
+        </a>
+      </li>
+      {courses.map((c: CollectionEntry<'courses'>) => (
+        <li>
+          <a href={`/courses/${c.id.replace(/\/index$/, '')}/`}>
+            <span class="ex-n disp">1</span>
+            <span class="ex-t disp">Course</span>
+          <Fragment set:html={go} />
+            <span class="ex-d">{c.data.title}: {c.data.description}</span>
           </a>
         </li>
       ))}
     </ol>
-  </div>
-
-  <section class="pad relative mt-20 overflow-hidden pt-4 pb-16 grid gap-x-12 gap-y-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,44%)]">
-    <InkBlots set="section" />
-    <div class="relative">
-      <h2 class="disp text-ink text-4xl">Writing</h2>
-      <ol class="index mt-5">
-        {posts.map((post: CollectionEntry<'blog'>) => (
-          <li>
-            <a class="index-row" href={`/blog/${post.id}/`}>
-              <span class="lab">{formatDate(post.data.publishDate)}</span>
-              <span class="ttl">{post.data.title}</span>
-            </a>
-          </li>
-        ))}
-      </ol>
-      <p class="mt-6 flex flex-wrap gap-3">
-        <a class="btn" href="/blog/">All writing</a>
-        <a class="btn" href="/courses/ms-excel-documentation/">Excel course</a>
-      </p>
-    </div>
-    <div class="relative lg:pt-14">
-      <p class="max-w-md text-lg">Working on something where this would help, or want the details behind a sheet?</p>
-      <p class="mt-5"><a class="btn-solid" href="/contact/">Get in touch</a></p>
-    </div>
   </section>
 </Layout>
 
 <style>
-  /* Photos sit in the sheet as single-ink plates. */
-  .plate { filter: grayscale(1) contrast(1.1); mix-blend-mode: luminosity; border: 1px solid var(--rule); }
-  [data-panel][hidden] { display: none; }
+  /* ---------- Phone first: headline, a swipeable strip of sheets, then the title block. ---------- */
+  .desk { position: relative; display: flex; flex-direction: column; gap: 1.5rem; padding: 1.5rem clamp(1rem, 4vw, 3.5rem) 2rem; border-bottom: 2px solid var(--ink); overflow: hidden; }
+  .desk-title { font-size: clamp(2.75rem, 11vw, 6.25rem); max-width: 11ch; position: relative; z-index: 1; pointer-events: none; }
+  .sheets { list-style: none; margin: 0 calc(-1 * clamp(1rem, 4vw, 3.5rem)); padding: .75rem clamp(1rem, 4vw, 3.5rem) 1rem; display: flex; gap: 1rem; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; order: 2; }
 
-  /* Phone: headline and figure pin together as one block while rows scroll beneath. */
-  .hero-top { position: sticky; top: var(--header-h); z-index: 20; background: var(--ground); padding-bottom: .75rem; }
-  .hero-title { padding-block: 1rem .75rem; }
-  .hero-figure { height: 34svh; min-height: 13rem; }
-  .hero-index { padding-bottom: 30svh; }
-  :global(.hero-drawing) { height: 100%; width: 100%; }
-  :global(.hero-drawing .figure) { height: 100%; }
+  .sheet-slot { flex: 0 0 min(78vw, 22rem); scroll-snap-align: center; }
+  .sheet-slot:nth-child(odd) .dsheet { rotate: -1.2deg; }
+  .sheet-slot:nth-child(even) .dsheet { rotate: 1.4deg; }
+  .tblock { order: 3; }
 
+  /* A sheet: paper, frame, figure, title strip. Its "lift" is drawn as a hidden-line outline, not a shadow. */
+  .dsheet { position: relative; display: flex; flex-direction: column; height: 100%; background: var(--ground); border: 2px solid var(--ink); color: var(--ink); text-decoration: none; touch-action: pan-y; user-select: none; -webkit-user-select: none; transition: border-color .2s, translate .35s cubic-bezier(.16, 1, .3, 1); }
+  .dsheet::before { content: ''; position: absolute; inset: 0; border: 1px dashed var(--ink); translate: 0 0; opacity: 0; transition: translate .35s cubic-bezier(.16, 1, .3, 1), opacity .2s; pointer-events: none; z-index: -1; }
+  .dsheet[data-engaged]::before { translate: 10px 10px; opacity: .55; }
+  .dsheet[data-engaged] { border-color: var(--mark); translate: -3px -3px; }
+  .ds-fig { display: flex; align-items: center; justify-content: center; aspect-ratio: 780 / 640; padding: .5rem; border-bottom: 1px solid var(--rule); }
+  .ds-fig :global(.figure-wrap) { width: 100%; }
+  .ds-text { font-size: clamp(1.4rem, 2.2vw, 2rem); padding: 1rem; text-align: left; align-self: stretch; display: flex; align-items: flex-end; background: repeating-linear-gradient(transparent 0 22px, var(--rule) 22px 23px); }
+  .ds-strip { display: grid; gap: .2rem; padding: .6rem .75rem .7rem; }
+  .ds-strip { position: relative; }
+  .ds-kind { color: var(--mark); }
+  .ds-strip :global(.go) { position: absolute; top: .65rem; right: .7rem; width: .85rem; }
+  .ds-meta { color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; letter-spacing: .08em; }
+  .ds-ttl { font-family: "Barlow Condensed", sans-serif; font-weight: 600; font-size: 1.15rem; line-height: 1.05; text-transform: uppercase; }
+  .ds-stamp { position: absolute; top: .75rem; right: .75rem; font-size: .7rem; padding: .25rem .5rem; background: var(--ground); }
+  /* Only the sheet in hand runs its drawing's idle loop. */
+  .dsheet:not([data-engaged]) :global(.lp) { animation-play-state: paused !important; }
+
+  .tblock { position: relative; z-index: 1; margin: 0; border: 2px solid var(--ink); background: var(--ground); display: grid; grid-template-columns: 1fr; max-width: 30rem; }
+  .tblock > div { display: grid; grid-template-columns: 5.5rem 1fr; gap: .75rem; padding: .55rem .85rem; border-bottom: 1px solid var(--rule); align-items: baseline; }
+  .tblock dt { color: var(--muted); }
+  .tblock dd { margin: 0; }
+  .tb-name { grid-template-columns: 1fr !important; border-bottom: 2px solid var(--ink) !important; }
+  .tb-name dd { font-size: 2rem; color: var(--ink); }
+  .tb-act { display: flex !important; flex-wrap: wrap; gap: .6rem; border-bottom: 0 !important; padding-block: .8rem !important; }
+
+  .xhair, .desk-hint, .drag-tag, .desk-reset { display: none; }
+
+  /* ---------- Desk: sheets lie loose on the table and can be moved. ---------- */
+  @media (min-width: 1200px) {
+    .desk { outline: none; display: block; height: max(44rem, calc(100svh - var(--header-h) - 40px)); padding: 0; cursor: crosshair; }
+    .desk-title { position: absolute; left: clamp(1.5rem, 3vw, 3.5rem); top: 2.25rem; font-size: clamp(4rem, 6.6vw, 7rem); max-width: 7.5ch; }
+    .tblock { position: absolute; left: clamp(1.5rem, 3vw, 3.5rem); bottom: 1.75rem; width: min(25rem, 27vw); z-index: 2; font-size: .95rem; }
+    /* Sheet widths follow the desk's width and their tops its height; capping the width keeps that ratio sane on very wide screens. */
+    .sheets { position: absolute; inset: 0 0 0 auto; width: min(100%, calc(max(44rem, 100svh - var(--header-h) - 40px) * 1.8)); margin: 0; padding: 0; overflow: visible; display: block; pointer-events: none; }
+    .sheet-slot { position: absolute; left: var(--l); top: var(--t); width: var(--w); rotate: var(--r); pointer-events: auto; translate: var(--dx, 0px) var(--dy, 0px); z-index: var(--z, 1); }
+    .sheet-slot .dsheet { rotate: none !important; cursor: grab; }
+    .sheet-slot[data-dragging] .dsheet { cursor: grabbing; }
+    .sheet-slot:nth-child(1) { --l: 35%; --t: 5%; --w: 24.5%; --r: -1.5deg; }
+    .sheet-slot:nth-child(2) { --l: 63%; --t: 4%; --w: 22%; --r: 2deg; }
+    .sheet-slot:nth-child(3) { --l: 34%; --t: 56%; --w: 19%; --r: -2.5deg; }
+    .sheet-slot:nth-child(4) { --l: 58%; --t: 57%; --w: 16%; --r: 2.5deg; }
+    .sheet-slot:nth-child(5) { --l: 77.5%; --t: 45%; --w: 18%; --r: -3deg; }
+    .desk[data-resetting] .sheet-slot { transition: translate .7s cubic-bezier(.16, 1, .3, 1); }
+
+    .ds-ttl { font-size: clamp(.95rem, 1.15vw, 1.25rem); }
+
+    .xhair { display: block; position: absolute; inset: 0; pointer-events: none; z-index: 0; opacity: 0; transition: opacity .2s; }
+    .desk[data-pointer] .xhair { opacity: 1; }
+    .xh-x, .xh-y { position: absolute; background: var(--ink); opacity: .35; }
+    .xh-x { left: 0; right: 0; height: 1px; top: var(--py, 0); }
+    .xh-y { top: 0; bottom: 0; width: 1px; left: var(--px, 0); }
+    .xh-read { position: absolute; left: calc(var(--px, 0) + 12px); top: calc(var(--py, 0) + 10px); color: var(--ink); white-space: nowrap; }
+    .desk-hint { display: block; position: absolute; right: clamp(1.5rem, 3vw, 3.5rem); bottom: 1.25rem; color: var(--muted); margin: 0; }
+    .drag-tag { display: block; position: absolute; left: calc(var(--px, 0) + 18px); top: calc(var(--py, 0) - 34px); z-index: 60; pointer-events: none; padding: .35rem .6rem; background: var(--ink); color: var(--ground); white-space: nowrap; opacity: 0; scale: .9; transition: opacity .25s, scale .35s cubic-bezier(.16, 1, .3, 1); }
+    .desk[data-tag] .drag-tag { opacity: 1; scale: 1; }
+    .desk-reset { display: inline-flex; position: absolute; top: 1.25rem; right: clamp(1.5rem, 3vw, 3.5rem); z-index: 50; border: 1px solid var(--rule); background: var(--ground); color: var(--muted); padding: .4rem .7rem; cursor: pointer; }
+    .desk-reset[hidden] { display: none; }
+    .desk-reset:hover, .desk-reset:focus-visible { color: var(--ink); border-color: var(--ink); }
+  }
+
+  /* The sheets are dealt onto the desk once, then the drawings plot themselves. */
+  @media (prefers-reduced-motion: no-preference) {
+    .sheet-slot { animation: deal .9s cubic-bezier(.16, 1, .3, 1) both; animation-delay: calc(120ms + var(--i) * 90ms); }
+    .tblock { animation: deal .9s cubic-bezier(.16, 1, .3, 1) 80ms both; }
+  }
+  @keyframes deal { from { opacity: 0; transform: translate(-40px, 60px) rotate(-6deg); } }
+
+  /* ---------- Exits ---------- */
+  .exits { list-style: none; margin: 0; padding: 0; border-top: 2px solid var(--ink); }
+  .exits a { position: relative; display: grid; grid-template-columns: 3.5rem 1fr; gap: .25rem 1rem; align-items: baseline; padding: 1.25rem 2.25rem 1.25rem 0; border-bottom: 1px solid var(--rule); color: var(--ink); text-decoration: none; }
+  .ex-n { grid-row: span 2; color: var(--mark); font-size: clamp(2.5rem, 5vw, 4rem); line-height: .85; }
+  .ex-d { grid-column: 2; }
+  .exits :global(.go) { position: absolute; top: 1.35rem; right: .25rem; width: 1.1rem; }
+
+  /* The open arrow: quiet until the row or sheet is in hand, then it inks and nudges out. */
+  :global(.go) { display: block; fill: none; stroke: var(--muted); stroke-width: 1.5; stroke-linecap: square; transition: stroke .2s, translate .35s cubic-bezier(.16, 1, .3, 1); }
+  .exits a:hover :global(.go), .exits a:focus-visible :global(.go), .dsheet[data-engaged] :global(.go), .dsheet:focus-visible :global(.go) { stroke: var(--mark); translate: 3px -3px; }
+  .ex-t { font-size: clamp(2.25rem, 6vw, 5rem); transition: letter-spacing .4s cubic-bezier(.16, 1, .3, 1), color .2s; }
+  .ex-d { color: var(--text); max-width: 60ch; }
+  .exits a:hover .ex-t, .exits a:focus-visible .ex-t { color: var(--mark); letter-spacing: .03em; }
   @media (min-width: 1024px) {
-    .hero-top { display: contents; }
-    .hero-title { grid-column: 1; position: sticky; top: var(--header-h); z-index: 20; background: var(--ground); padding-block: 2rem 1.5rem; }
-    .hero-figure { grid-column: 2; grid-row: 1 / span 2; position: sticky; top: calc(var(--header-h) + 1.5rem); height: calc(100dvh - var(--header-h) - 3rem); margin-top: 1.5rem; }
-    .hero-index { grid-column: 1; padding-bottom: 42dvh; }
+    .exits a { grid-template-columns: 7rem minmax(0, 1fr) minmax(0, 26rem); align-items: center; padding-right: 3rem; }
+    .ex-n { grid-row: auto; }
+    .ex-d { grid-column: 3; justify-self: end; }
+    .exits :global(.go) { top: 50%; margin-top: -.55rem; }
   }
 </style>
 
 <script>
-  // The first row clear of the pinned headline is the selected sheet.
-  function bindIndex() {
-    const rows = [...document.querySelectorAll<HTMLElement>('#sheet-index [data-sheet]')];
-    const panels = document.querySelectorAll<HTMLElement>('[data-panel]');
-    const figure = document.querySelector<HTMLElement>('.hero-figure');
-    const title = document.querySelector<HTMLElement>('.hero-title');
-    if (!rows.length || !figure || !title) return;
-    let current = '0';
-    const show = (id: string) => {
-      if (id === current) return;
-      current = id;
-      rows.forEach((row) => (row.dataset.sheet === id ? (row.dataset.on = 'true') : delete row.dataset.on));
-      panels.forEach((panel) => (panel.hidden = panel.dataset.panel !== id));
-    };
-    const wide = window.matchMedia('(min-width: 1024px)');
-    let queued = false;
-    const onScroll = () => {
-      if (queued) return;
-      queued = true;
-      requestAnimationFrame(() => {
-        queued = false;
-        if (!document.body.contains(figure)) return window.removeEventListener('scroll', onScroll);
-        // The selected sheet is the first row still clear of the pinned block above it.
-        const pinned = (wide.matches ? title : figure)!.getBoundingClientRect().bottom;
-        const best = rows.find((row) => row.getBoundingClientRect().bottom > pinned + 56) ?? rows[rows.length - 1]!;
-        show(best.dataset.sheet!);
-      });
-    };
-    window.addEventListener('scroll', onScroll, { passive: true });
-    rows.forEach((row) => row.addEventListener('focus', () => show(row.dataset.sheet!)));
+  // Desk interactions (wide screens with a fine pointer): drag with inertia, crosshair readout, a first-visit
+  // drag tag, reset, and one engaged sheet at a time whose drawing re-plots. A press that does not move stays a click.
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)');
+
+  // Restart a sheet's drawing from its first stroke (throttled so passing over it does not stutter).
+  function replot(a: HTMLElement) {
+    const wrap = a.querySelector<HTMLElement>('.figure-wrap');
+    if (!wrap || reduce.matches || performance.now() < Number(a.dataset.plotted ?? 0)) return;
+    a.dataset.plotted = String(performance.now() + 2600);
+    wrap.getAnimations({ subtree: true }).forEach((an) => { an.currentTime = 0; an.play(); });
   }
-  bindIndex();
-  document.addEventListener('astro:after-swap', bindIndex);
+
+  function bindDesk() {
+    const desk = document.getElementById('desk');
+    if (!desk || desk.dataset.bound) return;
+    desk.dataset.bound = '';
+    const sheets = [...desk.querySelectorAll<HTMLAnchorElement>('.dsheet')];
+    // The first plot is still running when the page opens; don't restart it straight away.
+    sheets.forEach((s) => (s.dataset.plotted = String(performance.now() + 3500)));
+    const engage = (a: HTMLElement) => {
+      if ('engaged' in a.dataset) return;
+      sheets.forEach((s) => (s === a ? (s.dataset.engaged = '') : delete s.dataset.engaged));
+      replot(a);
+    };
+    sheets.forEach((s) => {
+      s.addEventListener('pointerenter', () => engage(s));
+      s.addEventListener('focus', () => engage(s));
+    });
+
+    // In-page links glide instead of jumping.
+    document.querySelectorAll<HTMLAnchorElement>('main a[href^="#"]').forEach((link) => {
+      link.addEventListener('click', (e) => {
+        const target = document.querySelector(link.hash);
+        if (!target) return;
+        e.preventDefault();
+        target.scrollIntoView({ behavior: reduce.matches ? 'auto' : 'smooth' });
+        history.replaceState(null, '', link.hash);
+      });
+    });
+
+    const wide = matchMedia('(min-width: 1200px) and (pointer: fine)');
+    const read = desk.querySelector<HTMLElement>('.xh-read');
+    const reset = desk.querySelector<HTMLButtonElement>('.desk-reset');
+    let seen = false;
+    try { seen = sessionStorage.getItem('desk-tag') === '1'; } catch { /* storage blocked: show the tag */ }
+    const hideTag = () => { delete desk.dataset.tag; seen = true; try { sessionStorage.setItem('desk-tag', '1'); } catch { /* ignore */ } };
+    // Pointer position goes only to the crosshair and tag (not the whole desk), once per frame.
+    const followers = [...desk.querySelectorAll<HTMLElement>('.xhair, .drag-tag')];
+    let px = 0, py = 0, frame = 0;
+    const paint = () => {
+      frame = 0;
+      followers.forEach((el) => { el.style.setProperty('--px', `${px}px`); el.style.setProperty('--py', `${py}px`); });
+      // 32px grid cell = 10 mm on the drawing.
+      if (read) read.textContent = `X ${String(Math.round(px / 3.2)).padStart(4, '0')}  Y ${String(Math.round(py / 3.2)).padStart(4, '0')}`;
+    };
+    desk.addEventListener('pointermove', (e) => {
+      if (!wide.matches) return;
+      const r = desk.getBoundingClientRect();
+      px = e.clientX - r.left; py = e.clientY - r.top;
+      frame ||= requestAnimationFrame(paint);
+      desk.dataset.pointer = '';
+      if (!seen && !('tag' in desk.dataset)) { desk.dataset.tag = ''; setTimeout(hideTag, 3000); }
+    });
+    desk.addEventListener('pointerleave', () => delete desk.dataset.pointer);
+
+    let z = 10;
+    const homes: (() => void)[] = [];
+    reset?.addEventListener('click', () => {
+      desk.dataset.resetting = '';
+      homes.forEach((home) => home());
+      reset.hidden = true;
+      desk.focus({ preventScroll: true });
+      setTimeout(() => delete desk.dataset.resetting, 750);
+    });
+    sheets.forEach((a) => {
+      const slot = a.parentElement as HTMLElement;
+      let dx = 0, dy = 0, vx = 0, vy = 0, sx = 0, sy = 0, ox = 0, oy = 0, lx = 0, ly = 0, lt = 0, moved = false, raf = 0;
+      const place = () => { slot.style.setProperty('--dx', `${dx}px`); slot.style.setProperty('--dy', `${dy}px`); };
+      homes.push(() => { cancelAnimationFrame(raf); dx = dy = vx = vy = 0; place(); });
+      // Keep at least a third of the sheet on the desk, and never under the header.
+      const clamp = () => {
+        const d = desk.getBoundingClientRect(), s = slot.getBoundingClientRect();
+        const bx = s.width * 0.66, by = s.height * 0.66;
+        if (s.left < d.left - bx) dx += d.left - bx - s.left, vx = 0;
+        if (s.right > d.right + bx) dx -= s.right - d.right - bx, vx = 0;
+        if (s.top < d.top + 8) dy += d.top + 8 - s.top, vy = 0;
+        if (s.bottom > d.bottom + by) dy -= s.bottom - d.bottom - by, vy = 0;
+      };
+      const glide = () => {
+        vx *= 0.92; vy *= 0.92; dx += vx; dy += vy; clamp(); place();
+        if (Math.hypot(vx, vy) > 0.3) raf = requestAnimationFrame(glide);
+      };
+      a.addEventListener('pointerdown', (e) => {
+        if (!wide.matches || e.button !== 0) return;
+        cancelAnimationFrame(raf);
+        sx = e.clientX; sy = e.clientY; ox = dx; oy = dy; lx = sx; ly = sy; lt = e.timeStamp; vx = vy = 0; moved = false;
+        a.setPointerCapture(e.pointerId);
+        slot.style.setProperty('--z', String(++z));
+      });
+      a.addEventListener('pointermove', (e) => {
+        if (!a.hasPointerCapture(e.pointerId)) return;
+        if (!moved && Math.hypot(e.clientX - sx, e.clientY - sy) < 6) return;
+        if (!moved) { hideTag(); if (reset) reset.hidden = false; }
+        moved = true; slot.dataset.dragging = ''; engage(a);
+        const dt = Math.max(1, e.timeStamp - lt);
+        vx = ((e.clientX - lx) / dt) * 16; vy = ((e.clientY - ly) / dt) * 16;
+        lx = e.clientX; ly = e.clientY; lt = e.timeStamp;
+        dx = ox + e.clientX - sx; dy = oy + e.clientY - sy; place();
+      });
+      const end = (e: PointerEvent) => {
+        if (!a.hasPointerCapture(e.pointerId)) return;
+        a.releasePointerCapture(e.pointerId);
+        delete slot.dataset.dragging;
+        if (moved) { clamp(); if (reduce.matches) place(); else raf = requestAnimationFrame(glide); }
+      };
+      a.addEventListener('pointerup', end);
+      a.addEventListener('pointercancel', end);
+      // A drag is not a click. A click names only this sheet's drawing, so it alone morphs into its page.
+      a.addEventListener('click', (e) => {
+        if (moved) { e.preventDefault(); moved = false; return; }
+        if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button) return;
+        const wrap = a.querySelector<HTMLElement>('.figure-wrap');
+        if (wrap && a.dataset.morph) wrap.style.viewTransitionName = a.dataset.morph;
+      });
+    });
+  }
+  bindDesk();
+  document.addEventListener('astro:page-load', bindDesk);
 </script>

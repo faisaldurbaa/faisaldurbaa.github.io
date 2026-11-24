@@ -46,7 +46,7 @@ export const competitionProjectsTr: CompetitionProject[] = [
     focus: "Afet Müdahalesi Simülasyonu",
     roles: ["Araştırmacı"],
     competition: "STREAM It Up!-3",
-    yearTag: "STREAM It Up!-3",
+    yearTag: "STREAM It Up!-3 · Haziran 2024",
     problem: "Türkiye'de deprem riski yüksek bölgelerin tahliye ve lojistik güzergâhlarını ayrıntılı biçimde modelleyen afet planları yeterli değil.",
     solution: "Altı aşamalı yapay zekâ destekli kriz yönetimi süreci, bölgesel nüfus ve ulaşım verilerini bir araya getiriyor. Sistem olası deprem hasarını simüle ediyor, kapanma riski taşıyan güzergâhları öngörüyor ve müdahale merkezlerinin yerleşimini optimize ediyor.",
     links: [

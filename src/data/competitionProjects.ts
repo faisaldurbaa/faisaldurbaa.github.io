@@ -65,7 +65,7 @@ export const competitionProjects: CompetitionProject[] = [
     focus: "Disaster Response Simulation",
     roles: ["Researcher"],
     competition: "STREAM It Up!-3",
-    yearTag: "STREAM It Up!-3",
+    yearTag: "STREAM It Up!-3 · June 2024",
     problem:
       "Turkey lacks adequate disaster planning for high-risk seismic zones, leaving evacuation and logistics paths under-modeled.",
     solution:

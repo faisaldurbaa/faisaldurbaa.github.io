@@ -1,6 +1,7 @@
 ---
-// Renders a sheet's line drawing with a draw-in animation. Drawings live in src/lib/figures.ts.
-import { figures } from '../lib/figures';
+// Renders a sheet's line drawing: drawn in like a pen sketch when it scrolls into view, then one idle loop. Drawings live in src/lib/figures.ts.
+// Contract: .figure-wrap[data-reached] = draw-in plays (one-shot); [data-visible] = on screen (idle loops run).
+import { figures, figureMotion } from '../lib/figures';
 
 interface Props {
   name: string;
@@ -8,32 +9,147 @@ interface Props {
   class?: string;
   /** Crop for drawings that do not use the full 780x700 canvas. */
   viewBox?: string;
+  /** view-transition-name shared with the same drawing on another page, so it morphs across navigation. */
+  vt?: string;
 }
-const { name, title, class: className, viewBox = '0 0 780 700' } = Astro.props;
+const { name, title, class: className, viewBox = '0 0 780 700', vt } = Astro.props;
 
-let order = 0;
-// Solid shapes draw themselves in; dashed lines and numerals fade in after.
-const body = figures[name]?.().replace(
-  /<(path|ellipse|circle|rect|line|polyline|polygon)\b(?![^>]*stroke-dasharray)/g,
-  (_match: string, tag: string) => `<${tag} pathLength="1" style="--i:${order++}"`,
+const SPAN = 900; // ms over which draw-in starts are spread
+const motion = figureMotion[name] ?? { order: 'sequence' as const };
+const [ox, oy] = motion.origin ?? [390, 350];
+
+// First coordinate of a shape: enough to order shapes spatially.
+const num = (a: string, n: string) => Number(a.match(new RegExp(`(?:^|\\s)${n}="(-?[\\d.]+)"`))?.[1] ?? 0);
+const first = (tag: string, a: string): [number, number] => {
+  if (tag === 'ellipse' || tag === 'circle') return [num(a, 'cx'), num(a, 'cy')];
+  if (tag === 'rect') return [num(a, 'x'), num(a, 'y')];
+  if (tag === 'line') return [num(a, 'x1'), num(a, 'y1')];
+  const m = a.match(/(?:\sd|points)="[Mm]?\s*(-?[\d.]+)[\s,]*(-?[\d.]+)/);
+  return [Number(m?.[1] ?? 0), Number(m?.[2] ?? 0)];
+};
+const key = (i: number, p: [number, number]) => {
+  const by = { sequence: i, rise: -p[1], fall: p[1], sweep: p[0], radial: Math.hypot(p[0] - ox, p[1] - oy) };
+  return by[motion.order];
+};
+
+const SHAPES = new RegExp('<g class="bal">[\\s\\S]*?</g>|<(path|ellipse|circle|rect|line|polyline|polygon)\\b([^>]*)>', 'g');
+const keys: number[] = [];
+let balloons = 0;
+// Solid shapes draw themselves in, ordered by geometry; balloons, dashed lines and numerals arrive last.
+const marked = figures[name]?.().replace(
+  SHAPES,
+  (match: string, tag?: string, attrs = '') => {
+    if (!tag) {
+      const d = `${1550 + 80 * balloons++}ms`;
+      return match.replace(/<(path|circle)\b/g, `<$1 pathLength="1" style="--d:${d}"`).replace('<text ', `<text style="--d:${d}" `);
+    }
+    if (attrs.includes('stroke-dasharray')) return match;
+    keys.push(key(keys.length, first(tag, attrs)));
+    return `<${tag} pathLength="1" style="--d:@@${keys.length - 1}@@"${attrs}>`;
+  },
 );
+const rank = new Map([...keys.keys()].sort((a, b) => keys[a]! - keys[b]! || a - b).map((k, r) => [k, r]));
+const body = marked?.replace(/@@(\d+)@@/g, (_m, i: string) => `${Math.round(((rank.get(Number(i)) ?? 0) * SPAN) / Math.max(1, keys.length - 1))}ms`);
 ---
 {body && (
-  <figure class:list={['figure-wrap', className]}>
+  <figure class:list={['figure-wrap', className]} style={vt ? `view-transition-name:${vt}` : undefined}>
     <svg class="figure" viewBox={viewBox} role="img" aria-label={`Illustrative line drawing: ${title}`} set:html={body} />
   </figure>
 )}
 
+<script>
+  // One observer for all drawings; rebinds after Astro view transitions.
+  let io: IntersectionObserver | undefined;
+  const bind = () => {
+    const els = document.querySelectorAll<HTMLElement>('.figure-wrap:not([data-bound])');
+    if (!('IntersectionObserver' in window)) {
+      els.forEach((el) => { el.dataset.reached = ''; el.dataset.visible = ''; });
+      return;
+    }
+    io ??= new IntersectionObserver((entries) => {
+      for (const e of entries) {
+        const el = e.target as HTMLElement;
+        if (e.isIntersecting) {
+          el.dataset.visible = '';
+          // very tall drawings may never reach 30% of their own height
+          if (e.intersectionRatio >= 0.3 || e.intersectionRect.height >= innerHeight * 0.3) {
+            // Back in view after leaving entirely: plot it again from the first stroke.
+            if ('left' in el.dataset && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+              el.getAnimations({ subtree: true }).forEach((a) => { a.currentTime = 0; a.play(); });
+            }
+            delete el.dataset.left;
+            el.dataset.reached = '';
+          }
+        } else {
+          delete el.dataset.visible;
+          if ('reached' in el.dataset) el.dataset.left = '';
+        }
+      }
+    }, { threshold: [0, 0.3] });
+    els.forEach((el) => { el.dataset.bound = ''; io!.observe(el); });
+  };
+  bind();
+  document.addEventListener('astro:page-load', bind);
+  // A drawing that morphs in from the previous page arrives already drawn instead of re-plotting.
+  document.addEventListener('astro:before-swap', (e) => {
+    const names = new Set([...document.querySelectorAll<HTMLElement>('.figure-wrap')].map((el) => el.style.viewTransitionName).filter(Boolean));
+    e.newDocument.querySelectorAll<HTMLElement>('.figure-wrap').forEach((el) => {
+      if (names.has(el.style.viewTransitionName)) el.dataset.arrived = el.dataset.reached = '';
+    });
+  });
+</script>
+
 <style is:global>
-  .figure-wrap { position: relative; margin: 0; }
+  .figure-wrap { position: relative; margin: 0; --draw: 2.8s; }
+  .figure-wrap[data-arrived] { --draw: 0s; }
+  .figure-wrap[data-arrived] .figure :is([pathLength], [stroke-dasharray], text) { animation: none !important; stroke-dashoffset: 0; opacity: 1; }
   .figure { display: block; width: 100%; height: auto; fill: none; stroke: currentColor; stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
   .figure text { fill: currentColor; stroke: none; font: 500 15px "Barlow Semi Condensed", sans-serif; }
   .figure .hl { stroke: var(--mark); }
   .figure text.hl { fill: var(--mark); stroke: none; }
   @media (prefers-reduced-motion: no-preference) {
-    .figure [pathLength] { stroke-dasharray: 1; stroke-dashoffset: 1; animation: figure-draw .9s cubic-bezier(.16, 1, .3, 1) forwards; animation-delay: calc(var(--i) * 14ms); }
-    .figure [stroke-dasharray], .figure text { opacity: 0; animation: figure-fade .5s ease-out .7s forwards; }
+    /* Draw-in: pen strokes ease out; per-shape --d comes from the figure's choreography */
+    .figure [pathLength] { stroke-dasharray: 1; stroke-dashoffset: 1; animation: figure-draw 1.3s cubic-bezier(.16, 1, .3, 1) var(--d, 0ms) forwards; }
+    .figure .bal [pathLength] { animation-duration: .6s; }
+    .figure [stroke-dasharray], .figure text { opacity: 0; animation: figure-fade .6s ease-out var(--d, 1700ms) forwards; }
+    /* Hold everything until the drawing is reached (no-JS: draws on load) */
+    html.js .figure-wrap:not([data-reached]) .figure * { animation-play-state: paused; }
+
+    /* Idle loops: animate <g class="lp m-*"> only; start after the draw-in, run only on screen */
+    .figure .lp { transform-box: fill-box; transform-origin: center; animation-duration: var(--t, 4s); animation-timing-function: ease-in-out; animation-iteration-count: infinite; animation-fill-mode: backwards; animation-delay: calc(var(--draw) + var(--k, 0) * .45s); }
+    html.js .figure-wrap:not([data-visible]) .figure .lp { animation-play-state: paused; }
+    .figure .m-pulse { animation-name: fig-pulse; }
+    .figure .m-breathe { animation-name: fig-breathe; }
+    .figure .m-flow { animation-name: fig-flow; animation-timing-function: linear; }
+    .figure .m-shake { animation-name: fig-shake; animation-timing-function: linear; }
+    .figure .m-snap { animation-name: fig-snap; animation-timing-function: cubic-bezier(.16, 1, .3, 1); }
+    .figure .m-scan { animation-name: fig-scan; animation-timing-function: linear; }
+    .figure .m-sweep { animation-name: fig-sweep; animation-timing-function: linear; }
+    .figure .m-scrub { animation-name: fig-scrub; animation-direction: alternate; }
+    .figure .m-node { animation-name: fig-node; }
+    .figure .m-drop { animation-name: fig-drop; animation-timing-function: ease-in; }
+    .figure .m-ring { animation-name: fig-ring; animation-timing-function: ease-out; }
+    .figure .m-ripple { animation-name: fig-ripple; animation-timing-function: ease-out; }
+    .figure .m-tilt { animation-name: fig-tilt; animation-direction: alternate; }
+    .figure .m-roll { animation-name: fig-roll; animation-direction: alternate; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .figure .fx { display: none; }
   }
   @keyframes figure-draw { to { stroke-dashoffset: 0; } }
   @keyframes figure-fade { to { opacity: 1; } }
+  @keyframes fig-pulse { 0%, 100% { opacity: 1; } 50% { opacity: .35; } }
+  @keyframes fig-breathe { 0%, 100% { transform: scale(.88); } 50% { transform: scale(1.1); } }
+  @keyframes fig-flow { to { stroke-dashoffset: var(--p, -10); } }
+  @keyframes fig-shake { 0%, 68%, 100% { transform: translateX(0); } 71% { transform: translateX(-1.8px); } 75% { transform: translateX(1.6px); } 79% { transform: translateX(-1.2px); } 83% { transform: translateX(.9px); } 88% { transform: translateX(-.4px); } }
+  @keyframes fig-snap { 0% { transform: scale(1.1); opacity: .3; } 12%, 100% { transform: scale(1); opacity: 1; } }
+  @keyframes fig-scan { 0% { transform: translateY(0); opacity: 0; } 8%, 92% { opacity: .9; } 100% { transform: translateY(var(--tr)); opacity: 0; } }
+  @keyframes fig-sweep { 0% { transform: translateX(0); opacity: 0; } 6%, 94% { opacity: 1; } 100% { transform: translateX(var(--tr)); opacity: 0; } }
+  @keyframes fig-scrub { from { transform: translateX(0); } to { transform: translateX(var(--tr)); } }
+  @keyframes fig-node { 0%, 100% { opacity: 0; } 6% { opacity: 1; } 16% { opacity: 0; } }
+  @keyframes fig-drop { 0% { transform: translate(0, 0); opacity: 0; } 15%, 70% { opacity: 1; } 100% { transform: translate(var(--dx), var(--dy)); opacity: 0; } }
+  @keyframes fig-ring { 0% { transform: scale(.5); opacity: .9; } 100% { transform: scale(1.6); opacity: 0; } }
+  @keyframes fig-ripple { 0% { transform: scale(.1); opacity: .9; } 100% { transform: scale(1); opacity: 0; } }
+  @keyframes fig-tilt { from { transform: rotate(-2.4deg); } to { transform: rotate(2.4deg); } }
+  @keyframes fig-roll { from { transform: translate(0, 0); } to { transform: translate(var(--dx), var(--dy)); } }
 </style>
