@@ -125,7 +125,7 @@ const seo = {
   .tblock { order: 3; }
 
   /* A sheet: paper, frame, figure, title strip. Its "lift" is drawn as a hidden-line outline, not a shadow. */
-  .dsheet { position: relative; display: flex; flex-direction: column; height: 100%; background: var(--ground); border: 2px solid var(--ink); color: var(--ink); text-decoration: none; touch-action: pan-y; user-select: none; -webkit-user-select: none; transition: border-color .2s, translate .35s cubic-bezier(.16, 1, .3, 1); }
+  .dsheet { position: relative; display: flex; flex-direction: column; height: 100%; background: var(--ground); border: 2px solid var(--ink); color: var(--ink); text-decoration: none; user-select: none; -webkit-user-select: none; transition: border-color .2s, translate .35s cubic-bezier(.16, 1, .3, 1); }
   .dsheet::before { content: ''; position: absolute; inset: 0; border: 1px dashed var(--ink); translate: 0 0; opacity: 0; transition: translate .35s cubic-bezier(.16, 1, .3, 1), opacity .2s; pointer-events: none; z-index: -1; }
   .dsheet[data-engaged]::before { translate: 10px 10px; opacity: .55; }
   .dsheet[data-engaged] { border-color: var(--mark); translate: -3px -3px; }
@@ -160,7 +160,7 @@ const seo = {
     /* Sheet widths follow the desk's width and their tops its height; capping the width keeps that ratio sane on very wide screens. */
     .sheets { position: absolute; inset: 0 0 0 auto; width: min(100%, calc(max(44rem, 100svh - var(--header-h) - 40px) * 1.8)); margin: 0; padding: 0; overflow: visible; display: block; pointer-events: none; }
     .sheet-slot { position: absolute; left: var(--l); top: var(--t); width: var(--w); rotate: var(--r); pointer-events: auto; translate: var(--dx, 0px) var(--dy, 0px); z-index: var(--z, 1); }
-    .sheet-slot .dsheet { rotate: none !important; cursor: grab; }
+    .sheet-slot .dsheet { rotate: none !important; cursor: grab; touch-action: pan-y; }
     .sheet-slot[data-dragging] .dsheet { cursor: grabbing; }
     .sheet-slot:nth-child(1) { --l: 35%; --t: 5%; --w: 24.5%; --r: -1.5deg; }
     .sheet-slot:nth-child(2) { --l: 63%; --t: 4%; --w: 22%; --r: 2deg; }
