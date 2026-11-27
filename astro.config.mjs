@@ -27,7 +27,8 @@ export default defineConfig({
   integrations: [
     mdx(), 
     tailwind(), 
-    sitemap(),
+    // Redirect stubs and noindex pages stay out of the sitemap.
+    sitemap({ filter: (page) => !/\/(about|portfolio|404|red\/.*|en\/red\/.*)\/?$/.test(new URL(page).pathname) }),
     icon(),
   ],
 });

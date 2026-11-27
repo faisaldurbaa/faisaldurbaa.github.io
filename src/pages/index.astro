@@ -31,11 +31,23 @@ const desk: DeskSheet[] = order.flatMap((key): DeskSheet[] => {
 const go = '<svg class="go" viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 9.5L9.5 2.5M4 2.5h5.5V8"/></svg>';
 
 const seo = {
-  title: 'Home',
+  title: 'Faisal Durbaa: AI, Robotics and Software',
   description: 'Faisal Durbaa: AI models, competition hardware, software and writing, each with its report, code or full text.',
+};
+
+const person = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: 'Faisal Durbaa',
+  url: 'https://faisaldurbaa.com/',
+  image: 'https://faisaldurbaa.com/placeholder.png',
+  description: seo.description,
+  sameAs: ['https://github.com/faisaldurbaa', 'https://www.linkedin.com/in/faisaldurbaa/'],
 };
 ---
 <Layout seo={seo}>
+  <!-- Tells search engines this site is the canonical page for the person. -->
+  <script type="application/ld+json" set:html={JSON.stringify(person)} />
   <section class="desk grid-paper" id="desk" aria-label="Selected work" tabindex="-1">
     <h1 class="desk-title disp text-ink">Models, machines, <span class="text-mark">software.</span></h1>
 

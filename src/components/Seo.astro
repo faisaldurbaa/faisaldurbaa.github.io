@@ -20,7 +20,7 @@ const imageSrc = (heroImage && typeof heroImage === 'string') ? heroImage : defa
 const finalImageUrl = new URL(imageSrc, Astro.site);
 
 const siteName = "Faisal Durbaa";
-const fullTitle = `${title} | ${siteName}`;
+const fullTitle = title.includes(siteName) ? title : `${title} | ${siteName}`;
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 ---
 
@@ -31,13 +31,15 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 
 <!-- Open Graph / Facebook -->
 <meta property="og:type" content="website" />
+<meta property="og:site_name" content={siteName} />
 <meta property="og:url" content={canonicalURL} />
 <meta property="og:title" content={fullTitle} />
 <meta property="og:description" content={description} />
 <meta property="og:image" content={finalImageUrl} />
 
 <!-- Twitter -->
-<meta property="twitter:card" content="summary_large_image" />
+<!-- The default image is square; a large card would crop it. -->
+<meta name="twitter:card" content={heroImage ? "summary_large_image" : "summary"} />
 <meta property="twitter:url" content={canonicalURL} />
 <meta property="twitter:title" content={fullTitle} />
 <meta property="twitter:description" content={description} />
