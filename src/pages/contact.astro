@@ -65,7 +65,8 @@ const recaptchaSiteKey = import.meta.env.PUBLIC_RECAPTCHA_SITE_KEY ?? '';
     /* Fill the viewport above the footer, but grow (and scroll) when the form plus a status message is taller; a fixed height let it spill over the footer. */
     .contact { min-height: calc(100svh - 17.5rem); }
     /* Out of flow so the drawing fills the leftover space without setting the row height. */
-    .contact-fig { position: absolute; inset: 0; display: flex; align-items: center; }
+    /* .contact prefix: Figure's own .figure-wrap { position: relative } loads after this in production and would win a tie. */
+    .contact .contact-fig { position: absolute; inset: 0; display: flex; align-items: center; }
     /* Cap so tall windows don't blow the drawing up to fill the whole column. */
     .contact-fig .figure { height: 100%; max-height: min(100%, 24rem); }
     .contact section > div { position: relative; }
